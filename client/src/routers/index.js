@@ -1,3 +1,5 @@
+import SignInPage from "../pages/Client/Auth/SignIn/SignInPage";
+import SignUpPage from "../pages/Client/Auth/SignUp/SignUpPage";
 import HomePage from "../pages/Client/HomePage/HomePage";
 import NotFoundPage from "../pages/Client/NotFoundPage/NotFoundPage";
 import ProductsDetailPage from "../pages/Client/ProductsDetailPage/ProductsDetailPage";
@@ -18,6 +20,16 @@ export const routes = [
         path: '/products/:id',
         page: ProductsDetailPage,
         isShowHeader: true,
+    },
+    {
+        path: '/signin',
+        page: SignInPage,
+        isShowHeader: false,
+    },
+    {
+        path: '/signup',
+        page: SignUpPage,
+        isShowHeader: false,
     },
     {
         path: '*',
