@@ -1,16 +1,17 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const { default: mongoose } = require('mongoose');
+const routers = require('./src/routes');
+const bodyParser = require('body-parser');
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001;
+app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-  res.send('Hello World! heheheheh');
-});
+routers(app);
 
-mongoose.connect(`mongodb+srv://DATN_WD98:${process.env.MONGO_DB}@datn98.ncugkyc.mongodb.net/?retryWrites=true&w=majority&appName=DATN98`)
+mongoose.connect(`${process.env.MONGO_DB}`)
 .then(() => {
   console.log('Kết nối MongoDB thành công');
 })
