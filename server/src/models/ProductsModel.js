@@ -23,10 +23,22 @@ const productSchema = new mongoose.Schema({
         required: true,
         min: 0
     },
-    rating: {
+    sold: {
         type: Number,
         required: true,
     },
+    variants: [
+        {
+            color: {
+                type: String,
+                required: true,
+            },
+            size: {
+                type: String,
+                required: true,
+            }
+        }
+    ],
     description: {
         type: String,
         // required: true,
