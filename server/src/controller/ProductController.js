@@ -48,9 +48,26 @@ const getDetailsProduct = async (req, res) => {
         console.log(error);
     }
 }
+// xoa san pham
+const deleteProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        if (!productId) {
+            return res.status(200).json({
+                status: 'ERROR',
+                message: 'xoa san pham'
+            });
+        }
+        const response = await ProductService.deleteProduct(productId);
+        return res.status(200).json(response);
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 module.exports = {
     createProduct,
     updateProduct,
-    getDetailsProduct
+    getDetailsProduct,
+    deleteProduct
 };
