@@ -1,8 +1,9 @@
 const Product = require('../models/ProductsModel');
 
+//thêm sản phẩm
 const createProduct = async (newProduct) => {
     return new Promise(async (resolve, reject) => {
-        const { name = '', image = '', type = '', price = 0, countInStock = 0, rating = 0, description = '' } = newProduct;
+        const { name = '', image = '', type = '', price = 0, countInStock = 0, sold = 0, variants = [], description = '' } = newProduct;
         try {
             const checkProduct = await Product.findOne({ name: name });// kiểm tra tên sản phẩm đã tồn tại chưa 
             if (checkProduct) {
@@ -17,7 +18,8 @@ const createProduct = async (newProduct) => {
                 type: type,
                 price: price,
                 countInStock: countInStock,
-                rating: rating,
+                sold: sold,
+                variants: variants,
                 description: description
             })
             if (newProduct) {
@@ -64,9 +66,31 @@ const updateProduct = async (productId, data) => {
 
 }
 
-
+// lấy chi tiết sản phẩm
+const getDetailsProduct = async (productId) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const product = await Product.findById(productId);
+            if (!product) {
+                return resolve({
+                    status: "ERROR",
+                    message: 'Sản phẩm không tồn tại'
+                });
+            } else {
+                resolve({
+                    status: "OK",
+                    message: 'Lấy chi tiết sản phẩm thành công',
+                    data: product
+                });
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    })
+}
 
 module.exports = {
     createProduct,
-    updateProduct
+    updateProduct,
+    getDetailsProduct
 };
