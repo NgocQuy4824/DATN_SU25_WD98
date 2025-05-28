@@ -88,9 +88,35 @@ const getDetailsProduct = async (productId) => {
         }
     })
 }
+//xoa san pham
+
+const deleteProduct = (id)=> {
+   return new Promise(async (resolve, reject) => {
+    try {
+        const checkProduct = await Product.findOne({
+            _id: id
+        })
+        if (checkProduct === null) {
+            resolve({
+                satatus: 'OK',
+                message: 'XOA'
+            })
+        }
+        await Product.findByIdAndDelete(id)
+        resolve({
+            status: 'OK',
+            message: 'XOA'
+        })
+    } catch (e) {
+        reject(e)
+    }
+   })
+}
+
 
 module.exports = {
     createProduct,
     updateProduct,
-    getDetailsProduct
+    getDetailsProduct,
+    deleteProduct
 };
