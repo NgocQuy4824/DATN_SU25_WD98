@@ -64,10 +64,22 @@ const deleteProduct = async (req, res) => {
         console.log(error);
     }
 }
+// getall product
+const getAllProduct = async (req, res) => {
+    try{
+        const response = await ProductService.getAllProduct()
+        return res.status(200).json(response)
+    } catch (e) {
+        return res.status(404).json({
+            message: e
+        })
+    }
+}
 
 module.exports = {
     createProduct,
     updateProduct,
     getDetailsProduct,
-    deleteProduct
+    deleteProduct,
+    getAllProduct
 };
