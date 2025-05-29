@@ -88,9 +88,36 @@ const getDetailsProduct = async (productId) => {
         }
     })
 }
+//xoa san pham
+
+const deleteProduct = async (id) => {
+    try {
+        const product = await Product.findById(id);
+
+        if (!product) {
+            return {
+                status: 'ERROR',
+                message: 'Sản phẩm không tồn tại',
+            };
+        }
+
+        await Product.findByIdAndDelete(id);
+
+        return {
+            status: 'OK',
+            message: 'Xóa sản phẩm thành công',
+        };
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
+
 
 module.exports = {
     createProduct,
     updateProduct,
-    getDetailsProduct
+    getDetailsProduct,
+    deleteProduct
 };
