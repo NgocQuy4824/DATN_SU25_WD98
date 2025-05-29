@@ -90,28 +90,29 @@ const getDetailsProduct = async (productId) => {
 }
 //xoa san pham
 
-const deleteProduct = (id)=> {
-   return new Promise(async (resolve, reject) => {
+const deleteProduct = async (id) => {
     try {
-        const checkProduct = await Product.findOne({
-            _id: id
-        })
-        if (checkProduct === null) {
-            resolve({
-                satatus: 'OK',
-                message: 'XOA'
-            })
+        const product = await Product.findById(id);
+
+        if (!product) {
+            return {
+                status: 'ERROR',
+                message: 'Sản phẩm không tồn tại',
+            };
         }
-        await Product.findByIdAndDelete(id)
-        resolve({
+
+        await Product.findByIdAndDelete(id);
+
+        return {
             status: 'OK',
-            message: 'XOA'
-        })
-    } catch (e) {
-        reject(e)
+            message: 'Xóa sản phẩm thành công',
+        };
+    } catch (error) {
+        console.error(error);
     }
-   })
 }
+
+
 
 
 module.exports = {

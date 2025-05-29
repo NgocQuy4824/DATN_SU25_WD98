@@ -3,7 +3,7 @@ const ProductService = require('../services/ProductService');
 //thêm sản phẩm
 const createProduct = async (req, res) => {
     try {
-        const { name = '', image = '', type = '', price = 0, countInStock = 0, sold = 0,variants = [] , description = '' } = req.body;
+        const { name = '', image = '', type = '', price = 0, countInStock = 0, sold = 0, variants = [], description = '' } = req.body;
         if (!name || !image || !type || !price || !countInStock || !sold || !variants) {
             return res.status(400).json({ message: 'Bắt buộc phải nhập' });
         }
@@ -53,12 +53,17 @@ const deleteProduct = async (req, res) => {
     try {
         const productId = req.params.id;
         if (!productId) {
-            return res.status(200).json({
+            return res.status(400).json({
                 status: 'ERROR',
-                message: 'xoa san pham'
+                message: 'ID sản phẩm không hợp lệ'
             });
         }
         const response = await ProductService.deleteProduct(productId);
+        if (response.status === 'ERROR') {
+            // check sản phẩm có tồn tại hay không
+            return res.status(404).json(response);
+        }
+        // Sản phẩm tồn tại và đã được xóa
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);
