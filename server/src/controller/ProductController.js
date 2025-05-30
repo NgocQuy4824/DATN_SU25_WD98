@@ -63,21 +63,22 @@ const deleteProduct = async (req, res) => {
             // check sản phẩm có tồn tại hay không
             return res.status(404).json(response);
         }
-        // Sản phẩm tồn tại và đã được xóa
         return res.status(200).json(response);
     } catch (error) {
         console.log(error);
     }
 }
+
 // getall product
 const getAllProduct = async (req, res) => {
-    try{
+    try {
         const response = await ProductService.getAllProduct()
-        return res.status(200).json(response)
+        if (response.status === 'ERROR') {
+            return res.status(404).json(response);
+        }
+        return res.status(200).json(response);
     } catch (e) {
-        return res.status(404).json({
-            message: e
-        })
+        console.log(e);
     }
 }
 
