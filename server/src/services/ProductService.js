@@ -111,19 +111,27 @@ const deleteProduct = async (id) => {
         console.error(error);
     }
 }
-//gett all san pham
+//get all sản phẩm
 
 const getAllProduct = () => {
     return new Promise(async (resolve, reject) => {
         try {
             const allProduct = await Product.find()
-            resolve({
-                status: 'OK',
-                message: 'OKK',
-                data: allProduct
-            })
+            if (allProduct.length > 0) {
+                resolve({
+                    status: "OK",
+                    message: 'Lấy danh sách sản phẩm thành công',
+                    data: allProduct
+                });
+            } else {
+                resolve({
+                    status: "ERROR",
+                    message: 'Không có sản phẩm nào',
+                    data: []
+                });
+            }
         } catch (e) {
-            reject(e)
+            console.log(e);
         }
     })
 }
