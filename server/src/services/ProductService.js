@@ -111,6 +111,23 @@ const deleteProduct = async (id) => {
         console.error(error);
     }
 }
+//gett all san pham
+
+const getAllProduct = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const allProduct = await Product.find()
+            resolve({
+                status: 'OK',
+                message: 'OKK',
+                data: allProduct
+            })
+        } catch (e) {
+            reject(e)
+        }
+    })
+}
+
 
 
 
@@ -119,5 +136,6 @@ module.exports = {
     createProduct,
     updateProduct,
     getDetailsProduct,
-    deleteProduct
+    deleteProduct,
+    getAllProduct
 };
