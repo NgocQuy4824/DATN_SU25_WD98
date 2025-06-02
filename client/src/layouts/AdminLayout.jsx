@@ -1,0 +1,66 @@
+import React from 'react';
+import HeaderComponent from '../components/HeaderComponent/HeaderComponent'
+import { Menu } from 'antd';
+import { Outlet, useNavigate } from 'react-router-dom';
+import {
+  AppstoreOutlined,
+  UserOutlined,
+  ShoppingCartOutlined,
+  BarChartOutlined,
+  PieChartOutlined
+} from '@ant-design/icons';
+
+const items = [
+  {
+    key: 'products',
+    label: 'Sản phẩm',
+    icon: <AppstoreOutlined />,
+  },
+  {
+    key: 'users',
+    label: 'Người dùng',
+    icon: <UserOutlined />,
+  },
+  {
+    key: 'orders',
+    label: 'Đơn hàng',
+    icon: <ShoppingCartOutlined />,
+  },
+  {
+    key: 'categories',
+    label: 'Danh mục',
+    icon: <BarChartOutlined />,
+  },
+  {
+    key: 'statistics',
+    label: 'Thống kê',
+    icon: <PieChartOutlined />,
+  },
+];
+
+const AdminLayout = () => {
+  const navigate = useNavigate();
+
+  const handleMenuClick = ({ key }) => {
+    navigate(`/system/admin/${key}`);
+  };
+
+  return (
+    <>
+      <HeaderComponent isAdmin />
+      <div style={{ display: 'flex' }}>
+        <Menu
+          onClick={handleMenuClick}
+          style={{ width: 256 }}
+          mode="inline"
+          items={items}
+        />
+        <div style={{ flex: 1, padding: 16 }}>
+          <Outlet />
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default AdminLayout;
