@@ -47,11 +47,11 @@ const AdminLayout = () => {
 
   return (
     <>
-      <HeaderComponent isAdmin />
+      <HeaderComponent isAdmin={true} />
       <div style={{ display: 'flex' }}>
         <Menu
           onClick={handleMenuClick}
-          style={{ width: 256 }}
+          style={{ width: 200 }}
           mode="inline"
           items={items}
         />

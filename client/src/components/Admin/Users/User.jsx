@@ -1,6 +1,6 @@
 import { PageContainer } from '@ant-design/pro-components'
 import React from 'react'
-import TableComponent from '../../TableComponent/TableComponent.jsx'
+import TableUser from './TableUser.jsx'
 
 const User = () => {
   return (
@@ -9,7 +9,7 @@ const User = () => {
         className="site-page-header"
         title="Quản lý người dùng"
       >
-        <TableComponent />
+        <TableUser />
       </PageContainer>
     </>
   )
