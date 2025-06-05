@@ -15,12 +15,12 @@ const HomePage = () => {
   ];
   return (
     <div style={{ padding: "0 120px" }}>
+      <SliderComponent arrImages={[slider1, slider2]} />
       <WrapperTypeProduct>
         {arrType.map((item) => (
           <TypeProducts key={item.id} name={item.name} />
         ))}
       </WrapperTypeProduct>
-      <SliderComponent arrImages={[slider1, slider2]} />
       HomePage
     </div>
   );

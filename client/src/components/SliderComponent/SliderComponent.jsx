@@ -21,7 +21,7 @@ const SliderComponent = ({ arrImages }) => {
             alt="slider"
             preview={false}
             width="100%"
-            height="250px"
+            height="400px"
           />
         );
       })}
