@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import TableComponent from './TableProduct.jsx';
 import { Button, Form } from 'antd';
 import ModalCustom from './ModalCustom.jsx';
-import { useCreateProduct, useGetAllProducts } from '../../../hooks/useProductHook.js';
+import { useCreateProduct, useDeleteProduct, useGetAllProducts, useUpdateProduct } from '../../../hooks/useProductHook.js';
 import { useQueryClient } from '@tanstack/react-query';
 
 
@@ -28,6 +28,19 @@ const Products = () => {
     queryClient.invalidateQueries(['products']);
   });
 
+  const { mutate: updateProduct, isLoading: updating } = useUpdateProduct(() => {
+  form.resetFields();
+  setModalOpen(false);
+  setEditingProduct(null);
+  queryClient.invalidateQueries(['products']);
+});
+
+  const { mutate: removeProduct, isLoading: deleting } = useDeleteProduct();
+
+  const handleDeleteProduct = (productId) => {
+    removeProduct(productId);
+  };
+
   const openAddModal = () => {
     setEditingProduct(null);
     form.resetFields();
@@ -41,8 +54,7 @@ const Products = () => {
 
   const handleSubmit = (values) => {
     if (editingProduct) {
-      // Call API to update product
-      console.log('Updating product:', { ...editingProduct, ...values });
+     updateProduct({ id: editingProduct._id, data: values });
     } else {
       createProduct(values);
     }
@@ -55,7 +67,7 @@ const Products = () => {
     form.resetFields();
     setModalOpen(false);
   };
-  
+
 
   return (
     <>
@@ -68,7 +80,7 @@ const Products = () => {
         </Button>
 
         <div style={{ marginTop: '20px' }}>
-          <TableComponent onEdit={openEditModal} products={productList} />
+          <TableComponent onEdit={openEditModal} products={productList} onDelete={handleDeleteProduct} loading={deleting} />
         </div>
       </PageContainer>
       <ModalCustom
@@ -79,7 +91,7 @@ const Products = () => {
         initialValues={editingProduct || { variants: [] }}
         isEdit={!!editingProduct}
         setEditingProduct={setEditingProduct}
-        isLoading={creating}
+        isLoading={creating || updating}
       />
     </>
   )
