@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import TableComponent from './TableProduct.jsx';
 import { Button, Form } from 'antd';
 import ModalCustom from './ModalCustom.jsx';
-import { useCreateProduct, useGetAllProducts } from '../../../hooks/useProductHook.js';
+import { useCreateProduct, useDeleteProduct, useGetAllProducts } from '../../../hooks/useProductHook.js';
 import { useQueryClient } from '@tanstack/react-query';
 
 
@@ -27,6 +27,12 @@ const Products = () => {
     setEditingProduct(null);
     queryClient.invalidateQueries(['products']);
   });
+
+  const { mutate: removeProduct, isLoading: deleting } = useDeleteProduct();
+
+  const handleDeleteProduct = (productId) => {
+    removeProduct(productId);
+  };
 
   const openAddModal = () => {
     setEditingProduct(null);
@@ -55,7 +61,7 @@ const Products = () => {
     form.resetFields();
     setModalOpen(false);
   };
-  
+
 
   return (
     <>
@@ -68,7 +74,7 @@ const Products = () => {
         </Button>
 
         <div style={{ marginTop: '20px' }}>
-          <TableComponent onEdit={openEditModal} products={productList} />
+          <TableComponent onEdit={openEditModal} products={productList} onDelete={handleDeleteProduct} loading={deleting} />
         </div>
       </PageContainer>
       <ModalCustom

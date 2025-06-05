@@ -1,14 +1,15 @@
 import React from 'react';
-import { Button, Image, Space, Table, Tag } from 'antd';
+import { Button, Image, Popconfirm, Space, Table, Tag } from 'antd';
 import { useGetAllProducts } from '../../../hooks/useProductHook.js';
 
 
-const TableComponent = ({ onEdit }) => {
+const TableComponent = ({ onEdit, onDelete }) => {
 
     const { data: response = [], isLoading } = useGetAllProducts();
     const products = response?.data ?? []; //xử lý trường hợp response không có data
 
-
+    console.log('Products:', products);
+    
     const columns = [
         {
             title: 'Name',
@@ -83,7 +84,15 @@ const TableComponent = ({ onEdit }) => {
             render: (_, record) => (
                 <Space style={{ display: 'flex' }}>
                     <Button type="link" onClick={() => onEdit(record)}>Sửa</Button>
-                    <Button type="primary" danger>Xóa</Button>
+                    <Popconfirm
+                        title="Bạn có chắc muốn xóa sản phẩm này?"
+                        onConfirm={() => onDelete(record?._id)}
+                        okText="Xóa"
+                        cancelText="Hủy"
+                        okButtonProps={{ danger: true }}
+                    >
+                        <Button type="primary" danger>Xóa</Button>
+                    </Popconfirm>
                 </Space>
             ),
         },
