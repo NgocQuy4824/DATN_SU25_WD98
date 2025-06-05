@@ -1,6 +1,6 @@
 // hooks/useCreateProduct.js
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createProduct, deleteProduct, getAllProducts } from '../services/ProductServices.js';
+import { createProduct, deleteProduct, getAllProducts, updateProduct } from '../services/ProductServices.js';
 import { toast } from 'react-toastify';
 
 //hook xử lý lấy tất cả sản phẩm
@@ -49,6 +49,23 @@ export const useDeleteProduct = (onSuccessCallback) => {
     },
     onError: (err) => {
       toast.error('Xóa sản phẩm thất bại');
+      console.error(err);
+    }
+  });
+};
+
+export const useUpdateProduct = (onSuccessCallback) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }) => updateProduct(id, data),
+    onSuccess: (data) => {
+      toast.success('Cập nhật sản phẩm thành công');
+      queryClient.invalidateQueries(['products']);
+      onSuccessCallback?.(data);
+    },
+    onError: (err) => {
+      toast.error('Cập nhật sản phẩm thất bại');
       console.error(err);
     }
   });
