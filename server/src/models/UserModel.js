@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const ROLE = require("../constants/role");
 
 const userSchema = new mongoose.Schema(
   {
@@ -18,13 +19,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    confirmPassword: {
-      type: String,
-      required: true,
-    },
     phone: {
       type: String,
       required: true,
+    },
+    avatar: {
+      type: String,
+      default: "https://i.imgur.com/HeIi0wU.png",
+    },
+    role: {
+      type: String,
+      enum: Object.values(ROLE),
+      default: ROLE.USER,
     },
   },
   {

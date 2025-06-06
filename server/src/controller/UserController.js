@@ -1,31 +1,29 @@
-const UserService = require("../services/UserService.js");
+const UserService = require("../services/UserService");
+const { registerSchema } = require("../validations/userValidations");
 
 const createUser = async (req, res) => {
   try {
-    const { name, email, password, confirmPassword, phone } = req.body;
-    const reg = /^\w+([-+.'])*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
-    const isCheckEmail = reg.test(email);
-    if (!name || !email || !password || !confirmPassword || !phone) {
+    // kiểm tra dữ liệu đầu vào nếu có lôi sẽ trả về lỗi khi abortEarly là false
+    const { error, value } = registerSchema.validate(req.body, { abortEarly: false });
+    if (error) {
+      // Lấy tất cả message lỗi
+      const errors = error.details.map((detail) => detail.message);
       return res.status(400).json({
         status: "ERROR",
-        message: "Bắt buộc nhập",
-      });
-    } else if (!isCheckEmail) {
-      return res.status(400).json({
-        status: "ERROR",
-        message: "Bắt buộc phải nhập email",
-      });
-    } else if (password !== confirmPassword) {
-      return res.status(400).json({
-        status: "ERROR",
-        message: "Bắt buộc nhập trùng mật khẩu",
+        message: errors,
       });
     }
 
-    const response = await UserService.createUser(req.body);
-    return res.status(200).json(response);
+    // Gọi service tạo user
+    const response = await UserService.createUser(value);
+
+    if (response.status === "ERROR") {
+      return res.status(400).json(response);
+    }
+
+    return res.status(201).json(response);
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
