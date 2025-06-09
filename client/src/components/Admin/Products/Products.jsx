@@ -29,11 +29,11 @@ const Products = () => {
   });
 
   const { mutate: updateProduct, isLoading: updating } = useUpdateProduct(() => {
-  form.resetFields();
-  setModalOpen(false);
-  setEditingProduct(null);
-  queryClient.invalidateQueries(['products']);
-});
+    form.resetFields();
+    setModalOpen(false);
+    setEditingProduct(null);
+    queryClient.invalidateQueries(['products']);
+  });
 
   const { mutate: removeProduct, isLoading: deleting } = useDeleteProduct();
 
@@ -54,7 +54,7 @@ const Products = () => {
 
   const handleSubmit = (values) => {
     if (editingProduct) {
-     updateProduct({ id: editingProduct._id, data: values });
+      updateProduct({ id: editingProduct._id, data: values });
     } else {
       createProduct(values);
     }

@@ -1,7 +1,8 @@
-import { Button, Form, Input, InputNumber, Space } from 'antd';
+import { Button, Form, Input, InputNumber, Select, Space } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import React from 'react'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
+import { colorOptions } from '../../utils/optionsColor';
 
 const FormComponent = () => {
 
@@ -73,9 +74,13 @@ const FormComponent = () => {
                                 <Form.Item
                                     {...restField}
                                     name={[name, 'color']}
-                                    rules={[{ required: true, message: 'Vui lòng nhập màu sắc' }]}
+                                    rules={[{ required: true, message: 'Vui lòng chọn màu sắc' }]}
                                 >
-                                    <Input placeholder="Màu sắc" />
+                                    <Select
+                                        placeholder="Chọn màu"
+                                        options={colorOptions}
+                                        style={{ width: 180 }}
+                                    />
                                 </Form.Item>
                                 <Form.Item
                                     {...restField}
@@ -84,9 +89,11 @@ const FormComponent = () => {
                                 >
                                     <Input placeholder="Kích thước" />
                                 </Form.Item>
+
                                 <MinusCircleOutlined onClick={() => remove(name)} />
                             </Space>
                         ))}
+
                         <Form.Item>
                             <Button
                                 type="dashed"
@@ -96,6 +103,7 @@ const FormComponent = () => {
                                 Thêm Biến Thể
                             </Button>
                         </Form.Item>
+
                         <div style={{ color: '#ff4d4f' }}>
                             <Form.ErrorList errors={errors} />
                         </div>
