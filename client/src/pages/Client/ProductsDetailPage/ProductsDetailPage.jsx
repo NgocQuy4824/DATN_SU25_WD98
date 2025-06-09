@@ -2,7 +2,9 @@ import React from 'react'
 
 const ProductsDetailPage = () => {
   return (
-    <div>ProductsDetailPage</div>
+    <div>
+      <h1>Chi tiết sản phẩm</h1>
+    </div>
   )
 }
 
