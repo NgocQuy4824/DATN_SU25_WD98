@@ -1,8 +1,10 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { generateToken } = require("../utils/jwt");
 
-const createUser = async (userData) => {
-  const { name, email, password, phone , role } = userData;
+const registerUser = async (userData) => {
+  const { name, email, password, phone, role } = userData;
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
@@ -20,7 +22,7 @@ const createUser = async (userData) => {
     email,
     password: hashedPassword,
     phone,
-    role
+    role,
   });
 
   const savedUser = await newUser.save();
@@ -36,6 +38,37 @@ const createUser = async (userData) => {
   };
 };
 
+const loginUser = async ({ email, password }) => {
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return {
+      status: "ERROR",
+      message: "Email hoặc mật khẩu không đúng",
+    };
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    return {
+      status: "ERROR",
+      message: "Email hoặc mật khẩu không đúng",
+    };
+  }
+
+  // Tạo access token
+  const token = generateToken({ userId: user._id, role: user.role });
+
+  const { password: _, ...userData } = user.toObject();
+
+  return {
+    status: "OK",
+    message: "Đăng nhập thành công",
+    data: { ...userData, token },
+  };
+};
+
 module.exports = {
-  createUser,
+  registerUser,
+  loginUser,
 };
