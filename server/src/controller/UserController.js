@@ -4,7 +4,7 @@ const {
   loginSchema,
 } = require("../validations/userValidations");
 
-const createUser = async (req, res) => {
+const registerUser = async (req, res) => {
   try {
     // kiểm tra dữ liệu đầu vào nếu có lôi sẽ trả về lỗi khi abortEarly là false
     const { error, value } = registerSchema.validate(req.body, {
@@ -20,19 +20,20 @@ const createUser = async (req, res) => {
     }
 
     // Gọi service tạo user
-    const response = await UserService.createUser(value);
+    const response = await UserService.registerUser(value);
 
     if (response.status === "ERROR") {
       return res.status(400).json(response);
     }
 
-    return res.status(201).json(response);
+    return res.status(200).json(response);
   } catch (error) {
     console.error(error);
   }
 };
 
-const login = async (req, res) => {
+
+const loginUser = async (req, res) => {
   try {
     const { error, value } = loginSchema.validate(req.body, {
       abortEarly: false,
@@ -54,11 +55,10 @@ const login = async (req, res) => {
     return res.status(200).json(response);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ status: "ERROR", message: "Đã xảy ra lỗi server" });
   }
 };
 
 module.exports = {
-  createUser,
-  login,
+  registerUser,
+  loginUser,
 };

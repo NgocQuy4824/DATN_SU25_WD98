@@ -1,8 +1,9 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { generateToken } = require("../utils/jwt");
 
-const createUser = async (userData) => {
+const registerUser = async (userData) => {
   const { name, email, password, phone, role } = userData;
 
   const existingUser = await User.findOne({ email });
@@ -55,29 +56,19 @@ const loginUser = async ({ email, password }) => {
     };
   }
 
-  // Tạo access token (thay đổi secret cho phù hợp)
-  const token = jwt.sign(
-    {
-      id: user._id,
-      role: user.role,
-    },
-    process.env.JWT_SECRET || "your_jwt_secret",
-    {
-      expiresIn: "1d",
-    }
-  );
+  // Tạo access token
+  const token = generateToken({ userId: user._id, role: user.role });
 
-  const userToReturn = user.toObject();
-  delete userToReturn.password;
+  const { password: _, ...userData } = user.toObject();
 
   return {
     status: "OK",
     message: "Đăng nhập thành công",
-    data: { ...userToReturn, token },
+    data: { ...userData, token },
   };
 };
 
 module.exports = {
-  createUser,
+  registerUser,
   loginUser,
 };
