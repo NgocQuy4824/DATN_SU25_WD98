@@ -1,10 +1,15 @@
 const UserService = require("../services/UserService");
-const { registerSchema } = require("../validations/userValidations");
+const {
+  registerSchema,
+  loginSchema,
+} = require("../validations/userValidations");
 
 const createUser = async (req, res) => {
   try {
     // kiểm tra dữ liệu đầu vào nếu có lôi sẽ trả về lỗi khi abortEarly là false
-    const { error, value } = registerSchema.validate(req.body, { abortEarly: false });
+    const { error, value } = registerSchema.validate(req.body, {
+      abortEarly: false,
+    });
     if (error) {
       // Lấy tất cả message lỗi
       const errors = error.details.map((detail) => detail.message);
@@ -27,6 +32,33 @@ const createUser = async (req, res) => {
   }
 };
 
+const login = async (req, res) => {
+  try {
+    const { error, value } = loginSchema.validate(req.body, {
+      abortEarly: false,
+    });
+    if (error) {
+      const errors = error.details.map((detail) => detail.message);
+      return res.status(400).json({
+        status: "ERROR",
+        message: errors,
+      });
+    }
+
+    const response = await UserService.loginUser(value);
+
+    if (response.status === "ERROR") {
+      return res.status(400).json(response);
+    }
+
+    return res.status(200).json(response);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ status: "ERROR", message: "Đã xảy ra lỗi server" });
+  }
+};
+
 module.exports = {
   createUser,
+  login,
 };
