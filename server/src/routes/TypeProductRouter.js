@@ -4,5 +4,6 @@ const ProductTypeController = require("../controller/TypeProductController");
 
 router.post("/create", ProductTypeController.createTypeProduct);
 router.put("/update/:id", ProductTypeController.updateTypeProduct);
+router.delete("/delete/:id", ProductTypeController.deleteTypeProduct);
 
 module.exports = router;

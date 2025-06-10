@@ -21,7 +21,18 @@ const updateTypeProduct = async (req, res) => {
   res.status(result.status === "OK" ? 200 : 400).json(result);
 };
 
+const deleteTypeProduct = async(req, res) => {
+  try {
+    const {id} = req.params;
+    const result = await TypeProductService.deleteTypeProduct(id);
+    return res.status(result.status === "OK" ? 200 : 400).json(result);
+  } catch(error) {
+    console.error("Lỗi khi xoá loại sản phẩm:", error);
+    return res.status(500).json({ status: "ERROR", message: "Lỗi server" });
+  }
+};
 module.exports = {
   createTypeProduct,
   updateTypeProduct,
+  deleteTypeProduct,
 };

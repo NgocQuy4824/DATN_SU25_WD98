@@ -1,3 +1,4 @@
+const { assert } = require("joi");
 const ProductType = require("../models/TypeProductModel");
 
 const createTypeProduct = async (name) => {
@@ -31,7 +32,33 @@ const updateTypeProduct = async (id, name) => {
   }
 };
 
+const deleteTypeProduct = async (id) => {
+  try{
+    const existingType = await ProductType.findById(id);
+    if (!existingType) {
+      return {
+        status: "error",
+        message:"khong tim thay loai san pham"
+      };
+    }
+    await ProductType.findByIdAndDelete(id);
+    return {
+      status: "OK",
+      message:"xoa thanh cong"
+
+    };
+  }catch (error) {
+    console.error(error);
+    return {
+     status: "ERROR",
+     message: "Xoá loại sản phẩm thất bại"
+};
+  }
+}
+
+
 module.exports = {
   createTypeProduct,
   updateTypeProduct,
+  deleteTypeProduct,
 };
