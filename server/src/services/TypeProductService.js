@@ -37,21 +37,20 @@ const deleteTypeProduct = async (id) => {
     const existingType = await ProductType.findById(id);
     if (!existingType) {
       return {
-        status: "error",
-        message:"khong tim thay loai san pham"
+        status: "ERROR",
+        message: "Không tìm thấy loại sản phẩm"
       };
     }
     await ProductType.findByIdAndDelete(id);
     return {
       status: "OK",
-      message:"xoa thanh cong"
-
+      message: "Xóa thành công"
     };
   }catch (error) {
     console.error(error);
     return {
      status: "ERROR",
-     message: "Xoá loại sản phẩm thất bại"
+     message: "Xóa loại sản phẩm thất bại"
 };
   }
 }
