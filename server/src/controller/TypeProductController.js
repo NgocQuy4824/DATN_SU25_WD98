@@ -21,18 +21,40 @@ const updateTypeProduct = async (req, res) => {
   res.status(result.status === "OK" ? 200 : 400).json(result);
 };
 
-const deleteTypeProduct = async(req, res) => {
+const deleteTypeProduct = async (req, res) => {
   try {
-    const {id} = req.params;
+    const { id } = req.params;
     const result = await TypeProductService.deleteTypeProduct(id);
     return res.status(result.status === "OK" ? 200 : 400).json(result);
-  } catch(error) {
+  } catch (error) {
     console.error("Lỗi khi xoá loại sản phẩm:", error);
     return res.status(500).json({ status: "ERROR", message: "Lỗi server" });
   }
 };
+
+const getAllTypeProduct = async (req, res) => {
+  try {
+    const typeProducts = await TypeProductService.getAllTypeProduct();
+
+    return res.status(200).json({
+      status: "OK",
+      message: "Lấy danh sách loại sản phẩm thành công",
+      data: typeProducts,
+    });
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách loại sản phẩm:", error);
+
+    return res.status(500).json({
+      status: "ERROR",
+      message: "Đã xảy ra lỗi khi lấy danh sách loại sản phẩm",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createTypeProduct,
   updateTypeProduct,
   deleteTypeProduct,
+  getAllTypeProduct,
 };
