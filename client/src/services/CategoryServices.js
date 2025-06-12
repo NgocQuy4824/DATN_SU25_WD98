@@ -8,3 +8,8 @@ export const getAllCategory = async () => {
   };
   return sortedData;
 };
+
+export const deleteCategoryById = async (id) => {
+  const response = await API.delete(`/type-product/delete/${id}`);
+  return response.data;
+};
