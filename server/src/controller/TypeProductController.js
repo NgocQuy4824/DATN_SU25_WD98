@@ -34,21 +34,10 @@ const deleteTypeProduct = async (req, res) => {
 
 const getAllTypeProduct = async (req, res) => {
   try {
-    const typeProducts = await TypeProductService.getAllTypeProduct();
-
-    return res.status(200).json({
-      status: "OK",
-      message: "Lấy danh sách loại sản phẩm thành công",
-      data: typeProducts,
-    });
+    const result = await TypeProductService.getAllTypeProduct();
+    return res.status(result.status === "OK" ? 200 : 400).json(result);
   } catch (error) {
     console.error("Lỗi khi lấy danh sách loại sản phẩm:", error);
-
-    return res.status(500).json({
-      status: "ERROR",
-      message: "Đã xảy ra lỗi khi lấy danh sách loại sản phẩm",
-      error: error.message,
-    });
   }
 };
 

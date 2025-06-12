@@ -57,10 +57,11 @@ const deleteTypeProduct = async (id) => {
 
 const getAllTypeProduct = async () => {
   try {
-    const typeProducts = await ProductType.find().lean(); // .lean() giúp trả về object thuần JS
-    return typeProducts;
+    const typeProducts = await ProductType.find().lean();
+    return { status: "OK", message: "Lấy danh sách loại sản phẩm thành công", data: typeProducts };
   } catch (error) {
-    throw new Error("Không thể truy xuất dữ liệu loại sản phẩm");
+    console.error(error);
+    return { status: "ERROR", message: "Lỗi khi lấy danh sách loại sản phẩm" };
   }
 };
 
