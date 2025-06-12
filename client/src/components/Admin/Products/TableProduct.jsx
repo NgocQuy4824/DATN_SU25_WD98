@@ -7,8 +7,6 @@ const TableComponent = ({ onEdit, onDelete }) => {
 
     const { data: response = [], isLoading } = useGetAllProducts();
     const products = response?.data ?? []; //xử lý trường hợp response không có data
-
-    console.log('Products:', products);
     
     const columns = [
         {
