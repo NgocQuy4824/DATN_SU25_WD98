@@ -33,31 +33,41 @@ const updateTypeProduct = async (id, name) => {
 };
 
 const deleteTypeProduct = async (id) => {
-  try{
+  try {
     const existingType = await ProductType.findById(id);
     if (!existingType) {
       return {
         status: "ERROR",
-        message: "Không tìm thấy loại sản phẩm"
+        message: "Không tìm thấy loại sản phẩm",
       };
     }
     await ProductType.findByIdAndDelete(id);
     return {
       status: "OK",
-      message: "Xóa thành công"
+      message: "Xóa thành công",
     };
-  }catch (error) {
+  } catch (error) {
     console.error(error);
     return {
-     status: "ERROR",
-     message: "Xóa loại sản phẩm thất bại"
-};
+      status: "ERROR",
+      message: "Xóa loại sản phẩm thất bại",
+    };
   }
-}
+};
 
+const getAllTypeProduct = async () => {
+  try {
+    const typeProducts = await ProductType.find().lean();
+    return { status: "OK", message: "Lấy danh sách loại sản phẩm thành công", data: typeProducts };
+  } catch (error) {
+    console.error(error);
+    return { status: "ERROR", message: "Lỗi khi lấy danh sách loại sản phẩm" };
+  }
+};
 
 module.exports = {
   createTypeProduct,
   updateTypeProduct,
   deleteTypeProduct,
+  getAllTypeProduct,
 };
