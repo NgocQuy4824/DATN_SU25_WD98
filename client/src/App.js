@@ -6,6 +6,8 @@ import { renderRoutes } from './utils/renderRouters';
 import dayjs from 'dayjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastContainer } from 'react-toastify';
+import { ConfigProvider } from 'antd';
+import enUS from 'antd/es/calendar/locale/en_US';
 
 
 dayjs.locale('en');
@@ -18,7 +20,8 @@ function App() {
   return (
 
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter locale={dayjs.locale('en')}>
+      <ConfigProvider locale={enUS}>
+      <BrowserRouter >
         <Routes>{renderRoutes(allRoutes)}</Routes>
          <ToastContainer
           position="top-right"
@@ -31,6 +34,7 @@ function App() {
           theme="light"
         />
       </BrowserRouter>
+      </ConfigProvider>
     </QueryClientProvider >
   );
 }
