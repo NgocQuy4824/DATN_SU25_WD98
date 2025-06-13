@@ -1,12 +1,15 @@
 import React from 'react';
 import { Button, Image, Popconfirm, Space, Table, Tag } from 'antd';
 import { useGetAllProducts } from '../../../hooks/useProductHook.js';
+import { useTablePagination } from '../../../hooks/useTablePagination.js';
 
 
 const TableComponent = ({ onEdit, onDelete }) => {
 
     const { data: response = [], isLoading } = useGetAllProducts();
     const products = response?.data ?? []; //xử lý trường hợp response không có data
+
+    const { paginatedData, paginationConfig } = useTablePagination(products, 5);
     
     const columns = [
         {
@@ -81,7 +84,7 @@ const TableComponent = ({ onEdit, onDelete }) => {
             key: 'action',
             render: (_, record) => (
                 <Space style={{ display: 'flex' }}>
-                    <Button type="link" onClick={() => onEdit(record)}>Sửa</Button>
+                    <Button type="primary" onClick={() => onEdit(record)}>Sửa</Button>
                     <Popconfirm
                         title="Bạn có chắc muốn xóa sản phẩm này?"
                         onConfirm={() => onDelete(record?._id)}
@@ -99,7 +102,7 @@ const TableComponent = ({ onEdit, onDelete }) => {
 
 
     return (
-        <Table rowKey="id" columns={columns} dataSource={products} isLoading={isLoading} />
+        <Table rowKey="id" columns={columns} dataSource={paginatedData} isLoading={isLoading} pagination={paginationConfig} />
     );
 }
 export default TableComponent;

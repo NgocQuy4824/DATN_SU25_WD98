@@ -1,100 +1,56 @@
-import { Button, Form, Input, Modal, Popconfirm, Space, Table } from "antd";
-import React, { useState } from "react";
-import {
-  useDeleteCategory,
-  useGetAllCategory,
-  useUpdateCategory,
-} from "../../../hooks/useCategoryHook";
+import { Button, Popconfirm, Space, Table } from "antd";
+import React from "react";
+import { useGetAllCategory } from "../../../hooks/useCategoryHook";
+import { useTablePagination } from "../../../hooks/useTablePagination";
 
-const TableCategory = () => {
-  const { data: response = [], isLoading } = useGetAllCategory();
-  const { mutate: deleteCategory, isLoading: isDeleting } = useDeleteCategory();
-  const { mutate: updateCategory, isLoading: isUpdating } = useUpdateCategory();
-  const category = response?.data ?? [];
 
-  const [open, setOpen] = useState(false);
-  const [form] = Form.useForm();
-  const [selectedCategory, setSelectedCategory] = useState(null);
+const TableCategory = ({
+    onEdit,
+    onDelete,
+    deletingId,
+}) => {
 
-  const handleDelete = (id) => {
-    deleteCategory(id);
-  };
+    const { data: response = [], isLoading } = useGetAllCategory();
+    const category = response?.data ?? []; //xử lý trường hợp response không có data
 
-  const handleEdit = (record) => {
-    setSelectedCategory(record);
-    form.setFieldsValue({ name: record.name });
-    setOpen(true);
-  };
+    const { paginatedData, paginationConfig } = useTablePagination(category, 5);
+    const columns = [
+        {
+            title: "Name",
+            dataIndex: "name",
+            key: "name",
+        },
+        {
+            title: "Action",
+            key: "action",
+            render: (_, record) => (
+                <Space>
+                    <Button type="primary" onClick={() => onEdit(record)}>
+                        Sửa
+                    </Button>
+                    <Popconfirm
+                        title="Bạn có chắc muốn xóa danh mục này?"
+                        onConfirm={() => onDelete(record._id)}
+                        okText="Xóa"
+                        cancelText="Hủy"
+                        okButtonProps={{ danger: true, loading: deletingId === record._id }}
+                    >
+                        <Button danger>Xóa</Button>
+                    </Popconfirm>
+                </Space>
+            ),
+        },
+    ];
 
-  const handleUpdate = () => {
-    form.validateFields().then((values) => {
-      updateCategory({
-        id: selectedCategory._id,
-        updatedData: values,
-      });
-      setOpen(false);
-    });
-  };
-
-  const columns = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (_, record) => (
-        <Space style={{ display: "flex" }}>
-          <Button type="primary" onClick={() => handleEdit(record)}>
-            Sửa
-          </Button>
-          <Popconfirm
-            title="Bạn có chắc muốn xóa danh mục này?"
-            onConfirm={() => handleDelete(record._id)}
-            okText="Xóa"
-            cancelText="Hủy"
-            okButtonProps={{ danger: true, loading: isDeleting }}
-          >
-            <Button type="primary" danger>
-              Xóa
-            </Button>
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
-
-  return (
-    <>
-      <Table
-        rowKey="id"
-        columns={columns}
-        dataSource={category}
-        isLoading={isLoading}
-      />
-      <Modal
-        open={open}
-        title="Sửa danh mục"
-        onCancel={() => setOpen(false)}
-        onOk={handleUpdate}
-        okText="Cập nhật"
-        cancelText="Hủy"
-        confirmLoading={isUpdating}
-      >
-        <Form form={form} layout="vertical">
-          <Form.Item
-            label="Tên danh mục"
-            name="name"
-            rules={[{ required: true, message: "Vui lòng nhập tên danh mục!" }]}
-          >
-            <Input placeholder="Nhập tên danh mục" />
-          </Form.Item>
-        </Form>
-      </Modal>
-    </>
-  );
+    return (
+        <Table
+            rowKey="_id"
+            columns={columns}
+            dataSource={paginatedData}
+            loading={isLoading}
+            pagination={paginationConfig}
+        />
+    );
 };
 
 export default TableCategory;
