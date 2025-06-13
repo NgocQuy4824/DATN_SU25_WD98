@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import {
+  createCategory,
   deleteCategoryById,
   getAllCategory,
   updateCategoryById,
@@ -36,6 +37,22 @@ export const useDeleteCategory = () => {
     },
   });
 };
+
+export const useCreateCategory = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (categoryData) => createCategory(categoryData),
+    onSuccess: () => {
+      toast.success("Tạo danh mục thành công");
+      queryClient.invalidateQueries(["typeproducts"]);
+    },
+    onError: (err) => {
+      toast.error("Tạo danh mục thất bại");
+      console.error(err);
+    },
+  });
+}
 
 // Cập nhật danh mục
 export const useUpdateCategory = () => {

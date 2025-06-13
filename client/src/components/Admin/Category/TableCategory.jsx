@@ -11,7 +11,7 @@ const TableCategory = ({
 }) => {
 
     const { data: response = [], isLoading } = useGetAllCategory();
-    const category = response?.data ?? []; //xử lý trường hợp response không có data
+    const category = response?.data ?? []; 
 
     const { paginatedData, paginationConfig } = useTablePagination(category, 5);
     const columns = [

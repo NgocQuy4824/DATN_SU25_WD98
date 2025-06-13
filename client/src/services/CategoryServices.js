@@ -20,3 +20,9 @@ export const updateCategoryById = async (id, updatedData) => {
   const response = await API.put(`/type-product/update/${id}`, updatedData);
   return response.data;
 };
+
+export const createCategory = async (categoryData) => {
+  const response = await API.post('/type-product/create', categoryData);
+  return response.data;
+};
+

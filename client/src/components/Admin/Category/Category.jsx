@@ -6,7 +6,8 @@ import ModalCategory from './ModalCategory';
 import {
   useGetAllCategory,
   useUpdateCategory,
-  useDeleteCategory
+  useDeleteCategory,
+  useCreateCategory
 } from '../../../hooks/useCategoryHook';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -23,12 +24,12 @@ const Category = () => {
     setCategoryList(data);
   });
 
-//   const { mutate: createCategory, isLoading: creating } = useCreateCategory(() => {
-//     form.resetFields();
-//     setModalOpen(false);
-//     setEditingCategory(null);
-//     queryClient.invalidateQueries(['categories']);
-//   });
+const { mutate: createCategory, isLoading: creating } = useCreateCategory(() => {
+  form.resetFields();
+  setModalOpen(false);
+  setEditingCategory(null);
+  queryClient.invalidateQueries(['typeproducts']);
+});
 
   const { mutate: updateCategory, isLoading: updating } = useUpdateCategory(() => {
     form.resetFields();
@@ -59,7 +60,7 @@ const Category = () => {
     if (editingCategory) {
       updateCategory({ id: editingCategory._id, updatedData: values });
     } else {
-    //   createCategory(values);
+      createCategory(values);
     }
     setModalOpen(false);
     setEditingCategory(null);
@@ -93,7 +94,7 @@ const Category = () => {
         onOk={handleSubmit}
         initialValues={editingCategory || {}}
         isEdit={!!editingCategory}
-        isLoading={updating}
+        isLoading={editingCategory ? updating : creating}
         onFinish={handleSubmit}
       />
     </PageContainer>

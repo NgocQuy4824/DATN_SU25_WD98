@@ -1,16 +1,16 @@
 import { Form, Input, Modal } from "antd";
 import React from "react";
 
-const ModalCategory = ({ open, onCancel, onOk, form, loading, onFinish }) => {
+const ModalCategory = ({ open, onCancel, onOk, form, loading, onFinish ,isEdit}) => {
     return (
         <Modal
             open={open}
-            title="Sửa danh mục"
+            title={isEdit ? "Sửa danh mục" : "Thêm danh mục"}
             onCancel={onCancel}
             onOk={() => {
                 form.submit();
             }}
-            okText="Cập nhật"
+            okText={isEdit ? "Cập nhật" : "Thêm"}
             cancelText="Hủy"
             confirmLoading={loading}
 
