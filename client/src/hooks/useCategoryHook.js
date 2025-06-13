@@ -1,20 +1,23 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { deleteCategoryById, getAllCategory } from "../services/CategoryServices";
-
+import {
+  deleteCategoryById,
+  getAllCategory,
+  updateCategoryById,
+} from "../services/CategoryServices";
 
 export const useGetAllCategory = (onSuccessCallback) => {
   return useQuery({
-    queryKey: ['typeproducts'],
+    queryKey: ["typeproducts"],
     queryFn: getAllCategory,
-    staleTime: 5 * 60 * 1000,//5p để refetch lại dữ liệu do thêm sp mới k nhận được ngay
+    staleTime: 5 * 60 * 1000, //5p để refetch lại dữ liệu do thêm sp mới k nhận được ngay
     onSuccess: (data) => {
       onSuccessCallback?.(data);
     },
     onError: (err) => {
-      toast.error('Lấy danh sách danh mục thất bại');
+      toast.error("Lấy danh sách danh mục thất bại");
       console.error(err);
-    }
+    },
   });
 };
 
@@ -25,12 +28,28 @@ export const useDeleteCategory = () => {
     mutationFn: deleteCategoryById,
     onSuccess: () => {
       toast.success("Xóa danh mục thành công");
-      queryClient.invalidateQueries(['typeproducts']);
+      queryClient.invalidateQueries(["typeproducts"]);
     },
     onError: (err) => {
       toast.error("Xóa danh mục thất bại");
       console.error(err);
-    }
+    },
   });
+};
 
+// Cập nhật danh mục
+export const useUpdateCategory = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, updatedData }) => updateCategoryById(id, updatedData),
+    onSuccess: () => {
+      toast.success("Cập nhật danh mục thành công");
+      queryClient.invalidateQueries(["typeproducts"]);
+    },
+    onError: (err) => {
+      toast.error("Cập nhật danh mục thất bại");
+      console.error(err);
+    },
+  });
 };

@@ -84,7 +84,7 @@ const TableComponent = ({ onEdit, onDelete }) => {
             key: 'action',
             render: (_, record) => (
                 <Space style={{ display: 'flex' }}>
-                    <Button type="link" onClick={() => onEdit(record)}>Sửa</Button>
+                    <Button type="primary" onClick={() => onEdit(record)}>Sửa</Button>
                     <Popconfirm
                         title="Bạn có chắc muốn xóa sản phẩm này?"
                         onConfirm={() => onDelete(record?._id)}

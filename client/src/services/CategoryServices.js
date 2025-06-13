@@ -1,15 +1,22 @@
 import API from "../config/app";
 
 export const getAllCategory = async () => {
-  const response = await API.get('/type-product/get-all');
+  const response = await API.get("/type-product/get-all");
   const sortedData = {
     ...response.data,
-    data: [...response.data.data].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)),
+    data: [...response.data.data].sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    ),
   };
   return sortedData;
 };
 
 export const deleteCategoryById = async (id) => {
   const response = await API.delete(`/type-product/delete/${id}`);
+  return response.data;
+};
+
+export const updateCategoryById = async (id, updatedData) => {
+  const response = await API.put(`/type-product/update/${id}`, updatedData);
   return response.data;
 };
