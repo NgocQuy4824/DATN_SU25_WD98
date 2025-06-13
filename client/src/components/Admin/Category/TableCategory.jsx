@@ -1,6 +1,7 @@
 import { Button, Popconfirm, Space, Table } from 'antd';
 import React from 'react'
 import { useDeleteCategory, useGetAllCategory } from '../../../hooks/useCategoryHook';
+import { useTablePagination } from '../../../hooks/useTablePagination';
 
 
 const TableCategory = () => {
@@ -8,6 +9,8 @@ const TableCategory = () => {
     const { data: response = [], isLoading } = useGetAllCategory();
     const {mutate: deleteCategory, isLoading : isDeleting} = useDeleteCategory();
     const category = response?.data ?? [];
+
+    const { paginatedData, paginationConfig } = useTablePagination(category, 5);
 
     const handleDelete = (id) => {
         deleteCategory(id);
@@ -45,8 +48,9 @@ const TableCategory = () => {
    <Table
         rowKey="id"
         columns={columns}
-        dataSource={category}
+        dataSource={paginatedData}
         isLoading={isLoading}
+        pagination={paginationConfig}
     />
   )
 }
