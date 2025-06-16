@@ -6,8 +6,8 @@ const typeProductSchema = new mongoose.Schema({
         required: true,
         unique: true,
         trim: true
-    }
-});
+    },
+}, { timestamps: true });
 
 const TypeProduct = mongoose.model('TypeProduct', typeProductSchema);
 
