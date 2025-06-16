@@ -10,18 +10,12 @@ const TableComponent = ({ onEdit, onDelete }) => {
     const products = response?.data ?? []; //xử lý trường hợp response không có data
 
     const { paginatedData, paginationConfig } = useTablePagination(products, 5);
-    
+
     const columns = [
         {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
-        },
-        {
-            title: 'Image',
-            dataIndex: 'image',
-            key: 'image',
-            render: (img) => <Image width={50} src={img} alt="product" />,
         },
         {
             title: 'Type',
@@ -35,43 +29,70 @@ const TableComponent = ({ onEdit, onDelete }) => {
             render: (price) => `$${price.toFixed(2)}`,
         },
         {
-            title: 'In Stock',
-            dataIndex: 'countInStock',
-            key: 'countInStock',
+            title: 'Discount',
+            dataIndex: 'discount',
+            key: 'discount',
+            render: (discount) => `${discount}%`,
         },
         {
-            title: 'Sold',
-            dataIndex: 'sold',
-            key: 'sold',
+            title: 'In Stock',
+            key: 'countInStock',
+            render: (_, record) => {
+                const total = record.variants.reduce((acc, v) => acc + (v.countInStock || 0), 0);
+                return total;
+            }
         },
         {
             title: 'Variants',
             dataIndex: 'variants',
             key: 'variants',
+            width:250,
             render: (variants) => (
                 <div
                     style={{
-                        maxWidth: '200px',
-                        maxHeight: '100px',
                         display: 'flex',
                         flexDirection: 'column',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        gap: '4px',
+                        gap: 8,
                     }}
                 >
                     {variants.map((variant, index) => (
-                        <div key={index}>
-                            <Tag color="blue" style={{ marginBottom: '4px' }}>
-                                Color: {variant.color}
-                            </Tag>
-                            <Tag color="green">
-                                Size: {variant.size}
-                            </Tag>
+                        <div
+                            key={index}
+                            style={{
+                                border: '1px solid #f0f0f0',
+                                borderRadius: 6,
+                                padding: 6,
+                                backgroundColor: '#fafafa',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 12,
+                                    justifyContent:'space-between'
+                            }}
+                        >
+                            <div style={{ textAlign: 'center' }}>
+                                <Image
+                                    width={50}
+                                    height={50}
+                                    src={variant.image}
+                                    style={{ objectFit: 'cover', borderRadius: 4 }}
+                                    preview={false}
+                                />
+                                <div style={{ fontSize: 12, color: '#8c8c8c', marginTop: 4 }}>
+                                    SL: {variant.countInStock ?? 0}
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <Tag color="blue" style={{ marginBottom: 4 }}>
+                                    Color: {variant.color}
+                                </Tag>
+                                <Tag color="green">
+                                    Size: {variant.size}
+                                </Tag>
+                            </div>
                         </div>
                     ))}
                 </div>
-            ),
+            )
         },
         {
             title: 'Description',

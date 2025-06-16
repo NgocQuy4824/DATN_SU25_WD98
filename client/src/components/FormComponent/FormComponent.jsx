@@ -20,15 +20,6 @@ const FormComponent = () => {
             >
                 <Input />
             </Form.Item>
-
-            <Form.Item
-                name="image"
-                label="Ảnh Sản Phẩm"
-                rules={[{ required: true, message: 'Vui lòng nhập ảnh sản phẩm' }]}
-            >
-                <Input />
-            </Form.Item>
-
             <Form.Item
                 name="type"
                 label="Loại Sản Phẩm"
@@ -46,19 +37,11 @@ const FormComponent = () => {
             </Form.Item>
 
             <Form.Item
-                name="countInStock"
-                label="Số Lượng Tồn Kho"
-                rules={[{ required: true, message: 'Vui lòng nhập số lượng tồn kho' }]}
+                name="discount"
+                label="Giảm giá (%)"
+                rules={[{ required: true, message: 'Vui lòng nhập phần trăm giảm giá' }]}
             >
-                <InputNumber min={0} style={{ width: '100%' }} />
-            </Form.Item>
-
-            <Form.Item
-                name="sold"
-                label="Số Lượng Đã Bán"
-                rules={[{ required: true, message: 'Vui lòng nhập số lượng đã bán' }]}
-            >
-                <InputNumber min={0} style={{ width: '100%' }} />
+                <InputNumber min={0} max={100} style={{ width: '100%' }} />
             </Form.Item>
 
             <Form.List name="variants" rules={[{ validator: validateVariants }]}>
@@ -73,13 +56,20 @@ const FormComponent = () => {
                             >
                                 <Form.Item
                                     {...restField}
+                                    name={[name, 'image']}
+                                    rules={[{ required: true, message: 'Vui lòng nhập URL ảnh biến thể' }]}
+                                >
+                                    <Input placeholder="Ảnh biến thể" />
+                                </Form.Item>
+                                <Form.Item
+                                    {...restField}
                                     name={[name, 'color']}
                                     rules={[{ required: true, message: 'Vui lòng chọn màu sắc' }]}
                                 >
                                     <Select
                                         placeholder="Chọn màu"
                                         options={colorOptions}
-                                        style={{ width: 180 }}
+                                        style={{ width: 150 }}
                                     />
                                 </Form.Item>
                                 <Form.Item
@@ -88,6 +78,14 @@ const FormComponent = () => {
                                     rules={[{ required: true, message: 'Vui lòng nhập kích thước' }]}
                                 >
                                     <Input placeholder="Kích thước" />
+                                </Form.Item>
+
+                                <Form.Item
+                                    {...restField}
+                                    name={[name, 'countInStock']}
+                                    rules={[{ required: true, message: 'Vui lòng nhập số lượng tồn kho' }]}
+                                >
+                                    <InputNumber placeholder='Số lượng kho' min={0} style={{ width: 120 }} />
                                 </Form.Item>
 
                                 <MinusCircleOutlined onClick={() => remove(name)} />
@@ -110,7 +108,6 @@ const FormComponent = () => {
                     </>
                 )}
             </Form.List>
-
             <Form.Item name="description" label="Mô Tả">
                 <TextArea rows={4} />
             </Form.Item>
