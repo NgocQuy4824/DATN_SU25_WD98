@@ -27,9 +27,15 @@ const items = [
     icon: <ShoppingCartOutlined />,
   },
   {
-    key: 'categories',
-    label: 'Danh mục',
+    key: 'variants',
+    label: 'Quản lý biến thể',
     icon: <BarChartOutlined />,
+    children: [
+      {
+        key: 'variants/category',
+        label: 'Danh mục',
+      },
+    ],
   },
   {
     key: 'statistics',
