@@ -1,7 +1,7 @@
 import { Button, Space, Table } from "antd";
 import React from "react";
-import { useGetAllCategory } from "../../../hooks/useCategoryHook";
-import { useTablePagination } from "../../../hooks/useTablePagination";
+import { useGetAllCategory } from "../../../../hooks/useCategoryHook";
+import { useTablePagination } from "../../../../hooks/useTablePagination";
 
 
 const TableCategory = ({

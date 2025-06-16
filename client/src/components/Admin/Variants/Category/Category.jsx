@@ -7,7 +7,7 @@ import {
   useGetAllCategory,
   useUpdateCategory,
   useCreateCategory
-} from '../../../hooks/useCategoryHook';
+} from '../../../../hooks/useCategoryHook';
 import { useQueryClient } from '@tanstack/react-query';
 
 const Category = () => {
