@@ -1,4 +1,4 @@
-import { Button, Popconfirm, Space, Table } from "antd";
+import { Button, Space, Table } from "antd";
 import React from "react";
 import { useGetAllCategory } from "../../../hooks/useCategoryHook";
 import { useTablePagination } from "../../../hooks/useTablePagination";
@@ -7,7 +7,6 @@ import { useTablePagination } from "../../../hooks/useTablePagination";
 const TableCategory = ({
     onEdit,
     onDelete,
-    deletingId,
 }) => {
 
     const { data: response = [], isLoading } = useGetAllCategory();
@@ -28,15 +27,6 @@ const TableCategory = ({
                     <Button type="primary" onClick={() => onEdit(record)}>
                         Sửa
                     </Button>
-                    <Popconfirm
-                        title="Bạn có chắc muốn xóa danh mục này?"
-                        onConfirm={() => onDelete(record._id)}
-                        okText="Xóa"
-                        cancelText="Hủy"
-                        okButtonProps={{ danger: true, loading: deletingId === record._id }}
-                    >
-                        <Button danger>Xóa</Button>
-                    </Popconfirm>
                 </Space>
             ),
         },

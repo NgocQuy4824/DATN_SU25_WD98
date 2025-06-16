@@ -6,7 +6,6 @@ import ModalCategory from './ModalCategory';
 import {
   useGetAllCategory,
   useUpdateCategory,
-  useDeleteCategory,
   useCreateCategory
 } from '../../../hooks/useCategoryHook';
 import { useQueryClient } from '@tanstack/react-query';
@@ -38,11 +37,6 @@ const { mutate: createCategory, isLoading: creating } = useCreateCategory(() => 
     queryClient.invalidateQueries(['typeproducts']);
   });
 
-  const { mutate: deleteCategory, isLoading: deleting } = useDeleteCategory();
-
-  const handleDelete = (id) => {
-    deleteCategory(id);
-  };
 
   const openAddModal = () => {
     setEditingCategory(null);
@@ -82,8 +76,6 @@ const { mutate: createCategory, isLoading: creating } = useCreateCategory(() => 
         <TableCategory
           category={categoryList}
           onEdit={openEditModal}
-          onDelete={handleDelete}
-          loading={deleting}
         />
       </div>
 
