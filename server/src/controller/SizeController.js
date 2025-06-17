@@ -40,9 +40,20 @@ const getAllSizes = async (req, res) => {
     return res.status(500).json({ message: "Lỗi server" });
   }
 };
+const getSizeById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await SizeService.getSizeById(id);
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error("Lỗi lấy size theo ID:", error);
+    return res.status(500).json({ message: "Lỗi server khi lấy size" });
+  }
+};
 
 module.exports = {
   createSize,
   updateSize,
   getAllSizes,
+  getSizeById,
 };
