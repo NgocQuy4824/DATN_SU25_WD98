@@ -3,9 +3,12 @@ import TextArea from 'antd/es/input/TextArea';
 import React from 'react'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { colorOptions } from '../../utils/optionsColor';
+import { useCategoryOptions } from '../../hooks/useCategoryOptions';
 
 const FormComponent = () => {
 
+    const { options: categoryOptions, isLoading: loadingCategories } = useCategoryOptions();
+    
     const validateVariants = (_, variants) =>
         variants && variants.length > 0
             ? Promise.resolve()
@@ -21,11 +24,11 @@ const FormComponent = () => {
                 <Input />
             </Form.Item>
             <Form.Item
-                name="type"
+                name="category"
                 label="Loại Sản Phẩm"
-                rules={[{ required: true, message: 'Vui lòng nhập loại sản phẩm' }]}
+                rules={[{ required: true, message: 'Vui lòng chọn loại sản phẩm' }]}
             >
-                <Input />
+                <Select options={categoryOptions} loading={loadingCategories}/>
             </Form.Item>
 
             <Form.Item

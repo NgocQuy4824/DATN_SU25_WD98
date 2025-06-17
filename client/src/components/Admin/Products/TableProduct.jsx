@@ -1,13 +1,9 @@
 import React from 'react';
 import { Button, Image, Popconfirm, Space, Table, Tag } from 'antd';
-import { useGetAllProducts } from '../../../hooks/useProductHook.js';
 import { useTablePagination } from '../../../hooks/useTablePagination.js';
 
 
-const TableComponent = ({ onEdit, onDelete }) => {
-
-    const { data: response = [], isLoading } = useGetAllProducts();
-    const products = response?.data ?? []; //xử lý trường hợp response không có data
+const TableComponent = ({ onEdit, onDelete, products, loading }) => {
 
     const { paginatedData, paginationConfig } = useTablePagination(products, 5);
 
@@ -19,8 +15,9 @@ const TableComponent = ({ onEdit, onDelete }) => {
         },
         {
             title: 'Type',
-            dataIndex: 'type',
-            key: 'type',
+            dataIndex: 'category',
+            key: 'category',
+            render: (_, record) => record.category?.name
         },
         {
             title: 'Price',
@@ -46,7 +43,7 @@ const TableComponent = ({ onEdit, onDelete }) => {
             title: 'Variants',
             dataIndex: 'variants',
             key: 'variants',
-            width:250,
+            width: 250,
             render: (variants) => (
                 <div
                     style={{
@@ -66,7 +63,7 @@ const TableComponent = ({ onEdit, onDelete }) => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: 12,
-                                    justifyContent:'space-between'
+                                justifyContent: 'space-between'
                             }}
                         >
                             <div style={{ textAlign: 'center' }}>
@@ -123,7 +120,7 @@ const TableComponent = ({ onEdit, onDelete }) => {
 
 
     return (
-        <Table rowKey="id" columns={columns} dataSource={paginatedData} isLoading={isLoading} pagination={paginationConfig} />
+        <Table rowKey="id" columns={columns} dataSource={paginatedData} loading={loading} pagination={paginationConfig} />
     );
 }
 export default TableComponent;
