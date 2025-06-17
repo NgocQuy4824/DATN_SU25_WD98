@@ -7,7 +7,9 @@ import {
   UserOutlined,
   ShoppingCartOutlined,
   BarChartOutlined,
-  PieChartOutlined
+  PieChartOutlined,
+  AlignCenterOutlined,
+  HighlightOutlined
 } from '@ant-design/icons';
 
 const items = [
@@ -32,8 +34,14 @@ const items = [
     icon: <BarChartOutlined />,
     children: [
       {
+        icon:<AlignCenterOutlined />,
         key: 'variants/category',
         label: 'Danh mục',
+      },
+      {
+        icon:<HighlightOutlined />,
+        key: 'variants/size',
+        label: 'Màu sắc',
       },
     ],
   },
