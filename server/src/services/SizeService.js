@@ -55,8 +55,23 @@ const getAllSizes = async () => {
   }
 };
 
+const getSizeById = async (id) => {
+  try {
+    const size = await Size.findById(id);
+    if (!size) {
+      return { status: "ERROR", message: "Không tìm thấy size" };
+    }
+
+    return { status: "OK", data: size };
+  } catch (error) {
+    console.error("Lỗi khi lấy size theo ID:", error);
+    return { status: "ERROR", message: "Lỗi server khi lấy size" };
+  }
+};
+
 module.exports = {
   createSize,
   updateSize,
-  getAllSizes, //
+  getAllSizes,
+  getSizeById, //
 };
