@@ -14,12 +14,8 @@ const Products = () => {
   const [form] = Form.useForm();
   const queryClient = useQueryClient();
 
-  const [productList, setProductList] = useState([]);
-
-  // lấy lại danh sách sản phẩm mới nhất
-  useGetAllProducts((data) => {
-    setProductList(data);
-  });
+  const { data: response, isLoading: loadingProducts } = useGetAllProducts();
+  const products = response?.data ?? [];
 
   const { mutate: createProduct, isLoading: creating } = useCreateProduct(() => {
     form.resetFields();
@@ -80,7 +76,7 @@ const Products = () => {
         </Button>
 
         <div style={{ marginTop: '20px' }}>
-          <TableComponent onEdit={openEditModal} products={productList} onDelete={handleDeleteProduct} loading={deleting} />
+          <TableComponent onEdit={openEditModal} products={products} onDelete={handleDeleteProduct} loading={loadingProducts || deleting} />
         </div>
       </PageContainer>
       <ModalCustom
@@ -88,7 +84,7 @@ const Products = () => {
         open={modalOpen}
         onCancel={handleCancel}
         onSubmit={handleSubmit}
-        initialValues={editingProduct || { variants: [] }}
+        initialValues={editingProduct ? { ...editingProduct, category: editingProduct.category?._id } : { variants: [] }}
         isEdit={!!editingProduct}
         setEditingProduct={setEditingProduct}
         isLoading={creating || updating}
