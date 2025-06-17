@@ -59,9 +59,9 @@ const Size = () => {
     };
 
     return (
-        <PageContainer title="Quản lý danh mục">
+        <PageContainer title="Quản lý kích thước">
             <Button type="primary" onClick={openAddModal}>
-                Thêm màu sắc
+                Thêm kích thướ<canvas></canvas>
             </Button>
             <div style={{ marginTop: 20 }}>
                 <TableSize size={size} isLoading={isLoading} onEdit={openEditModal} />
