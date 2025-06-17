@@ -5,7 +5,7 @@ const ModalSize = ({ open, onCancel, onOk, form, isEdit, loading, onFinish, }) =
     return (
         <Modal
             open={open}
-            title={isEdit ? "Sửa màu sắc" : "Thêm màu sắc"}
+            title={isEdit ? "Sửa kích thước" : "Thêm kích thước"}
             onCancel={onCancel}
             onOk={() => {
                 form.submit();
@@ -17,11 +17,11 @@ const ModalSize = ({ open, onCancel, onOk, form, isEdit, loading, onFinish, }) =
         >
             <Form form={form} layout="vertical" onFinish={onFinish}>
                 <Form.Item
-                    label="Tên màu sắc"
+                    label="Tên kích thước"
                     name="name"
-                    rules={[{ required: true, message: "Vui lòng nhập tên màu sắc!" }]}
+                    rules={[{ required: true, message: "Vui lòng nhập tên kích thước!" }]}
                 >
-                    <Input placeholder="Nhập tên màu sắc" />
+                    <Input placeholder="Nhập tên kích thước" />
                 </Form.Item>
             </Form>
         </Modal>

@@ -41,7 +41,7 @@ const items = [
       {
         icon:<HighlightOutlined />,
         key: 'variants/size',
-        label: 'Màu sắc',
+        label: 'Kích thước',
       },
     ],
   },

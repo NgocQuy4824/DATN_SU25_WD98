@@ -12,7 +12,7 @@ export const useGetAllSizes = (onSuccessCallback) => {
             onSuccessCallback?.(data);
         },
         onError: (err) => {
-            toast.error("Lấy danh sách màu sắc thất bại");
+            toast.error("Lấy danh sách kích thước thất bại");
             console.error(err);
         },
     });
@@ -25,11 +25,11 @@ export const useCreateSize = () => {
     return useMutation({
         mutationFn: (sizeData) => createSize(sizeData),
         onSuccess: () => {
-            toast.success("Tạo màu sắc thành công");
+            toast.success("Tạo kích thước thành công");
             queryClient.invalidateQueries(["size"]);
         },
         onError: (err) => {
-            toast.error("Tạo màu sắc thất bại");
+            toast.error("Tạo kích thước thất bại");
             console.error(err);
         },
     });
@@ -41,11 +41,11 @@ export const useUpdateSize = () => {
     return useMutation({
         mutationFn: ({ id, updatedData }) => updateSizeById(id, updatedData),
         onSuccess: () => {
-            toast.success("Cập nhật màu sắc thành công");
+            toast.success("Cập nhật kích thước thành công");
             queryClient.invalidateQueries(["size"]);
         },
         onError: (err) => {
-            toast.error("Cập nhật màu sắc thất bại");
+            toast.error("Cập nhật kích thước thất bại");
             console.error(err);
         },
     });
