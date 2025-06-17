@@ -5,6 +5,7 @@ import Order from "../components/Admin/Orders/Order.jsx";
 import Category from "../components/Admin/Variants/Category/Category.jsx";
 import Statistic from "../components/Admin/Statistic/Statistic.jsx";
 import Variants from "../components/Admin/Variants/Variants.jsx";
+import Size from "../components/Admin/Variants/Size/Size.jsx";
 
 
 
@@ -19,6 +20,7 @@ export const adminRoutes = [
       { path: 'variants', element: <Variants />,
         children: [
           { path: 'category', element: <Category /> },
+          { path: 'size' , element: <Size/> }
         ]
        },
       { path: 'statistics', element: <Statistic /> },
