@@ -4,14 +4,12 @@ import { createProduct, deleteProduct, getAllProducts, updateProduct } from '../
 import { toast } from 'react-toastify';
 
 //hook xử lý lấy tất cả sản phẩm
-export const useGetAllProducts = (onSuccessCallback) => {
+export const useGetAllProducts = () => {
   return useQuery({
     queryKey: ['products'],
     queryFn: getAllProducts,
     staleTime: 5 * 60 * 1000,//5p để refetch lại dữ liệu do thêm sp mới k nhận được ngay
-    onSuccess: (data) => {
-      onSuccessCallback?.(data);
-    },
+    
     onError: (err) => {
       toast.error('Lấy danh sách sản phẩm thất bại');
       console.error(err);
