@@ -31,7 +31,18 @@ const updateSize = async (req, res) => {
   }
 };
 
+const getAllSizes = async (req, res) => {
+  try {
+    const response = await SizeService.getAllSizes();
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Lỗi server" });
+  }
+};
+
 module.exports = {
   createSize,
   updateSize,
+  getAllSizes,
 };

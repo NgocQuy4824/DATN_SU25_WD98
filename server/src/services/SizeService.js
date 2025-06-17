@@ -41,7 +41,22 @@ const updateSize = async (id, newName) => {
   }
 };
 
+const getAllSizes = async () => {
+  try {
+    const sizes = await Size.find().sort({ createdAt: -1 }); // Sắp xếp mới nhất trước
+    return {
+      status: "OK",
+      message: "Lấy danh sách size thành công",
+      data: sizes,
+    };
+  } catch (error) {
+    console.error(error);
+    return { status: "ERROR", message: "Đã xảy ra lỗi khi lấy danh sách size" };
+  }
+};
+
 module.exports = {
   createSize,
   updateSize,
+  getAllSizes, //
 };
