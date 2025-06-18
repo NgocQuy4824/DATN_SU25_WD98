@@ -3,8 +3,8 @@ const ProductService = require('../services/ProductService');
 //thêm sản phẩm
 const createProduct = async (req, res) => {
     try {
-        const { name = '', image = '', type = '', price = 0, countInStock = 0, sold = 0, variants = [], description = '' } = req.body;
-        if (!name || !image || !type || !price || !countInStock || !sold || !variants) {
+        const { name = '', category = '', price = 0,  discount = 0, variants = [], description = '' } = req.body;
+        if (!name || !category || !price ||  !discount || !variants) {
             return res.status(400).json({ message: 'Bắt buộc phải nhập' });
         }
         const response = await ProductService.createProduct(req.body);
@@ -82,10 +82,48 @@ const getAllProduct = async (req, res) => {
     }
 }
 
+const hideProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        if (!productId) {
+            return res.status(400).json({
+                status: 'ERROR',
+                message: 'ID sản phẩm không hợp lệ',
+            });
+        }
+
+        const response = await ProductService.hideProduct(productId);
+        return res.status(response.status === 'OK' ? 200 : 404).json(response);
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+
+const showProduct = async (req, res) => {
+    try {
+        const productId = req.params.id;
+        if (!productId) {
+            return res.status(400).json({
+                status: 'ERROR',
+                message: 'ID sản phẩm không hợp lệ',
+            });
+        }
+
+        const response = await ProductService.showProduct(productId);
+        return res.status(response.status === 'OK' ? 200 : 404).json(response);
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+
 module.exports = {
     createProduct,
     updateProduct,
     getDetailsProduct,
     deleteProduct,
-    getAllProduct
+    getAllProduct,
+    hideProduct,
+    showProduct
 };

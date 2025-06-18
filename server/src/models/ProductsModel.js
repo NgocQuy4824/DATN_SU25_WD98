@@ -4,28 +4,20 @@ const productSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique: true,
     },
-    image: {
-        type: String,
-        required: true,
-    },
-    type: {
-        type: String,
-        required: true,
+    category: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "TypeProduct",
     },
     price: {
         type: Number,
         required: true,
     },
-    countInStock: {
+    discount: {
         type: Number,
-        required: true,
-        min: 0
-    },
-    sold: {
-        type: Number,
-        required: true,
+        default: 0,
+        min: 0,
+        max: 100
     },
     variants: [
         {
@@ -36,13 +28,23 @@ const productSchema = new mongoose.Schema({
             size: {
                 type: String,
                 required: true,
-            }
+            },
+            image: {
+                type: String,
+                required: true,
+            },
+            countInStock: {
+                type: Number,
+                required: true,
+                min: 0
+            },
         }
     ],
     description: {
         type: String,
         // required: true,
-    }
+    },
+    isActive: { type: Boolean, default: true }
 }, { timestamps: true });
 
 const Product = mongoose.model('Product', productSchema);
