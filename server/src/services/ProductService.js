@@ -3,24 +3,23 @@ const Product = require('../models/ProductsModel');
 //thêm sản phẩm
 const createProduct = async (newProduct) => {
     return new Promise(async (resolve, reject) => {
-        const { name = '', image = '', type = '', price = 0, countInStock = 0, sold = 0, variants = [], description = '' } = newProduct;
+        const { name = '', category = '', price = 0, discount = 0, variants = [], description = '', isActive } = newProduct;
         try {
-            const checkProduct = await Product.findOne({ name: name });// kiểm tra tên sản phẩm đã tồn tại chưa 
+            const checkProduct = await Product.findOne({ name: name, category: category });// kiểm tra tên ,loại sản phẩm đã tồn tại chưa 
             if (checkProduct) {
                 return resolve({
                     status: "OK",
-                    message: 'Tên sản phẩm đã tồn tại'
+                    message: 'Tên sản phẩm đã tồn tại trong cùng loại'
                 });
             }
             const newProduct = await Product.create({
                 name: name,
-                image: image,
-                type: type,
+                category: category,
                 price: price,
-                countInStock: countInStock,
-                sold: sold,
+                discount: discount,
                 variants: variants,
-                description: description
+                description: description,
+                isActive
             })
             if (newProduct) {
                 resolve({
@@ -116,7 +115,7 @@ const deleteProduct = async (id) => {
 const getAllProduct = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            const allProduct = await Product.find()
+            const allProduct = await Product.find().populate('category')
             if (allProduct.length > 0) {
                 resolve({
                     status: "OK",
@@ -136,6 +135,59 @@ const getAllProduct = () => {
     })
 }
 
+//ẩn sản phẩm
+const hideProduct = async (id) => {
+    try {
+        const product = await Product.findOneAndUpdate(
+            { _id: id, isActive: true },
+            { isActive: false },
+            { new: true }
+        );
+
+        if (!product) {
+            return {
+                status: 'ERROR',
+                message: 'Không tìm thấy sản phẩm hoặc sản phẩm đã bị ẩn',
+            };
+        }
+
+        return {
+            status: 'OK',
+            message: 'Ẩn sản phẩm thành công',
+            data: product
+        };
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+//hiển thị sản phẩm 
+const showProduct = async (id) => {
+    try {
+        const product = await Product.findOneAndUpdate(
+            { _id: id, isActive: false },
+            { isActive: true },
+            { new: true }
+        );
+
+        if (!product) {
+            return {
+                status: 'ERROR',
+                message: 'Không tìm thấy sản phẩm hoặc sản phẩm đang hiển thị',
+            };
+        }
+
+        return {
+            status: 'OK',
+            message: 'Hiển thị lại sản phẩm thành công',
+            data: product
+        };
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+
 
 
 
@@ -145,5 +197,7 @@ module.exports = {
     updateProduct,
     getDetailsProduct,
     deleteProduct,
-    getAllProduct
+    getAllProduct,
+    hideProduct,
+    showProduct
 };
