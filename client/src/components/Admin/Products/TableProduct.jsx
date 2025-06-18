@@ -3,7 +3,7 @@ import { Button, Image, Popconfirm, Space, Table, Tag } from 'antd';
 import { useTablePagination } from '../../../hooks/useTablePagination.js';
 
 
-const TableComponent = ({ onEdit, onDelete, products, loading }) => {
+const TableComponent = ({ onEdit, onDelete, products, loading , handleToggleVisibility}) => {
 
     const { paginatedData, paginationConfig } = useTablePagination(products, 5);
 
@@ -98,10 +98,19 @@ const TableComponent = ({ onEdit, onDelete, products, loading }) => {
             ellipsis: true,
         },
         {
+            title: 'Trạng thái',
+            key: 'status',
+            render: (_, record) => (
+                <Tag color={record.isActive ? 'green' : 'red'}>
+                    {record.isActive ? 'Đang hiển thị' : 'Đang ẩn'}
+                </Tag>
+            )
+        },
+        {
             title: 'Action',
             key: 'action',
             render: (_, record) => (
-                <Space style={{ display: 'flex' }}>
+                <Space size="small" wrap className='align-items'>
                     <Button type="primary" onClick={() => onEdit(record)}>Sửa</Button>
                     <Popconfirm
                         title="Bạn có chắc muốn xóa sản phẩm này?"
@@ -112,6 +121,12 @@ const TableComponent = ({ onEdit, onDelete, products, loading }) => {
                     >
                         <Button type="primary" danger>Xóa</Button>
                     </Popconfirm>
+                    <Button
+                        onClick={() => handleToggleVisibility(record)}
+                        type={record.isActive ? 'dashed' : 'default'}
+                    >
+                        {record.isActive ? 'Ẩn' : 'Hiện'}
+                    </Button>
                 </Space>
             ),
         },
