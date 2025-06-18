@@ -24,3 +24,13 @@ export const updateProduct = async (productId, updatedData) => {
   const response = await API.put(`/product/update/${productId}`, updatedData);
   return response.data;
 };
+
+export const hideProduct = async (productId) => {
+  const response = await API.patch(`/product/hide/${productId}`);
+  return response.data;
+};
+
+export const showProduct = async (productId) => {
+  const response = await API.patch(`/product/show/${productId}`);
+  return response.data;
+};

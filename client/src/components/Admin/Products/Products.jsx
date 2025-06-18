@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import TableComponent from './TableProduct.jsx';
 import { Button, Form } from 'antd';
 import ModalCustom from './ModalCustom.jsx';
-import { useCreateProduct, useDeleteProduct, useGetAllProducts, useUpdateProduct } from '../../../hooks/useProductHook.js';
+import { useCreateProduct, useDeleteProduct, useGetAllProducts, useHideProduct, useShowProduct, useUpdateProduct } from '../../../hooks/useProductHook.js';
 import { useQueryClient } from '@tanstack/react-query';
 
 
@@ -12,7 +12,7 @@ const Products = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [form] = Form.useForm();
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient(); 
 
   const { data: response, isLoading: loadingProducts } = useGetAllProducts();
   const products = response?.data ?? [];
@@ -37,6 +37,19 @@ const Products = () => {
     removeProduct(productId);
   };
 
+  const { mutate: hideProduct } = useHideProduct();
+  const { mutate: showProduct } = useShowProduct();
+
+  //ẩn hiện sản phẩm 
+  const handleToggleVisibility = (product) => {
+    if (product.isActive) {
+      hideProduct(product._id);
+    } else {
+      showProduct(product._id);
+    }
+  };
+
+
   const openAddModal = () => {
     setEditingProduct(null);
     form.resetFields();
@@ -48,11 +61,11 @@ const Products = () => {
     setModalOpen(true);
   };
 
-  const handleSubmit = (values) => {
+  const handleSubmit = (productData) => {
     if (editingProduct) {
-      updateProduct({ id: editingProduct._id, data: values });
+      updateProduct({ id: editingProduct._id, data: productData });
     } else {
-      createProduct(values);
+      createProduct(productData);
     }
     setModalOpen(false);
     setEditingProduct(null);
@@ -76,7 +89,7 @@ const Products = () => {
         </Button>
 
         <div style={{ marginTop: '20px' }}>
-          <TableComponent onEdit={openEditModal} products={products} onDelete={handleDeleteProduct} loading={loadingProducts || deleting} />
+          <TableComponent onEdit={openEditModal} products={products} onDelete={handleDeleteProduct} loading={loadingProducts || deleting} handleToggleVisibility={handleToggleVisibility} />
         </div>
       </PageContainer>
       <ModalCustom

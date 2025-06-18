@@ -1,6 +1,6 @@
 // hooks/useCreateProduct.js
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { createProduct, deleteProduct, getAllProducts, updateProduct } from '../services/ProductServices.js';
+import { createProduct, deleteProduct, getAllProducts, hideProduct, showProduct, updateProduct } from '../services/ProductServices.js';
 import { toast } from 'react-toastify';
 
 //hook xử lý lấy tất cả sản phẩm
@@ -64,6 +64,38 @@ export const useUpdateProduct = (onSuccessCallback) => {
     },
     onError: (err) => {
       toast.error('Cập nhật sản phẩm thất bại');
+      console.error(err);
+    }
+  });
+};
+
+export const useHideProduct = (onSuccessCallback) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: hideProduct,
+    onSuccess: (data) => {
+      toast.success('Ẩn sản phẩm thành công');
+      queryClient.invalidateQueries(['products']);
+      onSuccessCallback?.(data);
+    },
+    onError: (err) => {
+      toast.error('Ẩn sản phẩm thất bại');
+      console.error(err);
+    }
+  });
+};
+
+export const useShowProduct = (onSuccessCallback) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: showProduct,
+    onSuccess: (data) => {
+      toast.success('Hiện sản phẩm thành công');
+      queryClient.invalidateQueries(['products']);
+      onSuccessCallback?.(data);
+    },
+    onError: (err) => {
+      toast.error('Hiện sản phẩm thất bại');
       console.error(err);
     }
   });

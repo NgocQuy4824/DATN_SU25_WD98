@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import FormComponent from '../../FormComponent/FormComponent';
 
 
-const ModalCustom = ({ form, open, onCancel, onSubmit, initialValues = [], isEdit, setEditingProduct , isLoading }) => {
+const ModalCustom = ({ form, open, onCancel, onSubmit, initialValues = [], isEdit, setEditingProduct, isLoading, setActiveStatus }) => {
 
   useEffect(() => {
     if (open && initialValues) {
@@ -11,10 +11,26 @@ const ModalCustom = ({ form, open, onCancel, onSubmit, initialValues = [], isEdi
     }
   }, [open, initialValues, form]);
 
-  const handleFinish = (values) => {
-    onSubmit(values);
+   const handleFinish = (values) => {
+    // Mặc định khi cập nhật thì không chọn Lưu ẩn/hiển thị, nên giữ nguyên trạng thái cũ
+    const productData = isEdit
+      ? { ...values, isActive: initialValues?.isActive }
+      : values;
+
+    onSubmit(productData);
     form.resetFields();
+    setEditingProduct(null);
   };
+
+  const handleSubmitStatus = (status) => {
+    const values = form.getFieldsValue();
+    const productData = { ...values, isActive: status };
+    onSubmit(productData);
+    form.resetFields();
+    setEditingProduct(null);
+    onCancel();
+  };
+
   return (
     <Modal
       title={isEdit ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm'}
@@ -38,9 +54,33 @@ const ModalCustom = ({ form, open, onCancel, onSubmit, initialValues = [], isEdi
             }}>
               Hủy
             </Button>
-            <Button type="primary" htmlType="submit" loading={isLoading}>
-              {isEdit ? 'Cập nhật' : 'Thêm mới'}
-            </Button>
+            {!isEdit && (
+              <>
+                <Button
+                  type="default"
+                  onClick={() => handleSubmitStatus(false)} // Lưu ẩn
+                  loading={isLoading}
+                >
+                  Lưu & Ẩn
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={() => handleSubmitStatus(true)} // Lưu hiển thị
+                  loading={isLoading}
+                >
+                  Lưu & Hiển thị
+                </Button>
+              </>
+            )}
+            {isEdit && (
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={isLoading}
+              >
+                Cập nhật
+              </Button>
+            )}
           </div>
         </Form.Item>
       </Form>
