@@ -8,7 +8,7 @@ const createProduct = async (newProduct) => {
             const checkProduct = await Product.findOne({ name: name, category: category });// kiểm tra tên ,loại sản phẩm đã tồn tại chưa 
             if (checkProduct) {
                 return resolve({
-                    status: "OK",
+                    status: "ERROR",
                     message: 'Tên sản phẩm đã tồn tại trong cùng loại'
                 });
             }
@@ -186,10 +186,6 @@ const showProduct = async (id) => {
         console.error(error);
     }
 }
-
-
-
-
 
 
 module.exports = {

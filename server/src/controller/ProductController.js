@@ -8,7 +8,7 @@ const createProduct = async (req, res) => {
             return res.status(400).json({ message: 'Bắt buộc phải nhập' });
         }
         const response = await ProductService.createProduct(req.body);
-        return res.status(200).json(response);
+        return res.status(response?.status === 'ERROR' ? 400 : 200).json(response);
     } catch (error) {
         console.log(error);
     }

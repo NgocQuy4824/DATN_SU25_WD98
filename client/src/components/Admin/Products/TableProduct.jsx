@@ -1,11 +1,13 @@
 import React from 'react';
 import { Button, Image, Popconfirm, Space, Table, Tag } from 'antd';
 import { useTablePagination } from '../../../hooks/useTablePagination.js';
+import { useSizeOptions } from '../../../hooks/useSizeOptions.js';
 
 
 const TableComponent = ({ onEdit, onDelete, products, loading , handleToggleVisibility}) => {
 
     const { paginatedData, paginationConfig } = useTablePagination(products, 5);
+    const { sizeMap } = useSizeOptions();
 
     const columns = [
         {
@@ -83,7 +85,7 @@ const TableComponent = ({ onEdit, onDelete, products, loading , handleToggleVisi
                                     Color: {variant.color}
                                 </Tag>
                                 <Tag color="green">
-                                    Size: {variant.size}
+                                    Size: {sizeMap[variant.size] || variant.size}
                                 </Tag>
                             </div>
                         </div>
