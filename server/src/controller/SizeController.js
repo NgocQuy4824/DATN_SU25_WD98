@@ -8,7 +8,7 @@ const createSize = async (req, res) => {
     }
 
     const response = await SizeService.createSize(name);
-    return res.status(200).json(response);
+    return res.status(response?.status === 'ERROR' ? 400 : 200).json(response);
   } catch (error) {
     console.error(error);
   }
