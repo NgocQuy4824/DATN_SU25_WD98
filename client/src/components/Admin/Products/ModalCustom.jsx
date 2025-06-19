@@ -11,7 +11,7 @@ const ModalCustom = ({ form, open, onCancel, onSubmit, initialValues = [], isEdi
     }
   }, [open, initialValues, form]);
 
-   const handleFinish = (values) => {
+  const handleFinish = (values) => {
     // Mặc định khi cập nhật thì không chọn Lưu ẩn/hiển thị, nên giữ nguyên trạng thái cũ
     const productData = isEdit
       ? { ...values, isActive: initialValues?.isActive }
@@ -22,13 +22,17 @@ const ModalCustom = ({ form, open, onCancel, onSubmit, initialValues = [], isEdi
     setEditingProduct(null);
   };
 
-  const handleSubmitStatus = (status) => {
-    const values = form.getFieldsValue();
-    const productData = { ...values, isActive: status };
-    onSubmit(productData);
-    form.resetFields();
-    setEditingProduct(null);
-    onCancel();
+  const handleSubmitStatus = async (status) => {
+    try {
+      const values = await form.validateFields();
+      const productData = { ...values, isActive: status };
+      onSubmit(productData);
+      form.resetFields();
+      setEditingProduct(null);
+      onCancel();
+    } catch (errorInfo) {
+      console.log(errorInfo)
+    }
   };
 
   return (
