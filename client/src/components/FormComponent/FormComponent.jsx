@@ -1,4 +1,4 @@
-import { Button, Form, Input, InputNumber, Select, Space } from 'antd';
+import { Button, Form, Input, InputNumber, Select, Space, Upload  } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import React from 'react'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
@@ -54,13 +54,30 @@ const FormComponent = () => {
               <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
 
                 {/* Ảnh */}
-                <Form.Item
-                  {...restField}
-                  name={[name, 'image']}
-                  rules={[{ required: true, message: 'Vui lòng nhập URL ảnh biến thể' }]}
-                >
-                  <Input placeholder="Ảnh biến thể" />
-                </Form.Item>
+         <Form.Item
+            {...restField}
+            name={[name, 'image']}
+            valuePropName="file"
+            getValueFromEvent={(e) => {
+              if (Array.isArray(e?.fileList) && e.fileList.length > 0) {
+                return e.fileList[0]; // Lưu cả object chứa file
+              }
+              return null;
+            }}
+            rules={[{ required: true, message: 'Vui lòng chọn ảnh biến thể' }]}
+          >
+            <Upload
+              listType="picture-card"
+              maxCount={1}
+              beforeUpload={() => false} // KHÔNG upload tự động
+            >
+              <div>
+                <PlusOutlined />
+                <div style={{ marginTop: 8 }}>Upload</div>
+              </div>
+            </Upload>
+</Form.Item>
+
 
                 {/* Màu */}
                 <Form.Item

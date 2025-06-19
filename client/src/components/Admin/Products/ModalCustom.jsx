@@ -11,29 +11,84 @@ const ModalCustom = ({ form, open, onCancel, onSubmit, initialValues = [], isEdi
     }
   }, [open, initialValues, form]);
 
-  const handleFinish = (values) => {
-    // Mặc định khi cập nhật thì không chọn Lưu ẩn/hiển thị, nên giữ nguyên trạng thái cũ
-    const productData = isEdit
-      ? { ...values, isActive: initialValues?.isActive }
-      : values;
+  const handleFinish = async (values) => {
+  const formData = new FormData();
 
-    onSubmit(productData);
-    form.resetFields();
-    setEditingProduct(null);
-  };
+  // Đưa các field đơn giản vào
+  formData.append('name', values.name);
+  formData.append('category', values.category);
+  formData.append('price', values.price);
+  formData.append('discount', values.discount);
+  formData.append('description', values.description || '');
+
+  // Biến thể: xử lý ảnh + field
+  const variants = values.variants.map((v) => {
+  const { image, ...rest } = v;
+
+  // Kiểm tra trước khi thêm ảnh
+  if (image?.originFileObj) {
+    formData.append('images', image.originFileObj);
+  }
+
+  return rest;
+});
+
+
+  formData.append('variants', JSON.stringify(variants));
+
+  // trạng thái hiển thị
+  if (isEdit) {
+    formData.append('isActive', initialValues?.isActive);
+  }
+
+  onSubmit(formData); // Gửi về hook
+  form.resetFields();
+  setEditingProduct(null);
+};
+
 
   const handleSubmitStatus = async (status) => {
-    try {
-      const values = await form.validateFields();
-      const productData = { ...values, isActive: status };
-      onSubmit(productData);
-      form.resetFields();
-      setEditingProduct(null);
-      onCancel();
-    } catch (errorInfo) {
-      console.log(errorInfo)
+  try {
+    const values = await form.validateFields();
+    const formData = buildFormData(values, status);
+    onSubmit(formData);
+    form.resetFields();
+    setEditingProduct(null);
+    onCancel();
+  } catch (errorInfo) {
+    console.log(errorInfo)
+  }
+};
+const buildFormData = (values, isActive) => {
+  const formData = new FormData();
+
+  formData.append('name', values.name);
+  formData.append('category', values.category);
+  formData.append('price', values.price);
+  formData.append('discount', values.discount);
+  formData.append('description', values.description || '');
+
+  const variants = values.variants.map((v) => {
+    const { image, ...rest } = v;
+
+    if (image?.originFileObj) {
+      formData.append('images', image.originFileObj);
     }
-  };
+
+    return rest;
+  });
+
+  formData.append('variants', JSON.stringify(variants));
+
+  if (typeof isActive === 'boolean') {
+    formData.append('isActive', isActive);
+  }
+
+  return formData;
+};
+
+
+
 
   return (
     <Modal

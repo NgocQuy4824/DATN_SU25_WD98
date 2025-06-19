@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import ModalCustom from './ModalCustom';
-import FormComponent from '../../FormComponent/FormComponent';
 import { useCreateProduct } from '../../../hooks/useCreateProduct';
 import { Form } from 'antd';
 
@@ -13,25 +12,27 @@ const CreateProducts = () => {
     form.resetFields();
   });
 
-  const handleCreate = (values) => {
-    createProduct(values);
+  const handleCreate = (formData) => {
+    createProduct(formData);
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
     form.resetFields();
   };
+
   return (
     <ModalCustom
-      title="Thêm sản phẩm mới"
-      isModalOpen={isModalOpen}
+      form={form}
+      open={isModalOpen}
       onCancel={handleCancel}
-      handleCancel={() => setIsModalOpen(false)}
-      destroyOnClose={true}
-    >
-      <FormComponent onFinish={handleCreate} isLoading={isLoading} />
-    </ModalCustom>
-  )
-}
+      onSubmit={handleCreate}
+      isEdit={false}
+      initialValues={{ variants: [] }}
+      setEditingProduct={() => {}}
+      isLoading={isLoading}
+    />
+  );
+};
 
-export default CreateProducts
+export default CreateProducts;
