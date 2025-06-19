@@ -72,7 +72,8 @@ const TableComponent = ({ onEdit, onDelete, products, loading , handleToggleVisi
                                 <Image
                                     width={50}
                                     height={50}
-                                    src={variant.image}
+                                    src={`http://localhost:3001${variant.image}`}
+
                                     style={{ objectFit: 'cover', borderRadius: 4 }}
                                     preview={false}
                                 />
