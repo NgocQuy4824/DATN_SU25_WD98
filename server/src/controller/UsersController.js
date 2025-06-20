@@ -1,3 +1,4 @@
+const User = require("../models/UserModel");
 const UserService = require("../services/UsersService");
 
 // Lấy toàn bộ người dùng
@@ -13,11 +14,19 @@ const getAllUsers = async (req, res) => {
 // Lấy thông tin profile người dùng
 const getProfile = async (req, res) => {
   try {
-    const userId = req.body.userId || req.query.userId;
-    const response = await UserService.getProfile(userId);
-    return res.status(response?.status === "ERROR" ? 400 : 200).json(response);
-  } catch (error) {
-    console.log(error);
+    const user = await User.findById(req.userId).select("-password");
+    if (!user) {
+      return res.status(404).json({ message: "Người dùng không tồn tại" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Lấy thông tin người dùng thành công",
+      data: user,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Lỗi máy chủ" });
   }
 };
 
