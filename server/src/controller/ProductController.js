@@ -3,7 +3,8 @@ const ProductService = require('../services/ProductService');
 //thêm sản phẩm
 const createProduct = async (req, res) => {
     try {
-        const { name = '', category = '', price = 0, discount = 0, description = '', variants } = req.body;
+        const { name = '', category = '', price = 0, discount = 0, description = '', variants, isActive } = req.body;
+
 
         if (!name || !category || !price || !discount || !variants) {
             return res.status(400).json({ message: 'Bắt buộc phải nhập' });
@@ -26,7 +27,8 @@ const createProduct = async (req, res) => {
             price,
             discount,
             description,
-            variants: parsedVariants
+            variants: parsedVariants,
+            isActive: typeof isActive === 'string' ? isActive === 'true' : Boolean(isActive)
         });
 
         return res.status(response?.status === 'ERROR' ? 400 : 200).json(response);

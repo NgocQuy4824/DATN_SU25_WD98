@@ -19,7 +19,8 @@ const createProduct = async (newProduct) => {
                 discount: discount,
                 variants: variants,
                 description: description,
-                isActive
+                isActive: typeof isActive === 'string' ? isActive === 'true' : Boolean(isActive)
+
             })
             if (newProduct) {
                 resolve({
