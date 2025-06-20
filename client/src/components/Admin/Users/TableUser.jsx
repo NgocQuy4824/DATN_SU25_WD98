@@ -1,6 +1,6 @@
 import React from 'react'
 
-const TableUser = () => {
+const TableUser = ({ user, loading }) => {
   return (
     <div>TableUser</div>
   )
