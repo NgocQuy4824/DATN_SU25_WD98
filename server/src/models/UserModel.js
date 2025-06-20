@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const ROLE = require("../constants/role");
 
-
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -28,8 +27,7 @@ const userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default:
-        "https://i.imgur.com/HeIi0wU.png",
+      default: "https://i.imgur.com/HeIi0wU.png",
     },
     imageUrlRef: {
       type: String,
@@ -41,7 +39,7 @@ const userSchema = new mongoose.Schema(
     },
     isActive: {
       type: Boolean,
-      default: false,
+      default: true,
     },
     wishList: [
       {
