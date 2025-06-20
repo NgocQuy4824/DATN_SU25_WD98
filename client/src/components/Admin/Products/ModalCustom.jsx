@@ -39,14 +39,14 @@ const ModalCustom = ({ form, open, onCancel, onSubmit, initialValues = [], isEdi
   // trạng thái hiển thị
   if (isEdit) {
     formData.append('isActive', initialValues?.isActive);
+  } else {
+    formData.append('isActive', true); // Nếu dùng nút "Lưu & Hiển thị" (nút mặc định submit)
   }
 
-  onSubmit(formData); // Gửi về hook
+  onSubmit(formData);
   form.resetFields();
   setEditingProduct(null);
 };
-
-
   const handleSubmitStatus = async (status) => {
   try {
     const values = await form.validateFields();
