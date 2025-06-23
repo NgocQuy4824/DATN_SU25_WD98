@@ -35,3 +35,8 @@ export const showProduct = async (productId) => {
   const response = await API.patch(`/product/show/${productId}`);
   return response.data;
 };
+
+export const getHighlightProducts = async () => {
+  const response = await API.get("/product/get-highlight");
+  return response.data;
+};

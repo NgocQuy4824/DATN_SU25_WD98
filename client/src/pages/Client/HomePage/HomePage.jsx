@@ -4,7 +4,7 @@ import { Title, WrapperProductList, WrapperTypeProduct } from "./style";
 import SliderComponent from "../../../components/SliderComponent/SliderComponent";
 import slider1 from "../../asset/images/slider1.webp";
 import slider2 from "../../asset/images/slider2.webp";
-import { getAllProducts } from "../../../services/ProductServices";
+import { getHighlightProducts } from "../../../services/ProductServices";
 import ProductCard from "./ProductCard";
 
 const HomePage = () => {
@@ -20,7 +20,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await getAllProducts();
+      const response = await getHighlightProducts();
       if (response && response.data) {
         setProducts(response.data);
       }
