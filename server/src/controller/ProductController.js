@@ -123,6 +123,19 @@ const showProduct = async (req, res) => {
   }
 };
 
+const getHighlightProducts = async (req, res) => {
+  try {
+    const response = await ProductService.getHighlightProducts();
+    return res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      status: "ERROR",
+      message: "Server error",
+    });
+  }
+};
+
 module.exports = {
   createProduct,
   updateProduct,
@@ -131,4 +144,5 @@ module.exports = {
   getAllProduct,
   hideProduct,
   showProduct,
+  getHighlightProducts,
 };

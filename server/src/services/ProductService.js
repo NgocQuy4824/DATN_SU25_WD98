@@ -199,6 +199,27 @@ const showProduct = async (id) => {
   }
 };
 
+// ✅ Hàm mới: Lấy sản phẩm nổi bật (6 sản phẩm mới nhất và đang hiển thị)
+const getHighlightProducts = async () => {
+  try {
+    const products = await Product.find({ isActive: true })
+      .sort({ createdAt: -1 }) // mới nhất trước
+      .limit(6)
+      .populate("category"); // nếu cần dữ liệu danh mục
+
+    return {
+      status: "OK",
+      message: "Lấy sản phẩm nổi bật thành công",
+      data: products,
+    };
+  } catch (error) {
+    return {
+      status: "ERROR",
+      message: "Lỗi khi lấy sản phẩm nổi bật",
+    };
+  }
+};
+
 module.exports = {
   createProduct,
   updateProduct,
@@ -207,4 +228,5 @@ module.exports = {
   getAllProduct,
   hideProduct,
   showProduct,
+  getHighlightProducts,
 };
