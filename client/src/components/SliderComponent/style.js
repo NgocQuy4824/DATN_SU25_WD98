@@ -2,6 +2,10 @@ import Slider from "react-slick";
 import styled from "styled-components";
 
 export const WrapperSliderStyle = styled(Slider)`
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  position: relative;
+
   & .slick-arrow.slick-prev {
     left: 12px;
     top: 50%;
@@ -26,7 +30,7 @@ export const WrapperSliderStyle = styled(Slider)`
     li {
       button {
         &::before {
-          color: rgb(255, 255, 0.5);
+          color: rgba(255, 255, 255, 0.5);
         }
       }
     }
