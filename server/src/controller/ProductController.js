@@ -136,6 +136,30 @@ const getHighlightProducts = async (req, res) => {
   }
 };
 
+//hiển thị sp theo kích thước 
+const getProductsBySize = async (req, res) => {
+  try {
+    const { sizeId } = req.params;
+
+    if (!sizeId) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "Thiếu sizeId trong yêu cầu",
+      });
+    }
+
+    const response = await ProductService.getProductsBySize(sizeId);
+    return res.status(response.status === "OK" ? 200 : 404).json(response);
+  } catch (error) {
+    console.error("Lỗi khi lấy sản phẩm theo size:", error);
+    return res.status(500).json({
+      status: "ERROR",
+      message: "Lỗi server",
+    });
+  }
+};
+
+
 module.exports = {
   createProduct,
   updateProduct,
@@ -145,4 +169,5 @@ module.exports = {
   hideProduct,
   showProduct,
   getHighlightProducts,
+  getProductsBySize
 };

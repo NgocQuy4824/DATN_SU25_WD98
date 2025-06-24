@@ -1,4 +1,6 @@
 const Product = require("../models/ProductsModel");
+const Size = require("../models/SizeModel")
+const mongoose = require('mongoose');
 
 //thêm sản phẩm
 const createProduct = async (newProduct) => {
@@ -23,12 +25,18 @@ const createProduct = async (newProduct) => {
           message: "Tên sản phẩm đã tồn tại trong cùng loại",
         });
       }
+
+      const normalizedVariants = variants.map((variant) => ({
+        ...variant,
+        size: new mongoose.Types.ObjectId(variant.size),
+      }));
+
       const newProduct = await Product.create({
         name: name,
         category: category,
         price: price,
         discount: discount,
-        variants: variants,
+        variants: normalizedVariants,
         description: description,
         isActive,
       });
@@ -199,7 +207,7 @@ const showProduct = async (id) => {
   }
 };
 
-// ✅ Hàm mới: Lấy sản phẩm nổi bật (6 sản phẩm mới nhất và đang hiển thị)
+//  Lấy sản phẩm nổi bật (6 sản phẩm mới nhất và đang hiển thị)
 const getHighlightProducts = async () => {
   try {
     const products = await Product.find({ isActive: true })
@@ -220,6 +228,37 @@ const getHighlightProducts = async () => {
   }
 };
 
+//hiển thị sp chi tiết theo kích thước
+const getProductsBySize = async (sizeId) => {
+  try {
+    // Kiểm tra sizeId có tồn tại không
+    const size = await Size.findById(sizeId);
+    if (!size) {
+      return {
+        status: "ERROR",
+        message: "Không tìm thấy size với ID đã cung cấp",
+      };
+    }
+
+    // Tìm sản phẩm có ít nhất 1 variant có size phù hợp
+    const products = await Product.find({ "variants.size": sizeId })
+      .populate("variants.size") // populate size
+      .populate("category");   
+
+    return {
+      status: "OK",
+      message: "Lấy sản phẩm theo size thành công",
+      data: products,
+    };
+  } catch (error) {
+    console.error("Lỗi trong getProductsBySize:", error);
+    return {
+      status: "ERROR",
+      message: "Không thể lấy sản phẩm theo size",
+    };
+  }
+};
+
 module.exports = {
   createProduct,
   updateProduct,
@@ -229,4 +268,5 @@ module.exports = {
   hideProduct,
   showProduct,
   getHighlightProducts,
+  getProductsBySize
 };

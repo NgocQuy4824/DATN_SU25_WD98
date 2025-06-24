@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import TypeProducts from "../../../components/Client/TypeProducts/TypeProducts";
-import { Title, WrapperProductList, WrapperTypeProduct } from "./style";
+import { ScrollButton, Title, WrapperProductList, WrapperTypeProduct } from "./style";
 import SliderComponent from "../../../components/SliderComponent/SliderComponent";
-import slider1 from "../../asset/images/slider1.webp";
-import slider2 from "../../asset/images/slider2.webp";
+import anh4 from "../../asset/images/anh4.jpg"
+import anh5 from "../../asset/images/anh5.jpg";
 import { getHighlightProducts } from "../../../services/ProductServices";
 import ProductCard from "./ProductCard";
+import { useRef } from "react";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 
 const HomePage = () => {
   const arrType = [
@@ -17,6 +19,7 @@ const HomePage = () => {
   ];
 
   const [products, setProducts] = useState([]);
+  const scrollRef = useRef();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,21 +31,42 @@ const HomePage = () => {
     fetchData();
   }, []);
 
+
+  const handleScroll = (direction) => {
+    const container = scrollRef.current;
+    if (container) {
+      const scrollAmount = 250 + 20;
+      container.scrollBy({ left: direction === "left" ? -scrollAmount : scrollAmount, behavior: "smooth" });
+    }
+  };
+
+
   return (
     <div style={{ padding: "0 120px" }}>
-      <SliderComponent arrImages={[slider1, slider2]} />
+      <SliderComponent arrImages={[anh4, anh5]} />
       <WrapperTypeProduct>
         {arrType.map((item) => (
           <TypeProducts key={item.id} name={item.name} />
         ))}
       </WrapperTypeProduct>
-      HomePage
       <Title>Sản phẩm nổi bật</Title>
-      <WrapperProductList>
-        {products.slice(0, 6).map((product) => (
-          <ProductCard key={product._id} product={product} />
-        ))}
-      </WrapperProductList>
+      <div style={{ position: "relative" }}>
+        {products.length > 5 && (
+          <>
+            <ScrollButton left onClick={() => handleScroll("left")}>
+              <LeftOutlined />
+            </ScrollButton>
+            <ScrollButton right onClick={() => handleScroll("right")}>
+              <RightOutlined />
+            </ScrollButton>
+          </>
+        )}
+        <WrapperProductList ref={scrollRef}>
+          {products.map((product) => (
+            <ProductCard key={product._id} product={product} />
+          ))}
+        </WrapperProductList>
+      </div>
     </div>
   );
 };

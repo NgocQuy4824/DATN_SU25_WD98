@@ -26,7 +26,8 @@ const productSchema = new mongoose.Schema({
                 required: true,
             },
             size: {
-                type: String,
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Size",
                 required: true,
             },
             image: {

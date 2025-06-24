@@ -10,5 +10,6 @@ router.get("/get-all", productsController.getAllProduct);
 router.patch("/hide/:id", productsController.hideProduct);
 router.patch("/show/:id", productsController.showProduct);
 router.get("/get-highlight", productsController.getHighlightProducts);
+router.get("/by-size/:sizeId",productsController.getProductsBySize)
 
 module.exports = router;

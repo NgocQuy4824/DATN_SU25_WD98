@@ -11,10 +11,37 @@ export const WrapperTypeProduct = styled.div`
 
 export const WrapperProductList = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center; /* căn giữa các sản phẩm */
+  flex-direction: row;
+  overflow-x: auto;
   gap: 20px;
-  margin: 20px auto;
+  padding-bottom: 10px;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+`;
+
+export const ScrollButton = styled.button`
+  position: absolute;
+  top: 35%;
+  ${(props) => (props.left ? "left: -20px" : "right: -20px")};
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  padding: 4px 8px;
+  cursor: pointer;
+  z-index: 1;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.2);
 `;
 
 export const Title = styled.h2`

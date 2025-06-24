@@ -8,6 +8,7 @@ const Card = styled.div`
   border-radius: 8px;
   background: #fff;
   overflow: hidden;
+  flex-shrink: 0;
   cursor: pointer;
   transition: all 0.3s ease;
   border: 1px solid #f0f0f0;
