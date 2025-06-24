@@ -6,7 +6,7 @@ const ClientLayout = () => {
   return (
     <>
       <HeaderComponent isAdmin={false} />
-      <main style={{ padding: 16 }}>
+      <main>
         <Outlet />
       </main>
     </>
