@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import TypeProducts from "../../../components/Client/TypeProducts/TypeProducts";
 import { ScrollButton, Title, WrapperProductList, WrapperTypeProduct } from "./style";
 import SliderComponent from "../../../components/SliderComponent/SliderComponent";
 import anh4 from "../../asset/images/anh4.jpg"
 import anh5 from "../../asset/images/anh5.jpg";
-import { getHighlightProducts } from "../../../services/ProductServices";
 import ProductCard from "./ProductCard";
 import { useRef } from "react";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { useHighlightProducts } from "../../../hooks/useProductHook";
 
 const HomePage = () => {
   const arrType = [
@@ -18,18 +18,11 @@ const HomePage = () => {
     { id: 5, name: "Khuyến Mãi" },
   ];
 
-  const [products, setProducts] = useState([]);
+
   const scrollRef = useRef();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await getHighlightProducts();
-      if (response && response.data) {
-        setProducts(response.data);
-      }
-    };
-    fetchData();
-  }, []);
+  const { data, isLoading } = useHighlightProducts();
+  const products = data?.data || [];
 
 
   const handleScroll = (direction) => {
@@ -63,7 +56,7 @@ const HomePage = () => {
         )}
         <WrapperProductList ref={scrollRef}>
           {products.map((product) => (
-            <ProductCard key={product._id} product={product} />
+            <ProductCard key={product._id} product={product} isLoading={isLoading} />
           ))}
         </WrapperProductList>
       </div>

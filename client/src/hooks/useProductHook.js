@@ -4,6 +4,7 @@ import {
   createProduct,
   deleteProduct,
   getAllProducts,
+  getHighlightProducts,
   hideProduct,
   showProduct,
   updateProduct,
@@ -83,6 +84,7 @@ export const useHideProduct = (onSuccessCallback) => {
     onSuccess: (data) => {
       toast.success("Ẩn sản phẩm thành công");
       queryClient.invalidateQueries(["products"]);
+      queryClient.invalidateQueries(["highlightProducts"]);
       onSuccessCallback?.(data);
     },
     onError: (err) => {
@@ -99,11 +101,22 @@ export const useShowProduct = (onSuccessCallback) => {
     onSuccess: (data) => {
       toast.success("Hiện sản phẩm thành công");
       queryClient.invalidateQueries(["products"]);
+      queryClient.invalidateQueries(["highlightProducts"]);
       onSuccessCallback?.(data);
     },
     onError: (err) => {
       toast.error("Hiện sản phẩm thất bại");
       console.error(err);
+    },
+  });
+};
+
+export const useHighlightProducts = () => {
+  return useQuery({
+    queryKey: ["highlightProducts"],
+    queryFn: getHighlightProducts,
+    onError: () => {
+      toast.error("Lấy sản phẩm nổi bật thất bại");
     },
   });
 };
