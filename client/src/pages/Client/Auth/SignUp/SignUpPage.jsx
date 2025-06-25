@@ -11,7 +11,7 @@ const SignUpPage = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
-    const { confirm, ...submitData } = values; // 🔥 loại bỏ confirm trước khi gửi
+    const { confirm, ...submitData } = values;
 
     try {
       const res = await registerApi(submitData);

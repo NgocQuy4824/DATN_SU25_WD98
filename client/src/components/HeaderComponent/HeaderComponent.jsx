@@ -5,20 +5,23 @@ import {
   IdcardOutlined,
   ShoppingCartOutlined,
   UserOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import { WrapperHeader, WrapperHeaderLogo } from "./style";
 import ButtonInputSearch from "../Client/ButtonInputSearch/ButtonInputSearch";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 const HeaderComponent = ({ isAdmin = false }) => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
-  const handleLoginClick = () => {
-    navigate("/signin");
-  };
+  const handleLoginClick = () => navigate("/signin");
+  const handleRegisterClick = () => navigate("/signup");
 
-  const handleRegisterClick = () => {
-    navigate("/signup");
+  const handleLogout = () => {
+    logout();
+    navigate("/");
   };
 
   return (
@@ -58,7 +61,34 @@ const HeaderComponent = ({ isAdmin = false }) => {
                 <span>Tài Khoản</span>
               </div>
 
-              {!isAdmin && (
+              {user ? (
+                <>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                      cursor: "pointer",
+                    }}
+                  >
+                    <UserOutlined />
+                    <span>{user.name || "Đã đăng nhập"}</span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                      cursor: "pointer",
+                      color: "red",
+                    }}
+                    onClick={handleLogout}
+                  >
+                    <LogoutOutlined />
+                    <span>Đăng xuất</span>
+                  </div>
+                </>
+              ) : (
                 <>
                   <div
                     style={{
@@ -84,14 +114,21 @@ const HeaderComponent = ({ isAdmin = false }) => {
                     <UserOutlined />
                     <span>Đăng nhập</span>
                   </div>
-                  <div
-                    style={{ display: "flex", alignItems: "center", gap: 6 }}
-                  >
-                    <ShoppingCartOutlined />
-                    <span>Giỏ hàng</span>
-                  </div>
                 </>
               )}
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                  cursor: "pointer",
+                }}
+                onClick={() => navigate("/cart")}
+              >
+                <ShoppingCartOutlined />
+                <span>Giỏ hàng</span>
+              </div>
             </div>
           </div>
         </Col>

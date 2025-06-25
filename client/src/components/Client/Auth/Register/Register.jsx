@@ -8,12 +8,12 @@ const Register = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => { 
     e.preventDefault();
     setMessage("");
     try {
       const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/register`,
+        `${import.meta.env.REACT_APP_API_BASE_URL}/auth/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

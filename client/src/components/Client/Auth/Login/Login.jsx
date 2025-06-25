@@ -1,8 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
+import { loginApi } from "../../../services/authApi";
 
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const [message, setMessage] = useState("");
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -11,25 +16,20 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/auth/login`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        }
-      );
-      const data = await res.json();
+      const data = await loginApi(form); // Gọi API từ service
+
       if (data.status === "OK") {
+        const { token, user } = data.data;
+        login(token, user); // Gọi login từ context
         setMessage("Đăng nhập thành công!");
-        // Lưu token vào localStorage nếu muốn
-        // localStorage.setItem("token", data.data.token);
-        // Chuyển hướng sang trang chính nếu cần
+        navigate("/");
       } else {
         setMessage(data.message || "Đăng nhập thất bại!");
       }
-    } catch {
+    } catch (err) {
+      console.error("Lỗi login:", err);
       setMessage("Có lỗi xảy ra. Vui lòng thử lại.");
     }
   };
