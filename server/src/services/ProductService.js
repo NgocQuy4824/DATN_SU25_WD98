@@ -1,6 +1,6 @@
 const Product = require("../models/ProductsModel");
-const Size = require("../models/SizeModel")
-const mongoose = require('mongoose');
+const Size = require("../models/SizeModel");
+const mongoose = require("mongoose");
 
 //thêm sản phẩm
 const createProduct = async (newProduct) => {
@@ -89,7 +89,7 @@ const updateProduct = async (productId, data) => {
 const getDetailsProduct = async (productId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const product = await Product.findById(productId);
+      const product = await Product.findById(productId).populate("category");
       if (!product) {
         return resolve({
           status: "ERROR",
@@ -243,7 +243,7 @@ const getProductsBySize = async (sizeId) => {
     // Tìm sản phẩm có ít nhất 1 variant có size phù hợp
     const products = await Product.find({ "variants.size": sizeId })
       .populate("variants.size") // populate size
-      .populate("category");   
+      .populate("category");
 
     return {
       status: "OK",
@@ -268,5 +268,5 @@ module.exports = {
   hideProduct,
   showProduct,
   getHighlightProducts,
-  getProductsBySize
+  getProductsBySize,
 };
