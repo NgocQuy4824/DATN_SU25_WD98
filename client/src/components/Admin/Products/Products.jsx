@@ -62,14 +62,14 @@ const Products = () => {
   };
 
   const handleSubmit = (productData) => {
-    if (editingProduct) {
-      updateProduct({ id: editingProduct._id, data: productData });
-    } else {
-      createProduct(productData);
-    }
-    setModalOpen(false);
-    setEditingProduct(null);
-  };
+  if (editingProduct) {
+    updateProduct({ id: editingProduct._id, formData: productData }); //  ĐÚNG
+  } else {
+    createProduct(productData);
+  }
+  setModalOpen(false);
+  setEditingProduct(null);
+};
 
   const handleCancel = () => {
     setEditingProduct(null);

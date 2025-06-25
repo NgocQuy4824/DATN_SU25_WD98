@@ -3,21 +3,87 @@ import React, { useEffect } from 'react'
 import FormComponent from '../../FormComponent/FormComponent';
 
 
-const ModalCustom = ({ form, open, onCancel, onSubmit, initialValues = [], isEdit, setEditingProduct, isLoading, setActiveStatus }) => {
-
+const ModalCustom = ({
+  form,
+  open,
+  onCancel,
+  onSubmit,
+  initialValues = [],
+  isEdit,
+  setEditingProduct,
+  isLoading,
+  setActiveStatus,
+}) => {
   useEffect(() => {
     if (open && initialValues) {
-      form.setFieldsValue(initialValues);
+      const formattedInitialValues = { ...initialValues };
+
+      if (Array.isArray(initialValues.variants)) {
+      const backendURL = 'http://localhost:3001';
+
+formattedInitialValues.variants = initialValues.variants.map((variant, index) => {
+  let formattedImage = [];
+
+  if (typeof variant.image === 'string') {
+    const fileName = variant.image.split('/').pop();
+    const isFullUrl = variant.image.startsWith('http');
+
+    formattedImage = [
+      {
+        uid: `-variant-${index}`,
+        name: fileName,
+        status: 'done',
+        url: isFullUrl
+          ? variant.image
+          : `${backendURL}/uploads/${fileName}`,
+        type: 'image/jpeg', // cần thiết để AntD render thumbnail
+      },
+    ];
+  }
+
+  return {
+    ...variant,
+    image: formattedImage,
+  };
+});
+
+
+
+      }
+
+      form.setFieldsValue(formattedInitialValues);
     }
   }, [open, initialValues, form]);
 
-  const handleFinish = (values) => {
-    // Mặc định khi cập nhật thì không chọn Lưu ẩn/hiển thị, nên giữ nguyên trạng thái cũ
-    const productData = isEdit
-      ? { ...values, isActive: initialValues?.isActive }
-      : values;
+  const handleFinish = async (values) => {
+    const formData = new FormData();
 
-    onSubmit(productData);
+    formData.append('name', values.name);
+    formData.append('category', values.category);
+    formData.append('price', values.price);
+    formData.append('discount', values.discount);
+    formData.append('description', values.description || '');
+
+    const variants = values.variants.map((v) => {
+      const { image, ...rest } = v;
+
+      if (Array.isArray(image)) {
+        const fileObj = image[0];
+        if (fileObj?.originFileObj) {
+          formData.append('images', fileObj.originFileObj);
+        } else if (fileObj?.url) {
+          const fileName = fileObj.url.split('/').pop(); // lấy tên ảnh cũ
+          rest.image = fileName;
+        }
+      }
+
+      return rest;
+    });
+
+    formData.append('variants', JSON.stringify(variants));
+    formData.append('isActive', isEdit ? initialValues?.isActive : true);
+
+    onSubmit(formData);
     form.resetFields();
     setEditingProduct(null);
   };
@@ -25,14 +91,45 @@ const ModalCustom = ({ form, open, onCancel, onSubmit, initialValues = [], isEdi
   const handleSubmitStatus = async (status) => {
     try {
       const values = await form.validateFields();
-      const productData = { ...values, isActive: status };
-      onSubmit(productData);
+      const formData = buildFormData(values, status);
+      onSubmit(formData);
       form.resetFields();
       setEditingProduct(null);
       onCancel();
     } catch (errorInfo) {
-      console.log(errorInfo)
+      console.log(errorInfo);
     }
+  };
+
+  const buildFormData = (values, isActive) => {
+    const formData = new FormData();
+
+    formData.append('name', values.name);
+    formData.append('category', values.category);
+    formData.append('price', values.price);
+    formData.append('discount', values.discount);
+    formData.append('description', values.description || '');
+
+    const variants = values.variants.map((v) => {
+      const { image, ...rest } = v;
+
+      if (Array.isArray(image)) {
+        const fileObj = image[0];
+        if (fileObj?.originFileObj) {
+          formData.append('images', fileObj.originFileObj);
+        } else if (fileObj?.url) {
+          const fileName = fileObj.url.split('/').pop();
+          rest.image = fileName;
+        }
+      }
+
+      return rest;
+    });
+
+    formData.append('variants', JSON.stringify(variants));
+    formData.append('isActive', isActive);
+
+    return formData;
   };
 
   return (
@@ -51,37 +148,28 @@ const ModalCustom = ({ form, open, onCancel, onSubmit, initialValues = [], isEdi
         <FormComponent />
         <Form.Item>
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
-            <Button danger onClick={() => {
-              form.resetFields();
-              setEditingProduct(null);
-              onCancel();
-            }}>
+            <Button
+              danger
+              onClick={() => {
+                form.resetFields();
+                setEditingProduct(null);
+                onCancel();
+              }}
+            >
               Hủy
             </Button>
             {!isEdit && (
               <>
-                <Button
-                  type="default"
-                  onClick={() => handleSubmitStatus(false)} // Lưu ẩn
-                  loading={isLoading}
-                >
+                <Button type="default" onClick={() => handleSubmitStatus(false)} loading={isLoading}>
                   Lưu & Ẩn
                 </Button>
-                <Button
-                  type="primary"
-                  onClick={() => handleSubmitStatus(true)} // Lưu hiển thị
-                  loading={isLoading}
-                >
+                <Button type="primary" onClick={() => handleSubmitStatus(true)} loading={isLoading}>
                   Lưu & Hiển thị
                 </Button>
               </>
             )}
             {isEdit && (
-              <Button
-                type="primary"
-                htmlType="submit"
-                loading={isLoading}
-              >
+              <Button type="primary" htmlType="submit" loading={isLoading}>
                 Cập nhật
               </Button>
             )}
@@ -89,7 +177,7 @@ const ModalCustom = ({ form, open, onCancel, onSubmit, initialValues = [], isEdi
         </Form.Item>
       </Form>
     </Modal>
-  )
-}
+  );
+};
 
-export default ModalCustom
+export default ModalCustom;

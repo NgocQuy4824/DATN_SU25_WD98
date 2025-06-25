@@ -17,13 +17,22 @@ export const deleteProduct = async (productId) => {
 };
 
 export const createProduct = async (productData) => {
-  const response = await API.post("/product/create", productData);
+  const response = await API.post('/product/create', productData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
   return response.data;
 };
 
-export const updateProduct = async (productId, updatedData) => {
-  const response = await API.put(`/product/update/${productId}`, updatedData);
-  return response.data;
+
+export const updateProduct = async ({ id, formData }) => {
+  const res = await API.put(`/product/update/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return res.data;
 };
 
 export const hideProduct = async (productId) => {
