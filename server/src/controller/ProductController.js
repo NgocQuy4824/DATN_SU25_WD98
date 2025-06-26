@@ -4,40 +4,112 @@ const ProductService = require("../services/ProductService");
 const createProduct = async (req, res) => {
   try {
     const {
-      name = "",
-      category = "",
+      name = '',
+      category = '',
       price = 0,
       discount = 0,
-      variants = [],
-      description = "",
+      description = '',
+      variants,
+      isActive,
     } = req.body;
+
     if (!name || !category || !price || !discount || !variants) {
-      return res.status(400).json({ message: "Bắt buộc phải nhập" });
+      return res.status(400).json({ message: 'Bắt buộc phải nhập đầy đủ thông tin' });
     }
-    const response = await ProductService.createProduct(req.body);
-    return res.status(response?.status === "ERROR" ? 400 : 200).json(response);
+
+    const parsedVariants = JSON.parse(variants);
+
+    if (!req.files || req.files.length !== parsedVariants.length) {
+      return res.status(400).json({ message: 'Số lượng ảnh không khớp với biến thể' });
+    }
+
+    parsedVariants.forEach((variant, index) => {
+      const file = req.files[index];
+
+      if (file?.path || file?.secure_url || file?.url) {
+        // Ưu tiên secure_url (Cloudinary), fallback sang path/url nếu cần
+        variant.image = file.secure_url || file.path || file.url;
+      } else {
+        throw new Error('Thiếu đường dẫn ảnh Cloudinary');
+      }
+    });
+
+    const response = await ProductService.createProduct({
+      name,
+      category,
+      price,
+      discount,
+      description,
+      variants: parsedVariants,
+      isActive: isActive === 'false' ? false : true,
+    });
+
+    return res.status(200).json(response);
   } catch (error) {
-    console.log(error);
+    console.error('Lỗi createProduct:', error);
+    return res.status(500).json({ message: 'Lỗi server khi tạo sản phẩm' });
   }
 };
+
+
+
 
 // cập nhật sản phẩm
 const updateProduct = async (req, res) => {
   try {
-    const productId = req.params.id; // lấy id từ params
-    const data = req.body; // lấy dữ liệu từ body
-    if (!productId) {
+    const productId = req.params.id;
+    const {
+      name = '',
+      category = '',
+      price = 0,
+      discount = 0,
+      description = '',
+      variants,
+      isActive,
+    } = req.body;
+
+    if (!productId || !variants) {
       return res.status(400).json({
-        status: "ERROR",
-        message: "ID sản phẩm không hợp lệ",
+        status: 'ERROR',
+        message: 'Thiếu dữ liệu đầu vào',
       });
     }
-    const response = await ProductService.updateProduct(productId, data);
-    return res.status(200).json(response);
+
+    const parsedVariants = JSON.parse(variants);
+    const files = req.files || [];
+
+    parsedVariants.forEach((variant, index) => {
+      if (files[index]) {
+        variant.image = files[index].path; // ✅ Cloudinary URL
+      }
+
+      if (!variant.image) {
+        throw new Error(`Biến thể thứ ${index + 1} thiếu trường ảnh`);
+      }
+    });
+
+    const dataUpdate = {
+      name,
+      category,
+      price,
+      discount,
+      description,
+      variants: parsedVariants,
+    };
+
+    if (isActive !== undefined) {
+      dataUpdate.isActive = typeof isActive === 'string' ? isActive === 'true' : Boolean(isActive);
+    }
+
+    const response = await ProductService.updateProduct(productId, dataUpdate);
+    return res.status(response?.status === 'ERROR' ? 400 : 200).json(response);
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ message: 'Lỗi server khi cập nhật sản phẩm' });
   }
 };
+
+
 
 // lấy chi tiết sản phẩm
 const getDetailsProduct = async (req, res) => {

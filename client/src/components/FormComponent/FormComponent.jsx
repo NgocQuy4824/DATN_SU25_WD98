@@ -1,4 +1,4 @@
-import { Button, Form, Input, InputNumber, Select, Space } from 'antd';
+import { Button, Form, Input, InputNumber, Select, Space, Upload } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import React from 'react'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
@@ -54,13 +54,41 @@ const FormComponent = () => {
               <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
 
                 {/* Ảnh */}
-                <Form.Item
-                  {...restField}
-                  name={[name, 'image']}
-                  rules={[{ required: true, message: 'Vui lòng nhập URL ảnh biến thể' }]}
-                >
-                  <Input placeholder="Ảnh biến thể" />
-                </Form.Item>
+               <Form.Item
+        {...restField}
+        name={[name, 'image']}
+        valuePropName="fileList"
+        getValueFromEvent={(e) => {
+          if (!e || !e.fileList) return [];
+          return e.fileList;
+        }}
+        rules={[{ required: true, message: 'Vui lòng chọn ảnh biến thể' }]}
+      >
+        <Upload
+          listType="picture-card"
+          maxCount={1}
+          accept="image/*"
+          beforeUpload={() => false}
+          showUploadList={{ showPreviewIcon: true }}
+          onPreview={(file) => {
+            const src = file.url || (file.response && file.response.url);
+            const image = new Image();
+            image.src = src;
+            const imgWindow = window.open(src);
+            if (imgWindow) {
+              imgWindow.document.write(image.outerHTML);
+            }
+          }}
+        >
+          <div>
+            <PlusOutlined />
+            <div style={{ marginTop: 8 }}>Upload</div>
+          </div>
+        </Upload>
+</Form.Item>
+
+
+
 
                 {/* Màu */}
                 <Form.Item

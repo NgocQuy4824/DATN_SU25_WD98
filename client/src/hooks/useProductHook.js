@@ -65,7 +65,7 @@ export const useUpdateProduct = (onSuccessCallback) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, data }) => updateProduct(id, data),
+    mutationFn: (formDataWithId) => updateProduct(formDataWithId),
     onSuccess: (data) => {
       toast.success("Cập nhật sản phẩm thành công");
       queryClient.invalidateQueries(["products"]);

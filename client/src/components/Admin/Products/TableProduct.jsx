@@ -73,6 +73,7 @@ const TableComponent = ({ onEdit, onDelete, products, loading , handleToggleVisi
                                     width={50}
                                     height={50}
                                     src={variant.image}
+
                                     style={{ objectFit: 'cover', borderRadius: 4 }}
                                     preview={false}
                                 />
