@@ -9,7 +9,7 @@ const register = async ({ name, email, password }) => {
   const user = new User({ name, email, password });
   await user.save();
 
-  const token = generateToken({ userId: user._id, role: user.role });
+  const token = generateToken({ userId: user._id, role: user.role }, "1h");
   const { password: _, ...userData } = user.toObject();
 
   return {
@@ -31,7 +31,7 @@ const login = async ({ email, password }) => {
     return { status: "ERROR", message: "Mật khẩu không đúng" };
   }
 
-  const token = generateToken({ userId: user._id, role: user.role });
+  const token = generateToken({ userId: user._id, role: user.role },"1h");
 
   const { password: _, ...userData } = user.toObject();
 
