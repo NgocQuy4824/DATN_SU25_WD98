@@ -1,48 +1,98 @@
-const AuthService = require("../services/AuthService");
+
+// const bcrypt = require("bcrypt");
+
+const { register, login } = require("../services/AuthService");
 const {
-  registerSchema,
-  loginSchema,
-} = require("../validations/authValidations");
+  generateAccessToken,
+  generateRefreshToken,
+  verifyAccessToken,
+  verifyRefreshToken,
+} = require("../utils/jwt");
 
-const validateInput = (schema, data) => {
-  const { error, value } = schema.validate(data, { abortEarly: false });
-  if (error) {
-    return {
-      valid: false,
-      message: error.details.map((e) => e.message),
-    };
-  }
-  return { valid: true, value };
-};
 
-const register = async (req, res) => {
+const registerController = async (req, res) => {
   try {
-    const { valid, value, message } = validateInput(registerSchema, req.body);
-    if (!valid) return res.status(400).json({ status: "ERROR", message });
+    const result = await register(req.body);
 
-    const response = await AuthService.register(value);
-    return res.status(response.status === "ERROR" ? 400 : 200).json(response);
+    if (result.status === "OK") {
+      res.cookie("refreshToken", result.data.refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+    }
+
+    res.status(result.status === "OK" ? 201 : 400).json(result);
   } catch (err) {
-    console.error(err);
-    return res
-      .status(500)
-      .json({ status: "ERROR", message: "Internal Server Error" });
+    res.status(500).json({
+      status: "ERROR",
+      message: "Đăng ký thất bại",
+      error: err.message,
+    });
   }
 };
 
-const login = async (req, res) => {
+const loginController = async (req, res) => {
   try {
-    const { valid, value, message } = validateInput(loginSchema, req.body);
-    if (!valid) return res.status(400).json({ status: "ERROR", message });
+    const result = await login(req.body);
 
-    const response = await AuthService.login(value);
-    return res.status(response.status === "ERROR" ? 400 : 200).json(response);
+    if (result.status === "OK") {
+      res.cookie("refreshToken", result.data.refreshToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+    }
+
+    res.status(result.status === "OK" ? 200 : 400).json(result);
   } catch (err) {
-    console.error(err);
-    return res
-      .status(500)
-      .json({ status: "ERROR", message: "Internal Server Error" });
+    res.status(500).json({
+      status: "ERROR",
+      message: "Đăng nhập thất bại",
+      error: err.message,
+    });
   }
 };
 
-module.exports = { register, login };
+const refreshTokenController = (req, res) => {
+  const token = req.cookies.refreshToken;
+  if (!token) {
+    return res.status(401).json({
+      status: "ERROR",
+      message: "Không có refresh token",
+    });
+  }
+
+  try {
+    const decoded = verifyRefreshToken(token);
+    const accessToken = generateAccessToken({
+      userId: decoded.userId,
+      role: decoded.role,
+    });
+
+    res.json({
+      status: "OK",
+      message: "Làm mới token thành công",
+      data: { accessToken },
+    });
+  } catch (err) {
+    res.status(403).json({
+      status: "ERROR",
+      message: "Refresh token không hợp lệ hoặc hết hạn",
+    });
+  }
+};
+
+const logoutController = (req, res) => {
+  res.clearCookie("refreshToken");
+  res.json({ status: "OK", message: "Đăng xuất thành công" });
+};
+
+module.exports = {
+  registerController,
+  loginController,
+  refreshTokenController,
+  logoutController,
+};

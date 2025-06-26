@@ -18,11 +18,11 @@ const Login = () => {
     setMessage("");
 
     try {
-      const data = await loginApi(form); // Gọi API từ service
+      const data = await loginApi(form);
 
       if (data.status === "OK") {
-        const { token, user } = data.data;
-        login(token, user); // Gọi login từ context
+        const { accessToken, user } = data.data; 
+        login(accessToken, user);
         setMessage("Đăng nhập thành công!");
         navigate("/");
       } else {

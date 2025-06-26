@@ -11,21 +11,26 @@ const SignUpPage = () => {
   const navigate = useNavigate();
 
   const onFinish = async (values) => {
-    const { confirm, ...submitData } = values;
+  const { confirm, ...submitData } = values;
 
-    try {
-      const res = await registerApi(submitData);
-      localStorage.setItem("token", res.data.token);
-      toast.success("Đăng ký thành công!");
+  try {
+    const res = await registerApi(submitData);
+
+    if (res.status === "OK") {
+      localStorage.setItem("token", res.data.token); 
+      toast.success(res.message || "Đăng ký thành công!");
       navigate("/signin");
-    } catch (err) {
-      toast.error(
-        err.response?.data?.message?.[0] ||
-          err.response?.data?.message ||
-          "Đăng ký thất bại"
-      );
+    } else {
+      toast.error(res.message || "Đăng ký thất bại");
     }
-  };
+  } catch (err) {
+    toast.error(
+      err.response?.data?.message?.[0] ||
+        err.response?.data?.message ||
+        "Đăng ký thất bại"
+    );
+  }
+};
 
   return (
     <div
