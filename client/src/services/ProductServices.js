@@ -49,3 +49,8 @@ export const getHighlightProducts = async () => {
   const response = await API.get("/product/get-highlight");
   return response.data;
 };
+
+export const getProductDetail = async (productId) => {
+  const response = await API.get(`/product/details/${productId}`);
+  return response.data;
+};

@@ -5,6 +5,7 @@ import {
   deleteProduct,
   getAllProducts,
   getHighlightProducts,
+  getProductDetail,
   hideProduct,
   showProduct,
   updateProduct,
@@ -110,7 +111,7 @@ export const useShowProduct = (onSuccessCallback) => {
     },
   });
 };
-
+// lấy sản phẩm theo active: true
 export const useHighlightProducts = () => {
   return useQuery({
     queryKey: ["highlightProducts"],
@@ -118,5 +119,14 @@ export const useHighlightProducts = () => {
     onError: () => {
       toast.error("Lấy sản phẩm nổi bật thất bại");
     },
+  });
+};
+/// lấy sản phẩm theo id
+export const useProductDetail = (id) => {
+  return useQuery({
+    queryKey: ["productDetail", id],
+    queryFn: () => getProductDetail(id),
+    enabled: !!id, // chỉ gọi khi có id
+    onError: () => toast.error("Lấy chi tiết sản phẩm thất bại"),
   });
 };

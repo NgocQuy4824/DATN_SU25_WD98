@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 
 const Card = styled.div`
-  width: 250px;
+  width: 230px;
   height: 350px;
   border-radius: 8px;
   background: #fff;
@@ -93,7 +93,11 @@ const ProductCard = ({ product }) => {
   const firstVariant = product?.variants?.[0];
 
   return (
-    <Card onClick={() => navigate(`/product/${product._id}`)}>
+    <Card
+      onClick={() =>
+        navigate(`/products/${product._id}`, { state: { from: "home" } })
+      }
+    >
       <ImageWrapper>
         <ProductImage src={firstVariant?.image} alt={product.name} />
       </ImageWrapper>
