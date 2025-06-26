@@ -1,33 +1,35 @@
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+require('dotenv').config();
+const cloudinary = require('cloudinary').v2;
 
-// Tạo thư mục lưu trữ nếu chưa tồn tại
-const uploadPath = path.join(__dirname, '../../public/uploads');
-if (!fs.existsSync(uploadPath)) {
-  fs.mkdirSync(uploadPath, { recursive: true });
-}
-
-// Cấu hình nơi lưu file và tên file
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, uploadPath);
-  },
-  filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${file.originalname}`;
-    cb(null, uniqueName);
-  }
+// Cấu hình Cloudinary từ biến môi trường
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Kiểm tra loại file (chỉ cho ảnh)
+
+// Cấu hình nơi lưu trữ là Cloudinary
+const storage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: 'product_images', // Thư mục trên Cloudinary
+    allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
+    transformation: [{ width: 800, height: 800, crop: 'limit' }],
+  },
+});
+
+// Tạo middleware upload với filter cho ảnh
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /jpeg|jpg|png|gif/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+  const extname = allowedTypes.test(file.originalname.toLowerCase());
   const mimetype = allowedTypes.test(file.mimetype);
   if (extname && mimetype) {
     cb(null, true);
   } else {
-    cb(new Error('Chỉ cho phép file ảnh'));
+    cb(new Error('Chỉ cho phép file ảnh jpeg, jpg, png, gif'));
   }
 };
 

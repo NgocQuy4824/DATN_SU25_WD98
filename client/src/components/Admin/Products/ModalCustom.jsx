@@ -19,36 +19,26 @@ const ModalCustom = ({
       const formattedInitialValues = { ...initialValues };
 
       if (Array.isArray(initialValues.variants)) {
-      const backendURL = 'http://localhost:3001';
+        formattedInitialValues.variants = initialValues.variants.map((variant, index) => {
+          let formattedImage = [];
 
-formattedInitialValues.variants = initialValues.variants.map((variant, index) => {
-  let formattedImage = [];
+          if (typeof variant.image === 'string') {
+            formattedImage = [
+              {
+                uid: `-variant-${index}`,
+                name: `image-${index}`,
+                status: 'done',
+                url: variant.image, // ✅ dùng luôn Cloudinary URL
+                type: 'image/jpeg',
+              },
+            ];
+          }
 
-  if (typeof variant.image === 'string') {
-    const fileName = variant.image.split('/').pop();
-    const isFullUrl = variant.image.startsWith('http');
-
-    formattedImage = [
-      {
-        uid: `-variant-${index}`,
-        name: fileName,
-        status: 'done',
-        url: isFullUrl
-          ? variant.image
-          : `${backendURL}/uploads/${fileName}`,
-        type: 'image/jpeg', // cần thiết để AntD render thumbnail
-      },
-    ];
-  }
-
-  return {
-    ...variant,
-    image: formattedImage,
-  };
-});
-
-
-
+          return {
+            ...variant,
+            image: formattedImage,
+          };
+        });
       }
 
       form.setFieldsValue(formattedInitialValues);
@@ -56,33 +46,7 @@ formattedInitialValues.variants = initialValues.variants.map((variant, index) =>
   }, [open, initialValues, form]);
 
   const handleFinish = async (values) => {
-    const formData = new FormData();
-
-    formData.append('name', values.name);
-    formData.append('category', values.category);
-    formData.append('price', values.price);
-    formData.append('discount', values.discount);
-    formData.append('description', values.description || '');
-
-    const variants = values.variants.map((v) => {
-      const { image, ...rest } = v;
-
-      if (Array.isArray(image)) {
-        const fileObj = image[0];
-        if (fileObj?.originFileObj) {
-          formData.append('images', fileObj.originFileObj);
-        } else if (fileObj?.url) {
-          const fileName = fileObj.url.split('/').pop(); // lấy tên ảnh cũ
-          rest.image = fileName;
-        }
-      }
-
-      return rest;
-    });
-
-    formData.append('variants', JSON.stringify(variants));
-    formData.append('isActive', isEdit ? initialValues?.isActive : true);
-
+    const formData = buildFormData(values, isEdit ? initialValues?.isActive : true);
     onSubmit(formData);
     form.resetFields();
     setEditingProduct(null);
@@ -115,11 +79,13 @@ formattedInitialValues.variants = initialValues.variants.map((variant, index) =>
 
       if (Array.isArray(image)) {
         const fileObj = image[0];
+
         if (fileObj?.originFileObj) {
+          // Ảnh mới (từ Upload)
           formData.append('images', fileObj.originFileObj);
         } else if (fileObj?.url) {
-          const fileName = fileObj.url.split('/').pop();
-          rest.image = fileName;
+          // Ảnh cũ (đã là URL Cloudinary)
+          rest.image = fileObj.url;
         }
       }
 
