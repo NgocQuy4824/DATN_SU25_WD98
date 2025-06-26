@@ -31,6 +31,7 @@ import {
   TopSection,
   Wrapper,
 } from "./style";
+import ModalPickSize from "./ModalPickSize/ModalPickSize";
 
 const { Title, Paragraph } = Typography;
 
@@ -45,6 +46,7 @@ const ProductsDetailPage = () => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [showFullDesc, setShowFullDesc] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const product = data?.data;
 
@@ -206,6 +208,23 @@ const ProductsDetailPage = () => {
                 </ToggleButton>
               )}
             </DescriptionWrapper>
+            <div
+              onClick={() => setIsModalOpen(true)}
+              style={{
+                cursor: "pointer",
+                color: "#1677ff",
+                marginTop: "16px",
+              }}
+            >
+              <Title level={4} style={{ margin: 0 }}>
+                Hướng dẫn chọn Size
+              </Title>
+            </div>
+
+            <ModalPickSize
+              isModalOpen={isModalOpen}
+              setIsModalOpen={setIsModalOpen}
+            />
           </InfoSection>
         </TopSection>
       </Wrapper>
