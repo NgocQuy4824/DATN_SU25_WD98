@@ -1,5 +1,12 @@
-// src/context/AuthContext.js
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import { jwtDecode } from "jwt-decode";
+import { refreshTokenApi } from "../services/AuthServices";
 
 const AuthContext = createContext();
 
@@ -7,29 +14,47 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem("token");
+  const login = useCallback((accessToken, user) => {
+    setToken(accessToken);
+    setUser(user);
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("user", JSON.stringify(user));
+  }, []);
+
+  const logout = useCallback(() => {
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("user");
+  }, []);
+
+  //  kiểm tra token hết hạn
+  const checkTokenExpiration = useCallback(async () => {
+    const storedToken = localStorage.getItem("accessToken");
     const storedUser = localStorage.getItem("user");
 
     if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+      try {
+        const decoded = jwtDecode(storedToken);
+        const isExpired = decoded.exp * 1000 < Date.now();
+
+        if (isExpired) {
+          const res = await refreshTokenApi();
+          login(res.accessToken, JSON.parse(storedUser));
+        } else {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (err) {
+        console.error("Lỗi kiểm tra token:", err);
+        logout();
+      }
     }
-  }, []);
+  }, [login, logout]);
 
-  const login = (token, user) => {
-    setToken(token);
-    setUser(user);
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-  };
-
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-  };
+  useEffect(() => {
+    checkTokenExpiration();
+  }, [checkTokenExpiration]);
 
   return (
     <AuthContext.Provider value={{ token, user, login, logout }}>
@@ -37,5 +62,6 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
 
 export const useAuth = () => useContext(AuthContext);

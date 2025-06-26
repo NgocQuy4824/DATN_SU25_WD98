@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { registerApi } from "../../../../services/AuthServices";
 
 const Register = () => {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
@@ -8,25 +9,19 @@ const Register = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => { 
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
+
     try {
-      const res = await fetch(
-        `${import.meta.env.REACT_APP_API_BASE_URL}/auth/register`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(form),
-        }
-      );
-      const data = await res.json();
+      const data = await registerApi(form);
       if (data.status === "OK") {
-        setMessage("Đăng ký thành công! Vui lòng kiểm tra email để xác nhận.");
+        setMessage("Đăng ký thành công! Vui lòng đăng nhập.");
       } else {
         setMessage(data.message || "Đăng ký thất bại!");
       }
-    } catch {
+    } catch (err) {
+      console.error("Lỗi đăng ký:", err);
       setMessage("Có lỗi xảy ra. Vui lòng thử lại.");
     }
   };
