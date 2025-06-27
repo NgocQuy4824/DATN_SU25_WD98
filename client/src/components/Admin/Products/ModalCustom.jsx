@@ -28,7 +28,7 @@ const ModalCustom = ({
                 uid: `-variant-${index}`,
                 name: `image-${index}`,
                 status: 'done',
-                url: variant.image, // ✅ dùng luôn Cloudinary URL
+                url: variant.image, // dùng luôn Cloudinary URL
                 type: 'image/jpeg',
               },
             ];

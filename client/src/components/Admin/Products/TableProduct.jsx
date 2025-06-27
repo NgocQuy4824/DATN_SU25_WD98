@@ -138,7 +138,7 @@ const TableComponent = ({ onEdit, onDelete, products, loading , handleToggleVisi
 
 
     return (
-        <Table rowKey="id" columns={columns} dataSource={paginatedData} loading={loading} pagination={paginationConfig} />
+        <Table rowKey="_id" columns={columns} dataSource={paginatedData} loading={loading} pagination={paginationConfig} />
     );
 }
 export default TableComponent;

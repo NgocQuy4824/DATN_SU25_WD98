@@ -63,7 +63,7 @@ const Products = () => {
 
   const handleSubmit = (productData) => {
   if (editingProduct) {
-    updateProduct({ id: editingProduct._id, formData: productData }); //  ĐÚNG
+    updateProduct({ id: editingProduct._id, formData: productData }); 
   } else {
     createProduct(productData);
   }

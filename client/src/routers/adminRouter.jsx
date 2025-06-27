@@ -6,24 +6,35 @@ import Category from "../components/Admin/Variants/Category/Category.jsx";
 import Statistic from "../components/Admin/Statistic/Statistic.jsx";
 import Variants from "../components/Admin/Variants/Variants.jsx";
 import Size from "../components/Admin/Variants/Size/Size.jsx";
+import { PrivateRouter } from "./privateRouter.jsx";
+
+
 
 
 
 export const adminRoutes = [
   {
-    path: '/system/admin',
-    element: <AdminLayout />,
+    path: "/system/admin",
+    element: <PrivateRouter requiredRole="admin" />,
     children: [
-      { path: 'products', element: <Products /> },
-      { path: 'users', element: <User /> },
-      { path: 'orders', element: <Order /> },
-      { path: 'variants', element: <Variants />,
+      {
+        path: "",
+        element: <AdminLayout />,
         children: [
-          { path: 'category', element: <Category /> },
-          { path: 'size' , element: <Size/> }
-        ]
-       },
-      { path: 'statistics', element: <Statistic /> },
+          { path: "products", element: <Products /> },
+          { path: "users", element: <User /> },
+          { path: "orders", element: <Order /> },
+          {
+            path: "variants",
+            element: <Variants />,
+            children: [
+              { path: "category", element: <Category /> },
+              { path: "size", element: <Size /> },
+            ],
+          },
+          { path: "statistics", element: <Statistic /> },
+        ],
+      },
     ],
   },
 ];
