@@ -13,6 +13,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [user, setUser] = useState(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   const login = useCallback((accessToken, user) => {
     setToken(accessToken);
@@ -50,6 +51,7 @@ export const AuthProvider = ({ children }) => {
         logout();
       }
     }
+    setIsAuthLoading(false);
   }, [login, logout]);
 
   useEffect(() => {
@@ -57,7 +59,7 @@ export const AuthProvider = ({ children }) => {
   }, [checkTokenExpiration]);
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout }}>
+    <AuthContext.Provider value={{ token, user, login, logout,isAuthLoading }}>
       {children}
     </AuthContext.Provider>
   );

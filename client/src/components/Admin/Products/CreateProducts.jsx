@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import ModalCustom from './ModalCustom';
-import FormComponent from '../../FormComponent/FormComponent';
 import { useCreateProduct } from '../../../hooks/useCreateProduct';
 import { Form } from 'antd';
 

@@ -1,36 +1,61 @@
-import React from "react";
-import { Col } from "antd";
-import TopNavBar from "../Client/TopNavBar";
+import { Col, Dropdown, Menu } from "antd";
 import {
-  IdcardOutlined,
   ShoppingCartOutlined,
   UserOutlined,
-  LogoutOutlined,
 } from "@ant-design/icons";
 import { WrapperHeader, WrapperHeaderLogo } from "./style";
-import ButtonInputSearch from "../Client/ButtonInputSearch/ButtonInputSearch";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import TopNavBar from "../Client/TopNavBar";
+import ButtonInputSearch from "../Client/ButtonInputSearch/ButtonInputSearch";
+import React from "react";
 
 const HeaderComponent = ({ isAdmin = false }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
-
-  const handleLoginClick = () => navigate("/signin");
-  const handleRegisterClick = () => navigate("/signup");
 
   const handleLogout = () => {
     logout();
     navigate("/");
   };
 
+  const menuItems = [
+    user?.role === "admin" && {
+      key: "admin",
+      label: "Quản trị",
+      onClick: () => navigate("/system/admin"),
+    },
+    {
+      key: "profile",
+      label: "Thông tin",
+      onClick: () => navigate("/profile"),
+    },
+    {
+      key: "orders",
+      label: "Đơn hàng",
+      onClick: () => navigate("/orders"),
+    },
+    {
+      key: "logout",
+      label: "Đăng xuất",
+      onClick: handleLogout,
+      danger: true,
+    },
+  ].filter(Boolean);
+
+  const accountMenu = (
+    <Menu items={menuItems.map(({ key, label, onClick, danger }) => ({
+      key,
+      label: <span onClick={onClick}>{label}</span>,
+      danger,
+    }))} />
+  );
+
   return (
     <div>
       {!isAdmin && <TopNavBar />}
       <WrapperHeader>
-        <WrapperHeaderLogo flex={1} style={{ paddingRight: "10px" }}>
-          PaceRun
-        </WrapperHeaderLogo>
+        <WrapperHeaderLogo flex={1}>PaceRun</WrapperHeaderLogo>
 
         {!isAdmin && (
           <div style={{ flex: "none" }}>
@@ -38,97 +63,42 @@ const HeaderComponent = ({ isAdmin = false }) => {
           </div>
         )}
 
-        <Col flex={2}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              flexWrap: "wrap",
-              justifyContent: "flex-end",
-              gap: 8,
-            }}
-          >
+        <Col flex={2} style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            {user ? (
+              <>
+                <Dropdown overlay={accountMenu} placement="bottomRight" arrow>
+                  <div style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+                    <UserOutlined />
+                    <span>Tài khoản</span>
+                  </div>
+                </Dropdown>
+              </>
+            ) : (
+              <>
+                <div
+                  style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                  onClick={() => navigate("/signup")}
+                >
+                  <UserOutlined />
+                  <span>Đăng ký</span>
+                </div>
+                <div
+                  style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                  onClick={() => navigate("/signin")}
+                >
+                  <UserOutlined />
+                  <span>Đăng nhập</span>
+                </div>
+              </>
+            )}
+
             <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 16,
-                whiteSpace: "nowrap",
-              }}
+              style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+              onClick={() => navigate("/cart")}
             >
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <IdcardOutlined />
-                <span>Tài Khoản</span>
-              </div>
-
-              {user ? (
-                <>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                      cursor: "pointer",
-                    }}
-                  >
-                    <UserOutlined />
-                    <span>{user.name || "Đã đăng nhập"}</span>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                      cursor: "pointer",
-                      color: "red",
-                    }}
-                    onClick={handleLogout}
-                  >
-                    <LogoutOutlined />
-                    <span>Đăng xuất</span>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                      cursor: "pointer",
-                    }}
-                    onClick={handleRegisterClick}
-                  >
-                    <UserOutlined />
-                    <span>Đăng ký</span>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 6,
-                      cursor: "pointer",
-                    }}
-                    onClick={handleLoginClick}
-                  >
-                    <UserOutlined />
-                    <span>Đăng nhập</span>
-                  </div>
-                </>
-              )}
-
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                  cursor: "pointer",
-                }}
-                onClick={() => navigate("/cart")}
-              >
-                <ShoppingCartOutlined />
-                <span>Giỏ hàng</span>
-              </div>
+              <ShoppingCartOutlined />
+              <span>Giỏ hàng</span>
             </div>
           </div>
         </Col>
