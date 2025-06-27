@@ -1,4 +1,4 @@
-const { verifyToken } = require("../utils/jwt");
+const { verifyAccessToken } = require("../utils/jwt");
 
 const authenticate = (req, res, next) => {
 
@@ -12,7 +12,9 @@ const authenticate = (req, res, next) => {
     const token = authHeader.split(" ")[1];
     //giải mã token
     try {
-        const decoded = verifyToken(token);
+        console.log("token", token);
+        
+        const decoded = verifyAccessToken(token);
         //gắn với userId và role tương ứng với token đó
         req.userId = decoded.userId;
         req.role = decoded.role;

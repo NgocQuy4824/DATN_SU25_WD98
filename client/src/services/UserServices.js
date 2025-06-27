@@ -11,3 +11,8 @@ export const getAllUsers = async () => {
     };
     return sortedData;
 }
+
+export const getProfileApi = async () => {
+  const response = await API.get("/user/profile");
+  return { ...response.data };
+};

@@ -7,5 +7,15 @@ const API = axios.create({
   },
 });
 
+API.interceptors.request.use(
+  (config) => {
+    const accessToken = localStorage.getItem('accessToken'); // hoặc lấy từ context nếu bạn lưu trong memory
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export default API;
