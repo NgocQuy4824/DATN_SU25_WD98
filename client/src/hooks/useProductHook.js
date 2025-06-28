@@ -6,6 +6,7 @@ import {
   getAllProducts,
   getHighlightProducts,
   getProductDetail,
+  getProductDetailSameSize,
   hideProduct,
   showProduct,
   updateProduct,
@@ -130,3 +131,15 @@ export const useProductDetail = (id) => {
     onError: () => toast.error("Lấy chi tiết sản phẩm thất bại"),
   });
 };
+
+//lấy sản phẩm cùng size
+export const useProductsSameSize = (sizeId, productId) => {
+  return useQuery({
+    queryKey: ["productsSameSize", sizeId, productId],
+    queryFn: () => getProductDetailSameSize(sizeId, productId),
+    enabled: !!sizeId && !!productId,
+    onError: () => {
+      toast.error("Lấy sản phẩm cùng size thất bại");
+    },
+  });
+}

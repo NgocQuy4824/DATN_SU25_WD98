@@ -212,6 +212,7 @@ const getHighlightProducts = async (req, res) => {
 const getProductsBySize = async (req, res) => {
   try {
     const { sizeId } = req.params;
+    const { excludeProductId } = req.query;
 
     if (!sizeId) {
       return res.status(400).json({
@@ -220,7 +221,7 @@ const getProductsBySize = async (req, res) => {
       });
     }
 
-    const response = await ProductService.getProductsBySize(sizeId);
+    const response = await ProductService.getProductsBySize(sizeId, excludeProductId);
     return res.status(response.status === "OK" ? 200 : 404).json(response);
   } catch (error) {
     console.error("Lỗi khi lấy sản phẩm theo size:", error);
@@ -230,6 +231,7 @@ const getProductsBySize = async (req, res) => {
     });
   }
 };
+
 
 
 module.exports = {
