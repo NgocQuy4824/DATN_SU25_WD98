@@ -5,7 +5,7 @@ import { Typography } from "antd";
 const { Paragraph } = Typography;
 
 export const Wrapper = styled.div`
-  max-width: 1024px;
+  max-width: 1250px;
   margin: 24px auto;
   padding: 24px;
   border: 1px solid #f0f0f0;

@@ -229,7 +229,9 @@ const getHighlightProducts = async () => {
 };
 
 //hiển thị sp chi tiết theo kích thước
-const getProductsBySize = async (sizeId) => {
+// services/ProductService.js
+
+const getProductsBySize = async (sizeId, excludeProductId) => {
   try {
     // Kiểm tra sizeId có tồn tại không
     const size = await Size.findById(sizeId);
@@ -240,9 +242,18 @@ const getProductsBySize = async (sizeId) => {
       };
     }
 
-    // Tìm sản phẩm có ít nhất 1 variant có size phù hợp
-    const products = await Product.find({ "variants.size": sizeId })
-      .populate("variants.size") // populate size
+    const filter = {
+      "variants.size": sizeId,
+      isActive: true,
+    };
+
+    // Nếu có excludeProductId thì loại trừ sản phẩm hiện tại
+    if (excludeProductId) {
+      filter._id = { $ne: excludeProductId };
+    }
+
+    const products = await Product.find(filter)
+      .populate("variants.size")
       .populate("category");
 
     return {
@@ -258,6 +269,7 @@ const getProductsBySize = async (sizeId) => {
     };
   }
 };
+
 
 module.exports = {
   createProduct,

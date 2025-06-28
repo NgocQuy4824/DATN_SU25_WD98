@@ -54,3 +54,12 @@ export const getProductDetail = async (productId) => {
   const response = await API.get(`/product/details/${productId}`);
   return response.data;
 };
+
+export const getProductDetailSameSize = async (sizeId, productId) => {
+  const res = await API.get(`/product/by-size/${sizeId}`, {
+    params: {
+      excludeProductId: productId,
+    },
+  });
+  return res.data?.data;
+};

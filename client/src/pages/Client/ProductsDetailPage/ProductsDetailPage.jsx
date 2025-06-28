@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 
-import { useParams, useLocation, Link } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import { useSizeOptions } from "../../../hooks/useSizeOptions";
-import { Spin, Typography, Tag, Button, Radio, Breadcrumb } from "antd";
+import { Spin, Typography, Tag, Button } from "antd";
 
 import { useProductDetail } from "../../../hooks/useProductHook";
 
@@ -32,8 +32,10 @@ import {
   Wrapper,
 } from "./style";
 import ModalPickSize from "./ModalPickSize/ModalPickSize";
+import ProductSameSize from "./ProductSameSize/ProductSameSize";
+import BreadcrumbsNav from "./BreadcrumbNav/BreadcrumNav";
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 
 const ProductsDetailPage = () => {
   const { id } = useParams();
@@ -48,6 +50,7 @@ const ProductsDetailPage = () => {
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const from = location.state?.from;
   const product = data?.data;
 
   useEffect(() => {
@@ -82,23 +85,10 @@ const ProductsDetailPage = () => {
     }
   };
 
-  const from = location.state?.from;
-
-  let breadcrumbItems = [{ title: <Link to="/">Trang chủ</Link> }];
-
-  if (from === "products") {
-    breadcrumbItems.push({ title: <Link to="/products">Sản phẩm</Link> });
-  }
-
-  breadcrumbItems.push({ title: "Trang chi tiết" });
 
   return (
     <>
-      <Breadcrumb
-        separator=">"
-        style={{ margin: "8px 120px 24px" }}
-        items={breadcrumbItems}
-      />
+      <BreadcrumbsNav from={from} />
       <Wrapper>
         <TopSection>
           <ImageWrapper>
@@ -226,9 +216,13 @@ const ProductsDetailPage = () => {
               setIsModalOpen={setIsModalOpen}
             />
           </InfoSection>
-        </TopSection>
+        </TopSection> <br />
+        <ClauseComponent /> <br />
+        <div>
+          <h3 style={{ fontSize: '25px' }} >Sản phẩm gợi ý</h3>
+          <ProductSameSize sizeId={activeVariant?.size} productId={product._id} />
+        </div>
       </Wrapper>
-      <ClauseComponent />
     </>
   );
 };
