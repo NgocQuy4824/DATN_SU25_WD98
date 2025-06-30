@@ -12,8 +12,6 @@ const authenticate = (req, res, next) => {
     const token = authHeader.split(" ")[1];
     //giải mã token
     try {
-        console.log("token", token);
-        
         const decoded = verifyAccessToken(token);
         //gắn với userId và role tương ứng với token đó
         req.userId = decoded.userId;

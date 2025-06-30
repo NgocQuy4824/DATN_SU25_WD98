@@ -52,44 +52,38 @@ const FormComponent = () => {
             <label><b>Biến thể</b></label>
             {fields.map(({ key, name, ...restField }, index) => (
               <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
-
-                {/* Ảnh */}
-               <Form.Item
-        {...restField}
-        name={[name, 'image']}
-        valuePropName="fileList"
-        getValueFromEvent={(e) => {
-          if (!e || !e.fileList) return [];
-          return e.fileList;
-        }}
-        rules={[{ required: true, message: 'Vui lòng chọn ảnh biến thể' }]}
-      >
-        <Upload
-          listType="picture-card"
-          maxCount={1}
-          accept="image/*"
-          beforeUpload={() => false}
-          showUploadList={{ showPreviewIcon: true }}
-          onPreview={(file) => {
-            const src = file.url || (file.response && file.response.url);
-            const image = new Image();
-            image.src = src;
-            const imgWindow = window.open(src);
-            if (imgWindow) {
-              imgWindow.document.write(image.outerHTML);
-            }
-          }}
-        >
-          <div>
-            <PlusOutlined />
-            <div style={{ marginTop: 8 }}>Upload</div>
-          </div>
-        </Upload>
-</Form.Item>
-
-
-
-
+                <Form.Item
+                  {...restField}
+                  name={[name, 'image']}
+                  valuePropName="fileList"
+                  getValueFromEvent={(e) => {
+                    if (!e || !e.fileList) return [];
+                    return e.fileList;
+                  }}
+                  rules={[{ required: true, message: 'Vui lòng chọn ảnh biến thể' }]}
+                >
+                  <Upload
+                    listType="picture-card"
+                    maxCount={1}
+                    accept="image/*"
+                    beforeUpload={() => false}
+                    showUploadList={{ showPreviewIcon: true }}
+                    onPreview={(file) => {
+                      const src = file.url || (file.response && file.response.url);
+                      const image = new Image();
+                      image.src = src;
+                      const imgWindow = window.open(src);
+                      if (imgWindow) {
+                        imgWindow.document.write(image.outerHTML);
+                      }
+                    }}
+                  >
+                    <div>
+                      <PlusOutlined />
+                      <div style={{ marginTop: 8 }}>Upload</div>
+                    </div>
+                  </Upload>
+                </Form.Item>
                 {/* Màu */}
                 <Form.Item
                   {...restField}
@@ -124,7 +118,7 @@ const FormComponent = () => {
                   name={[name, 'countInStock']}
                   rules={[{ required: true, message: 'Vui lòng nhập số lượng tồn kho' }]}
                 >
-                  <InputNumber placeholder="Số lượng kho" min={0} style={{ width: 120 }} />
+                  <InputNumber placeholder="Số lượng kho" min={0} style={{ width: 120 }} precision={0} />
                 </Form.Item>
 
                 <MinusCircleOutlined onClick={() => remove(name)} />

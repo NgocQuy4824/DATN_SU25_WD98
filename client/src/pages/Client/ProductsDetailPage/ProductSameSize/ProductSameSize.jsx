@@ -18,7 +18,7 @@ const ProductSameSize = ({ sizeId, productId }) => {
     <Row gutter={[16, 16]}>
       {sameSizeProducts.map((product) => (
         <Col xs={24} sm={12} md={8} lg={6} key={product._id}>
-          <Link to={`/product/${product._id}`}>
+          <Link to={`/products/${product._id}`}>
             <Card
               hoverable
               cover={
