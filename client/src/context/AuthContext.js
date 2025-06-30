@@ -59,11 +59,12 @@ export const AuthProvider = ({ children }) => {
   }, [checkTokenExpiration]);
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout,isAuthLoading }}>
+    <AuthContext.Provider
+      value={{ user, setUser, token, login, logout, isAuthLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
-
 
 export const useAuth = () => useContext(AuthContext);

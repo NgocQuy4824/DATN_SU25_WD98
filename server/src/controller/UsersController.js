@@ -1,4 +1,5 @@
 const User = require("../models/UserModel");
+const asyncHandler = require("../helpers/asyncHandler");
 const UserService = require("../services/UsersService");
 
 // Lấy toàn bộ người dùng
@@ -31,17 +32,17 @@ const getProfile = async (req, res) => {
 };
 
 // Cập nhật thông tin người dùng (không xử lý files)
-const updateProfile = async (req, res) => {
-  try {
-    const userId = req.body.userId || req.query.userId;
-    const data = req.body;
+// const updateProfile = async (req, res) => {
+//   try {
+//     const userId = req.body.userId || req.query.userId;
+//     const data = req.body;
 
-    const response = await UserService.updateProfile(userId, data);
-    return res.status(response?.status === "ERROR" ? 400 : 200).json(response);
-  } catch (error) {
-    console.log(error);
-  }
-};
+//     const response = await UserService.updateProfile(userId, data);
+//     return res.status(response?.status === "ERROR" ? 400 : 200).json(response);
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
 
 // Đổi mật khẩu
 const changePassword = async (req, res) => {
@@ -49,7 +50,11 @@ const changePassword = async (req, res) => {
     const userId = req.body.userId || req.query.userId;
     const { password, newPassword } = req.body;
 
-    const response = await UserService.changePassword(userId, password, newPassword);
+    const response = await UserService.changePassword(
+      userId,
+      password,
+      newPassword
+    );
     return res.status(response?.status === "ERROR" ? 400 : 200).json(response);
   } catch (error) {
     console.log(error);
@@ -68,6 +73,16 @@ const forgotPassword = async (req, res) => {
     console.log(error);
   }
 };
+
+// @PATCH /api/users/profile
+const updateProfile = asyncHandler(async (req, res) => {
+  const userId = req.userId; // lấy từ middleware authenticate
+  const file = req.files?.avatar || [];
+  const body = req.body;
+
+  const response = await UserService.updateProfile(userId, body, file);
+  return res.status(200).json(response);
+});
 
 module.exports = {
   getAllUsers,

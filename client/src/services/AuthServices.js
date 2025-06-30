@@ -24,3 +24,15 @@ export const logoutApi = async () => {
   const res = await API.post("/logout");
   return res.data;
 };
+
+export const updateProfileApi = async (data) => {
+  // Nếu có upload file (avatar), dùng FormData
+  const formData = new FormData();
+  Object.keys(data).forEach((key) => {
+    formData.append(key, data[key]);
+  });
+  const res = await API.patch("/profile", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+  return res.data;
+};

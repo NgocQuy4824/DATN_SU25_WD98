@@ -1,11 +1,20 @@
 import React from "react";
-import { Card, Typography, Form, Input, Button, Row, Col, Avatar, Skeleton, Breadcrumb } from "antd";
+import {
+  Card,
+  Typography,
+  Form,
+  Input,
+  Button,
+  Row,
+  Col,
+  Avatar,
+  Skeleton,
+  Breadcrumb,
+} from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useGetProfile } from "../../../hooks/useUsersHook";
-
-
 
 const { Title } = Typography;
 
@@ -13,7 +22,7 @@ const ProfilePage = () => {
   const { user, isAuthLoading, logout } = useAuth();
   const navigate = useNavigate();
 
-  useGetProfile()
+  useGetProfile();
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -25,8 +34,13 @@ const ProfilePage = () => {
 
   return (
     <>
-      <Breadcrumb style={{ marginBottom: 24, paddingLeft: '150px', cursor: 'pointer' }}>
-        <Breadcrumb.Item onClick={() => navigate('/')} style={{ cursor: "pointer" }}>
+      <Breadcrumb
+        style={{ marginBottom: 24, paddingLeft: "150px", cursor: "pointer" }}
+      >
+        <Breadcrumb.Item
+          onClick={() => navigate("/")}
+          style={{ cursor: "pointer" }}
+        >
           Trang chủ
         </Breadcrumb.Item>
         <Breadcrumb.Item>Thông tin người dùng</Breadcrumb.Item>
@@ -34,7 +48,11 @@ const ProfilePage = () => {
       <Row gutter={[32, 32]} justify="center" style={{ padding: "40px 20px" }}>
         <Col xs={24} md={6}>
           <Card
-            style={{ textAlign: "center", border: "none", background: "transparent" }}
+            style={{
+              textAlign: "center",
+              border: "none",
+              background: "transparent",
+            }}
             bodyStyle={{ padding: 0 }}
           >
             <Avatar
@@ -54,7 +72,12 @@ const ProfilePage = () => {
                   Quản lý Admin
                 </Button>
               )}
-              <Button block style={{ marginTop: 24 }} danger onClick={handleLogout}>
+              <Button
+                block
+                style={{ marginTop: 24 }}
+                danger
+                onClick={handleLogout}
+              >
                 Đăng xuất
               </Button>
             </div>
@@ -87,7 +110,12 @@ const ProfilePage = () => {
 
               <Row gutter={16}>
                 <Col span={12}>
-                  <Button block type="primary">
+                  <Button
+                    block
+                    type="primary"
+                    style={{ marginBottom: 8 }}
+                    onClick={() => navigate("/profile/update")}
+                  >
                     Cập nhật thông tin
                   </Button>
                 </Col>

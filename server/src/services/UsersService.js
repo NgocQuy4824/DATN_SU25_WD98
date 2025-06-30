@@ -1,7 +1,6 @@
 const User = require("../models/UserModel");
-const bcrypt = require('bcrypt');
-
-
+const bcrypt = require("bcrypt");
+const customResponse = require("../helpers/customResponse");
 
 // Get all users
 const getAllUsers = async () => {
@@ -34,24 +33,51 @@ const getProfile = async (userId) => {
 };
 
 // Update user profile (bỏ upload avatar)
-const updateProfile = async (userId, data) => {
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return { status: "ERROR", message: "Không tìm thấy người dùng" };
-    }
+// const updateProfile = async (userId, data) => {
+//   try {
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return { status: "ERROR", message: "Không tìm thấy người dùng" };
+//     }
 
-    user.set(data);
-    await user.save();
+//     user.set(data);
+//     await user.save();
 
-    return {
-      status: "OK",
-      message: "Cập nhật thông tin thành công",
-    };
-  } catch (error) {
-    console.error(error);
-    return { status: "ERROR", message: "Cập nhật thông tin thất bại" };
+//     return {
+//       status: "OK",
+//       message: "Cập nhật thông tin thành công",
+//     };
+//   } catch (error) {
+//     console.error(error);
+//     return { status: "ERROR", message: "Cập nhật thông tin thất bại" };
+//   }
+// };
+
+const updateProfile = async (userId, data, avatarFile) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    return customResponse({
+      success: false,
+      message: "Không tìm thấy người dùng",
+      status: 404,
+    });
   }
+
+  // Xử lý avatar từ Cloudinary
+  if (avatarFile.length > 0) {
+    user.avatar = avatarFile[0].path;
+    user.imageUrlRef = avatarFile[0].filename; // Để sau này dùng để xóa nếu cần
+  }
+
+  user.set(data);
+  await user.save();
+
+  return customResponse({
+    success: true,
+    message: "Cập nhật thông tin thành công",
+    status: 200,
+    data: user,
+  });
 };
 
 // Change password

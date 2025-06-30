@@ -1,7 +1,7 @@
-const multer = require('multer');
-const { CloudinaryStorage } = require('multer-storage-cloudinary');
-require('dotenv').config();
-const cloudinary = require('cloudinary').v2;
+const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+require("dotenv").config();
+const cloudinary = require("cloudinary").v2;
 
 // Cấu hình Cloudinary từ biến môi trường
 cloudinary.config({
@@ -10,14 +10,13 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-
 // Cấu hình nơi lưu trữ là Cloudinary
 const storage = new CloudinaryStorage({
   cloudinary,
   params: {
-    folder: 'product_images', // Thư mục trên Cloudinary
-    allowed_formats: ['jpg', 'jpeg', 'png', 'gif'],
-    transformation: [{ width: 800, height: 800, crop: 'limit' }],
+    folder: "product_images", // Thư mục trên Cloudinary
+    allowed_formats: ["jpg", "jpeg", "png", "gif"],
+    transformation: [{ width: 800, height: 800, crop: "limit" }],
   },
 });
 
@@ -29,7 +28,7 @@ const fileFilter = (req, file, cb) => {
   if (extname && mimetype) {
     cb(null, true);
   } else {
-    cb(new Error('Chỉ cho phép file ảnh jpeg, jpg, png, gif'));
+    cb(new Error("Chỉ cho phép file ảnh jpeg, jpg, png, gif"));
   }
 };
 
