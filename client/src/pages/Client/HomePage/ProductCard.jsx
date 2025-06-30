@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import { ShoppingCartOutlined } from "@ant-design/icons";
+import ModalAddToCart from "../Cart/ModalAddToCart/ModalAddToCart";
 
 const Card = styled.div`
   width: 230px;
@@ -122,33 +123,58 @@ const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const firstVariant = product?.variants?.[0];
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [selectedVariant, setSelectedVariant] = useState(firstVariant);
+  const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState(firstVariant?.size);
+  const [selectedColor, setSelectedColor] = useState(firstVariant?.color);
+
 
   const handleAddToCart = (e) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
+    setIsModalOpen(true)
     //api giỏ hàng
   };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
   return (
-    <Card
-      onClick={() =>
-        navigate(`/products/${product._id}`, { state: { from: "home" } })
-      }
-    >
-      <ImageWrapper>
-        <ProductImage src={firstVariant?.image} alt={product.name} />
-        <AddToCartButton className="add-to-cart-btn" onClick={handleAddToCart}>
-          <ShoppingCartOutlined /> Thêm giỏ hàng
-        </AddToCartButton>
-      </ImageWrapper>
-      <ProductContent>
-        <ProductName>{product.name}</ProductName>
-        <AuthBadge>Hàng chính hãng 100%</AuthBadge>
-        <PriceRow>
-          <Price>{(product.price || 0).toLocaleString()}₫</Price>
-          {product.discount > 0 && <Discount>-{product.discount}%</Discount>}
-        </PriceRow>
-      </ProductContent>
-    </Card>
+    <>
+      <Card
+        onClick={() =>
+          navigate(`/products/${product._id}`, { state: { from: "home" } })
+        }
+      >
+        <ImageWrapper>
+          <ProductImage src={firstVariant?.image} alt={product.name} />
+          <AddToCartButton className="add-to-cart-btn" onClick={handleAddToCart}>
+            <ShoppingCartOutlined /> Thêm giỏ hàng
+          </AddToCartButton>
+        </ImageWrapper>
+        <ProductContent>
+          <ProductName>{product.name}</ProductName>
+          <AuthBadge>Hàng chính hãng 100%</AuthBadge>
+          <PriceRow>
+            <Price>{(product.price || 0).toLocaleString()}₫</Price>
+            {product.discount > 0 && <Discount>-{product.discount}%</Discount>}
+          </PriceRow>
+        </ProductContent>
+      </Card>
+
+      <ModalAddToCart
+        open={isModalOpen}
+        onClose={handleCloseModal}
+        product={product}
+        variants={product.variants}  
+        variant={selectedVariant}
+        quantity={quantity}
+        selectedSize={selectedSize}
+        selectedColor={selectedColor}
+      />
+    </>
   );
 };
 

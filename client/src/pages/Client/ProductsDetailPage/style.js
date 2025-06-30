@@ -178,7 +178,7 @@ export const AddToCartButton = styled.button`
   position: absolute;
   bottom: 8px;
   left: 50%;
-  transform: translate(-50%, 10px); /* ban đầu dịch xuống dưới */
+  transform: translate(-50%, 10px); 
   opacity: 0;
   transition: all 0.3s ease;
   background-color: #1677ff;

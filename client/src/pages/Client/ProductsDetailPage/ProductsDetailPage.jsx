@@ -10,7 +10,6 @@ import ClauseComponent from "../../../components/ClauseComponent/ClauseComponent
 import { ShoppingCartOutlined, ThunderboltOutlined } from "@ant-design/icons";
 import {
   ActionButtons,
-  AddToCartButton,
   BuyButton,
   ClampedParagraph,
   DescriptionWrapper,
@@ -97,29 +96,21 @@ const ProductsDetailPage = () => {
             <Image src={activeImage} alt="product" />
             <Thumbnails>
               {product.variants.map((variant, index) => (
-    <ThumbnailWrapper key={index}>
-      <ThumbnailImage
-        src={variant.image}
-        alt={`variant-${index}`}
-        onClick={() => {
-          setActiveImage(variant.image);
-          setSelectedColor(variant.color);
-          setSelectedSize(null);
-          setActiveVariant(variant);
-        }}
-        className={activeImage === variant.image ? "active" : ""}
-      />
-      <AddToCartButton className="add-to-cart-btn"
-        onClick={(e) => {
-          e.stopPropagation(); // tránh click lan sang thumbnail
-          console.log("Clicked thêm giỏ hàng:", variant);
-          // TODO: mở popup hoặc thêm vào giỏ hàng
-        }}
-      >
-        Thêm vào giỏ hàng
-      </AddToCartButton>
-    </ThumbnailWrapper>
-  ))}
+                <ThumbnailWrapper key={index}>
+                  <ThumbnailImage
+                    src={variant.image}
+                    alt={`variant-${index}`}
+                    onClick={() => {
+                      setActiveImage(variant.image);
+                      setSelectedColor(variant.color);
+                      setSelectedSize(null);
+                      setActiveVariant(variant);
+                    }}
+                    className={activeImage === variant.image ? "active" : ""}
+                  />
+
+                </ThumbnailWrapper>
+              ))}
             </Thumbnails>
           </ImageWrapper>
 
@@ -171,7 +162,7 @@ const ProductsDetailPage = () => {
                 ))}
               </RadioGroupWrapper>
             </OptionGroup>
-
+            
             <QuantityWrapper>
               <strong>Số lượng:</strong>
               <QuantityControl>
