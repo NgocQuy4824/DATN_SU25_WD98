@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { ShoppingCartOutlined } from "@ant-design/icons";
 
 const Card = styled.div`
   width: 230px;
@@ -14,10 +15,16 @@ const Card = styled.div`
   border: 1px solid #f0f0f0;
   display: flex;
   flex-direction: column;
+  position: relative;
 
   &:hover {
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
+  }
+
+   &:hover .add-to-cart-btn {
+    opacity: 1;
+    transform: translate(-50%, 0);
   }
 `;
 
@@ -31,10 +38,33 @@ const ImageWrapper = styled.div`
   justify-content: center;
 `;
 
+const AddToCartButton = styled.button`
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translate(-50%, 10px);
+  opacity: 0;
+  transition: all 0.3s ease;
+  background-color: #1677ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &:hover {
+    background-color: #0958d9;
+  }
+`;
+
 const ProductImage = styled.img`
   width: 100%;
   height: 100%;
-  object-fit: cover; /* Luôn fit vừa khung hình, giữ tỉ lệ */
+  object-fit: cover;
   display: block;
 `;
 
@@ -51,21 +81,21 @@ const ProductName = styled.div`
   color: #222;
   font-weight: 00;
   margin-bottom: 4px;
-  white-space: nowrap; /* Chỉ hiển thị 1 dòng */
-  overflow: hidden; /* Ẩn phần vượt quá */
-  text-overflow: ellipsis; /* Hiển thị dấu "..." */
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
 `;
 
 const AuthBadge = styled.div`
   display: inline-block;
   background-color: #fef0f0;
   color: #d0011b;
-  font-size: 13px; /* Tăng kích thước chữ */
+  font-size: 13px;
   font-weight: 600;
-  padding: 2px 6px; /* Padding vừa với chữ */
+  padding: 2px 6px; 
   border-radius: 4px;
   margin-bottom: 4px;
-  width: fit-content; /* Vừa với nội dung */
+  width: fit-content; 
 `;
 
 const PriceRow = styled.div`
@@ -92,6 +122,12 @@ const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const firstVariant = product?.variants?.[0];
 
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation(); 
+    //api giỏ hàng
+  };
+
   return (
     <Card
       onClick={() =>
@@ -100,6 +136,9 @@ const ProductCard = ({ product }) => {
     >
       <ImageWrapper>
         <ProductImage src={firstVariant?.image} alt={product.name} />
+        <AddToCartButton className="add-to-cart-btn" onClick={handleAddToCart}>
+          <ShoppingCartOutlined /> Thêm giỏ hàng
+        </AddToCartButton>
       </ImageWrapper>
       <ProductContent>
         <ProductName>{product.name}</ProductName>

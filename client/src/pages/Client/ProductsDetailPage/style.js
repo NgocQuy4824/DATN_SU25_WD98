@@ -162,3 +162,34 @@ export const ToggleButton = styled.div`
   margin-top: 8px;
   user-select: none;
 `;
+
+export const ThumbnailWrapper = styled.div`
+  position: relative;
+  width: calc((100% - 16px) / 3); /* cùng kích thước với ThumbnailImage */
+  height: 100px;
+
+  &:hover .add-to-cart-btn {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+export const AddToCartButton = styled.button`
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translate(-50%, 10px); /* ban đầu dịch xuống dưới */
+  opacity: 0;
+  transition: all 0.3s ease;
+  background-color: #1677ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0958d9;
+  }
+`;
