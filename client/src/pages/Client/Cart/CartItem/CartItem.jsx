@@ -3,6 +3,7 @@ import { Row, Col, Typography, Button, Checkbox } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import UpdateQuantity from "../UpdateQuantity/UpdateQuantity";
+import { useRemoveCartItem, useUpdateCartItemQuantity } from "../../../../hooks/useCartHook";
 
 const { Text } = Typography;
 
@@ -12,6 +13,23 @@ const ItemWrapper = styled.div`
 `;
 
 const CartItem = ({ item, }) => {
+
+  const removeCartItemMutation = useRemoveCartItem();
+  const updateQuantityMutation = useUpdateCartItemQuantity();
+
+  const handleRemove = () => {
+    removeCartItemMutation.mutate(item.variantId);
+  };
+
+  const handleChangeQuantity = (newQuantity) => {
+    updateQuantityMutation.mutate({
+      productId: item.productId,
+      variantId: item.variantId,
+      quantity: newQuantity,
+    });
+  };
+
+
   return (
     <ItemWrapper>
       <Row align="middle" gutter={16}>
@@ -28,13 +46,13 @@ const CartItem = ({ item, }) => {
           <Text strong>{item.price.toLocaleString()} ₫</Text>
         </Col>
         <Col>
-          <UpdateQuantity value={item.quantity} min={1} onChange={newQuantity => { console.log("Update quantity:", item.id, newQuantity); }} />
+          <UpdateQuantity value={item.quantity} min={1} max={item.variant.countInStock} onChange={handleChangeQuantity} loading={updateQuantityMutation.isLoading} />
         </Col>
         <Col>
           <Text strong>{(item.price * item.quantity).toLocaleString()} ₫</Text>
         </Col>
         <Col>
-          <Button type="link" danger icon={<DeleteOutlined />} />
+          <Button type="link" onClick={handleRemove} danger icon={<DeleteOutlined />} />
         </Col>
       </Row>
     </ItemWrapper>

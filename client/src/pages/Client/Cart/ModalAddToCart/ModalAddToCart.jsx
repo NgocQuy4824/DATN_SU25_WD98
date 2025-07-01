@@ -134,10 +134,7 @@ const ModalAddToCart = ({
       <CartSide
         open={isCartDrawerOpen}
         onClose={() => setCartDrawerOpen(false)}
-        cartItems={[]}
-        totalPrice={[]}
-        onChangeQuantity={[]}
-        onRemoveItem={[]}
+        
       />
     </>
 
