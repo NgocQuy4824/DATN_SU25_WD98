@@ -28,7 +28,7 @@ const ModalCustom = ({
                 uid: `-variant-${index}`,
                 name: `image-${index}`,
                 status: 'done',
-                url: variant.image, // dùng luôn Cloudinary URL
+                url: variant.image,
                 type: 'image/jpeg',
               },
             ];
@@ -67,6 +67,7 @@ const ModalCustom = ({
 
   const buildFormData = (values, isActive) => {
     const formData = new FormData();
+    const variants = [];
 
     formData.append('name', values.name);
     formData.append('category', values.category);
@@ -74,22 +75,23 @@ const ModalCustom = ({
     formData.append('discount', values.discount);
     formData.append('description', values.description || '');
 
-    const variants = values.variants.map((v) => {
-      const { image, ...rest } = v;
+    values.variants.forEach((variant, index) => {
+      const { image, ...rest } = variant;
+      const newVariant = { ...rest };
 
-      if (Array.isArray(image)) {
+      if (Array.isArray(image) && image.length > 0) {
         const fileObj = image[0];
 
         if (fileObj?.originFileObj) {
-          // Ảnh mới (từ Upload)
+          // Ảnh mới
           formData.append('images', fileObj.originFileObj);
         } else if (fileObj?.url) {
-          // Ảnh cũ (đã là URL Cloudinary)
-          rest.image = fileObj.url;
+          // Ảnh cũ
+          newVariant.image = fileObj.url;
         }
       }
 
-      return rest;
+      variants.push(newVariant);
     });
 
     formData.append('variants', JSON.stringify(variants));
@@ -124,7 +126,7 @@ const ModalCustom = ({
             >
               Hủy
             </Button>
-            {!isEdit && (
+            {!isEdit ? (
               <>
                 <Button type="default" onClick={() => handleSubmitStatus(false)} loading={isLoading}>
                   Lưu & Ẩn
@@ -133,8 +135,7 @@ const ModalCustom = ({
                   Lưu & Hiển thị
                 </Button>
               </>
-            )}
-            {isEdit && (
+            ) : (
               <Button type="primary" htmlType="submit" loading={isLoading}>
                 Cập nhật
               </Button>

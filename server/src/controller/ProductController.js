@@ -19,18 +19,23 @@ const createProduct = async (req, res) => {
 
     const parsedVariants = JSON.parse(variants);
 
-    if (!req.files || req.files.length !== parsedVariants.length) {
-      return res.status(400).json({ message: 'Số lượng ảnh không khớp với biến thể' });
+    // Lấy các biến thể cần upload ảnh mới
+    const newImageVariants = parsedVariants.filter(v => !v.image);
+
+    if (!req.files || req.files.length !== newImageVariants.length) {
+      return res.status(400).json({ message: 'Số lượng ảnh không khớp với biến thể cần upload ảnh mới' });
     }
 
+    let fileIndex = 0;
     parsedVariants.forEach((variant, index) => {
-      const file = req.files[index];
-
-      if (file?.path || file?.secure_url || file?.url) {
-        // Ưu tiên secure_url (Cloudinary), fallback sang path/url nếu cần
-        variant.image = file.secure_url || file.path || file.url;
-      } else {
-        throw new Error('Thiếu đường dẫn ảnh Cloudinary');
+      if (!variant.image) {
+        const file = req.files[fileIndex];
+        if (file?.secure_url || file?.path) {
+          variant.image = file.secure_url || file.path;
+          fileIndex++;
+        } else {
+          throw new Error('Thiếu ảnh cho biến thể mới');
+        }
       }
     });
 
@@ -54,10 +59,11 @@ const createProduct = async (req, res) => {
 
 
 
+
+
 // cập nhật sản phẩm
 const updateProduct = async (req, res) => {
   try {
-    const productId = req.params.id;
     const {
       name = '',
       category = '',
@@ -68,46 +74,40 @@ const updateProduct = async (req, res) => {
       isActive,
     } = req.body;
 
-    if (!productId || !variants) {
-      return res.status(400).json({
-        status: 'ERROR',
-        message: 'Thiếu dữ liệu đầu vào',
-      });
+    if (!name || !category || !price || !discount || !variants) {
+      return res.status(400).json({ message: 'Thiếu thông tin bắt buộc' });
     }
 
     const parsedVariants = JSON.parse(variants);
-    const files = req.files || [];
+    let imageIndex = 0;
 
-    parsedVariants.forEach((variant, index) => {
-      if (files[index]) {
-        variant.image = files[index].path; // ✅ Cloudinary URL
-      }
-
-      if (!variant.image) {
-        throw new Error(`Biến thể thứ ${index + 1} thiếu trường ảnh`);
+    parsedVariants.forEach((variant) => {
+      if (!variant.image && req.files && req.files[imageIndex]) {
+        // Gán ảnh mới từ req.files theo thứ tự
+        const file = req.files[imageIndex];
+        variant.image = file.secure_url || file.path || file.url;
+        imageIndex++;
       }
     });
 
-    const dataUpdate = {
+    const updated = await ProductService.updateProduct(req.params.id, {
       name,
       category,
       price,
       discount,
       description,
       variants: parsedVariants,
-    };
+      isActive: isActive === 'false' ? false : true,
+    });
 
-    if (isActive !== undefined) {
-      dataUpdate.isActive = typeof isActive === 'string' ? isActive === 'true' : Boolean(isActive);
-    }
-
-    const response = await ProductService.updateProduct(productId, dataUpdate);
-    return res.status(response?.status === 'ERROR' ? 400 : 200).json(response);
+    return res.status(200).json(updated);
   } catch (error) {
-    console.log(error);
+    console.error('Lỗi updateProduct:', error);
     return res.status(500).json({ message: 'Lỗi server khi cập nhật sản phẩm' });
   }
 };
+
+
 
 
 
