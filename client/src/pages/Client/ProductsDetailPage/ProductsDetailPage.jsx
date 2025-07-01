@@ -51,6 +51,7 @@ const ProductsDetailPage = () => {
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+
   const from = location.state?.from;
   const product = data?.data;
 
@@ -71,10 +72,6 @@ const ProductsDetailPage = () => {
     .filter((v) => v.color === selectedColor)
     .map((v) => v.size);
 
-  const totalStock = product.variants.reduce(
-    (acc, v) => acc + (v.countInStock || 0),
-    0
-  );
 
   const handleColorChange = (color) => {
     setSelectedColor(color);
@@ -162,7 +159,7 @@ const ProductsDetailPage = () => {
                 ))}
               </RadioGroupWrapper>
             </OptionGroup>
-            
+
             <QuantityWrapper>
               <strong>Số lượng:</strong>
               <QuantityControl>
@@ -172,7 +169,7 @@ const ProductsDetailPage = () => {
                 <span>{quantity}</span>
                 <button onClick={() => setQuantity((q) => q + 1)}>+</button>
               </QuantityControl>
-              <span>SL sản phẩm còn lại: {totalStock}</span>
+              <span>SL sản phẩm còn lại: {activeVariant?.countInStock}</span>
             </QuantityWrapper>
 
             <ActionButtons>
