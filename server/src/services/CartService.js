@@ -81,8 +81,85 @@ const getMyCart = async (userId) => {
   return { status: 'OK', message: 'Lấy giỏ hàng thành công', data: { userId: cart.userId, items } };
 };
 
+//xóa all
+const removeAllCartItems = async (userId) => {
+  userId = new mongoose.Types.ObjectId(userId);
+
+  const cart = await Cart.findOne({ userId });
+  if (!cart) {
+    return { status: 'ERROR', message: 'Không tìm thấy giỏ hàng' };
+  }
+
+  cart.items = []; 
+  await cart.save();
+
+  return { status: 'OK', message: 'Đã xoá toàn bộ giỏ hàng', data: { userId, items: [] } };
+};
+
+//xóa từng sp
+const removeCartItem = async (userId, variantId) => {
+  userId = new mongoose.Types.ObjectId(userId);
+  variantId = new mongoose.Types.ObjectId(variantId);
+
+  const cart = await Cart.findOne({ userId });
+  if (!cart) {
+    return { status: 'ERROR', message: 'Không tìm thấy giỏ hàng' };
+  }
+
+  //nếu có sp trong giỏ hàng thì xóa k thì lỗi
+  const originalLength = cart.items.length;
+  cart.items = cart.items.filter(item => !item.variant.equals(variantId));
+
+  if (cart.items.length === originalLength) {
+    return { status: 'ERROR', message: 'Không tìm thấy sản phẩm trong giỏ hàng' };
+  }
+
+  await cart.save();
+
+  return { status: 'OK', message: 'Đã xoá sản phẩm khỏi giỏ hàng', data: cart };
+};
+
+//update số lượng
+const updateCartItemQuantity = async (userId, productId, variantId, quantity) => {
+  userId = new mongoose.Types.ObjectId(userId);
+  productId = new mongoose.Types.ObjectId(productId);
+  variantId = new mongoose.Types.ObjectId(variantId);
+  quantity = parseInt(quantity, 10);
+
+  const product = await Product.findById(productId).lean();
+  if (!product) {
+    return { status: 'ERROR', message: 'Không tìm thấy sản phẩm' };
+  }
+
+  const variant = product.variants.find(v => v._id.equals(variantId));
+  if (!variant) {
+    return { status: 'ERROR', message: 'Không tìm thấy biến thể' };
+  }
+
+  if (quantity < 1) quantity = 1;
+  if (quantity > variant.countInStock) quantity = variant.countInStock;
+
+  const cart = await Cart.findOne({ userId });
+  if (!cart) {
+    return { status: 'ERROR', message: 'Không tìm thấy giỏ hàng' };
+  }
+
+  const item = cart.items.find(item => item.variant.equals(variantId));
+  if (!item) {
+    return { status: 'ERROR', message: 'Không tìm thấy sản phẩm trong giỏ hàng' };
+  }
+
+  item.quantity = quantity;
+  await cart.save();
+
+  return { status: 'OK', message: 'Cập nhật số lượng thành công', data: cart };
+};
+
 
 module.exports = {
   addToCart,
-  getMyCart
+  getMyCart,
+  removeAllCartItems,
+  removeCartItem,
+  updateCartItemQuantity
 }
