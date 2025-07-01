@@ -1,9 +1,17 @@
 import React from "react";
 import { Card, Typography, Button } from "antd";
+import { useMyCart } from "../../../../hooks/useCartHook";
 
 const { Text } = Typography;
 
-const CartSummary = ({ totalItems = [], totalPrice = [] }) => {
+const CartSummary = ({ totalItems = 0 }) => {
+  const { data } = useMyCart();
+  const items = data?.data?.items || [];
+
+  const totalPrice = items.reduce((acc, item) => {
+    return acc + item.price * item.quantity;
+  }, 0);
+
   return (
     <Card bordered style={{ border: "1px solid red" }}>
       <div style={{ marginBottom: 12 }}>

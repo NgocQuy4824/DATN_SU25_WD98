@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { addToCart, getMyCart } from "../services/CartServices";
+import { addToCart, getMyCart, removeAllCart, removeCartItem, updateCartItemQuantity } from "../services/CartServices";
 
 export const useMyCart = () => {
   return useQuery({
@@ -23,6 +23,50 @@ export const useAddToCart = () => {
     },
     onError: () => {
       toast.error("Thêm vào giỏ hàng thất bại");
+    },
+  });
+};
+
+export const useRemoveAllCart = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: removeAllCart,
+    onSuccess: () => {
+      toast.success("Đã xoá toàn bộ giỏ hàng");
+      queryClient.invalidateQueries({ queryKey: ["carts"] });
+    },
+    onError: () => {
+      toast.error("Xoá giỏ hàng thất bại");
+    },
+  });
+};
+
+export const useRemoveCartItem = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: removeCartItem,
+    onSuccess: () => {
+      toast.success("Đã xoá sản phẩm khỏi giỏ");
+      queryClient.invalidateQueries({ queryKey: ["carts"] });
+    },
+    onError: () => {
+      toast.error("Xoá sản phẩm khỏi giỏ thất bại");
+    },
+  });
+};
+
+export const useUpdateCartItemQuantity = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateCartItemQuantity,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["carts"] });
+    },
+    onError: () => {
+      toast.error("Cập nhật số lượng thất bại");
     },
   });
 };

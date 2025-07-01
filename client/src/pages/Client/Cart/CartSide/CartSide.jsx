@@ -13,6 +13,10 @@ const CartSide = ({ open, onClose }) => {
 
     const items = data?.data?.items || [];
 
+    const totalPrice = items.reduce((acc, item) => {
+        return acc + item.price * item.quantity;
+    }, 0);
+
     return (
         <Drawer
             title="GIỎ HÀNG"
@@ -43,7 +47,7 @@ const CartSide = ({ open, onClose }) => {
                             <Text strong>TỔNG ĐƠN HÀNG:</Text>
                             <br />
                             <Text strong style={{ fontSize: 18, color: "red" }}>
-                                {/* ₫{totalPrice.toLocaleString()} */}
+                                ₫{totalPrice.toLocaleString()}
                             </Text>
                         </div>
                     </div>
