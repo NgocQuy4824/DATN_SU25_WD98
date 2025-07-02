@@ -12,8 +12,31 @@ const ItemWrapper = styled.div`
   padding: 12px 0;
 `;
 
-const CartItem = ({ item, }) => {
+const ProductName = styled.div`
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
+const Image = styled.img`
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 4px;
+`;
+
+const StyledCheckbox = styled(Checkbox)`
+  &.ant-checkbox-wrapper .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #1677ff;
+    border-color: #1677ff;
+  }
+  &.ant-checkbox-wrapper .ant-checkbox-checked::after {
+    border: 1px solid #1677ff;
+  }
+`;
+
+const CartItem = ({ item }) => {
   const removeCartItemMutation = useRemoveCartItem();
   const updateQuantityMutation = useUpdateCartItemQuantity();
 
@@ -29,34 +52,46 @@ const CartItem = ({ item, }) => {
     });
   };
 
-
   return (
     <ItemWrapper>
-      <Row align="middle" gutter={16}>
-        <Col>
-          <Checkbox checked={item.selected} />
+      <Row align="middle" gutter={12} wrap={false}>
+        <Col flex="32px">
+          <StyledCheckbox
+            checked={item.selected}
+            disabled
+          />
         </Col>
-        <Col>
-          <img src={item.variant?.image} alt="" style={{ width: 60, height: 60, objectFit: "cover" }} />
+        <Col flex="70px">
+          <Image src={item.variant?.image} alt={item.name} />
         </Col>
         <Col flex="auto">
-          <div><strong>{item.name}</strong></div>
-          <Text type="secondary">Màu Sắc: <b>{item.variant?.color}</b></Text><br />
-          <Text type="secondary">Kích Cỡ: {item.variant?.size?.name}</Text><br />
+          <ProductName title={item.name}>{item.name}</ProductName>
+          <Text type="secondary">Màu sắc: <b>{item.variant?.color}</b></Text><br />
+          <Text type="secondary">Kích cỡ: {item.variant?.size?.name}</Text><br />
           <Text strong>{item.price?.toLocaleString()} ₫</Text>
-          {/* cảnh báo khi có thay đổi sp ở giỏ hàng */}
           {item.warning && (
             <Alert message={item.warning} type="warning" showIcon style={{ marginTop: 8 }} />
           )}
         </Col>
-        <Col>
-          <UpdateQuantity value={item?.quantity} min={1} max={item.variant?.countInStock} onChange={handleChangeQuantity} loading={updateQuantityMutation.isLoading} />
+        <Col flex="100px">
+          <UpdateQuantity
+            value={item?.quantity}
+            min={1}
+            max={item.variant?.countInStock}
+            onChange={handleChangeQuantity}
+            loading={updateQuantityMutation.isLoading}
+          />
         </Col>
-        <Col>
+        <Col flex="100px" style={{ textAlign: "right" }}>
           <Text strong>{(item?.price * item?.quantity).toLocaleString()} ₫</Text>
         </Col>
-        <Col>
-          <Button type="link" onClick={handleRemove} danger icon={<DeleteOutlined />} />
+        <Col flex="40px" style={{ textAlign: "center" }}>
+          <Button
+            type="link"
+            onClick={handleRemove}
+            danger
+            icon={<DeleteOutlined />}
+          />
         </Col>
       </Row>
     </ItemWrapper>
