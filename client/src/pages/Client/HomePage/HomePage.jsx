@@ -1,5 +1,4 @@
 import React from "react";
-import TypeProducts from "../../../components/Client/TypeProducts/TypeProducts";
 import {
   ScrollButton,
   Title,
@@ -16,15 +15,9 @@ import { useHighlightProducts } from "../../../hooks/useProductHook";
 
 import ClauseComponent from "../../../components/ClauseComponent/ClauseComponent";
 import Footer from "../../../components/FooterComponent/FooterComponent";
+import { Link } from "react-router-dom";
 
 const HomePage = () => {
-  const arrType = [
-    { id: 1, name: "Giày Nam" },
-    { id: 2, name: "Giày Nữ" },
-    { id: 3, name: "Giày Trẻ Em" },
-    { id: 4, name: "Phụ Kiện" },
-    { id: 5, name: "Khuyến Mãi" },
-  ];
 
   const scrollRef = useRef();
 
@@ -46,9 +39,7 @@ const HomePage = () => {
     <>
       <div style={{ padding: "0 120px" }}>
         <WrapperTypeProduct>
-          {arrType.map((item) => (
-            <TypeProducts key={item.id} name={item.name} />
-          ))}
+          <Link to='/products' style={{textDecoration:"none"}} >Sản phẩm</Link>
         </WrapperTypeProduct>
         <SliderComponent arrImages={[anh4, anh5]} />
         <ClauseComponent />

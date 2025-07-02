@@ -270,6 +270,42 @@ const getProductsBySize = async (sizeId, excludeProductId) => {
   }
 };
 
+//api filter theo size và color
+const getProductsBySizeAndColorFlexible = async (sizeId, color) => {
+  try {
+    const elemMatch = {};
+    if (sizeId) elemMatch.size = sizeId;
+    if (color) elemMatch.color = color;
+
+    const filter = {
+      variants: { $elemMatch: elemMatch },
+      isActive: true,
+    };
+
+    const products = await Product.find(filter)
+      .populate("variants.size")
+      .populate("category")
+      .lean();
+
+    // enrich matchedVariant
+    const enrichedProducts = products.map(p => {
+      const matchedVariant = p.variants.find(v => {
+        const sizeMatch = sizeId ? v.size.toString() === sizeId : true;
+        const colorMatch = color ? v.color === color : true;
+        return sizeMatch && colorMatch;
+      });
+      return { ...p, matchedVariant };
+    });
+
+    return { status: "OK", message: "Lấy sản phẩm thành công", data: enrichedProducts };
+  } catch (error) {
+    console.error("Lỗi trong getProductsBySizeAndColorFlexible:", error);
+    return { status: "ERROR", message: "Không thể lấy sản phẩm" };
+  }
+};
+
+
+
 
 module.exports = {
   createProduct,
@@ -281,4 +317,5 @@ module.exports = {
   showProduct,
   getHighlightProducts,
   getProductsBySize,
+  getProductsBySizeAndColorFlexible
 };

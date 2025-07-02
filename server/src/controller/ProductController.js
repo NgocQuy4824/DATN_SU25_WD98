@@ -232,6 +232,30 @@ const getProductsBySize = async (req, res) => {
   }
 };
 
+//
+const getProductsByFilter = async (req, res) => {
+  try {
+    const { sizeId, color } = req.query;
+
+    if (!sizeId && !color) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "Cần ít nhất 1 tham số sizeId hoặc color"
+      });
+    }
+
+    const response = await ProductService.getProductsBySizeAndColorFlexible(sizeId, color);
+    return res.status(response.status === "OK" ? 200 : 404).json(response);
+  } catch (error) {
+    console.error("Lỗi khi filter sản phẩm:", error);
+    return res.status(500).json({
+      status: "ERROR",
+      message: "Lỗi server khi filter sản phẩm"
+    });
+  }
+};
+
+
 
 
 module.exports = {
@@ -243,5 +267,6 @@ module.exports = {
   hideProduct,
   showProduct,
   getHighlightProducts,
-  getProductsBySize
+  getProductsBySize,
+  getProductsByFilter
 };
