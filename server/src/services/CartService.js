@@ -55,19 +55,28 @@ const getMyCart = async (userId) => {
 
   const items = cart.items.map(item => {
     const product = item.product;
+    let warning = null;
 
-    // so sánh biến thể trong product có bằng vs biến thể không và gán vào biến variant
-    const variant = product.variants.find(v => v._id.toString() === item.variant.toString());
+    // Check product
+    if (!product || product.isActive === false) {
+      warning = 'Sản phẩm này không còn khả dụng hoặc đã bị ẩn !';
+    }
+
+    // Check variant
+    const variant = product?.variants?.find(v => v._id.toString() === item.variant.toString());
+    if (!variant) {
+      warning = 'Biến thể của sản phẩm không còn tồn tại.';
+    }
 
     return {
-      productId: product._id,
+      productId: product?._id,
       variantId: item.variant,
       quantity: item.quantity,
-      name: product.name,
-      price: product.price,
-      discount: product.discount,
-      description: product.description,
-      category: product.category ? product.category.name : null,
+      name: product?.name,
+      price: product?.price,
+      discount: product?.discount,
+      description: product?.description,
+      category: product?.category ? product.category.name : null,
       variant: variant ? {
         _id: variant._id,
         color: variant.color,
@@ -75,11 +84,13 @@ const getMyCart = async (userId) => {
         image: variant.image,
         countInStock: variant.countInStock,
       } : null,
+      warning, 
     };
   });
 
   return { status: 'OK', message: 'Lấy giỏ hàng thành công', data: { userId: cart.userId, items } };
 };
+
 
 //xóa all
 const removeAllCartItems = async (userId) => {
