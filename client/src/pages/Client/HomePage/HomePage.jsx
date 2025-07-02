@@ -15,6 +15,7 @@ import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useHighlightProducts } from "../../../hooks/useProductHook";
 
 import ClauseComponent from "../../../components/ClauseComponent/ClauseComponent";
+import Footer from "../../../components/FooterComponent/FooterComponent";
 
 const HomePage = () => {
   const arrType = [
@@ -42,38 +43,41 @@ const HomePage = () => {
   };
 
   return (
-    <div style={{ padding: "0 120px" }}>
-      <WrapperTypeProduct>
-        {arrType.map((item) => (
-          <TypeProducts key={item.id} name={item.name} />
-        ))}
-      </WrapperTypeProduct>
-      <SliderComponent arrImages={[anh4, anh5]} />
-      <ClauseComponent />
-
-      <Title>Sản phẩm nổi bật</Title>
-      <div style={{ position: "relative" }}>
-        {products.length > 5 && (
-          <>
-            <ScrollButton left onClick={() => handleScroll("left")}>
-              <LeftOutlined />
-            </ScrollButton>
-            <ScrollButton right onClick={() => handleScroll("right")}>
-              <RightOutlined />
-            </ScrollButton>
-          </>
-        )}
-        <WrapperProductList ref={scrollRef}>
-          {products.map((product) => (
-            <ProductCard
-              key={product._id}
-              product={product}
-              isLoading={isLoading}
-            />
+    <>
+      <div style={{ padding: "0 120px" }}>
+        <WrapperTypeProduct>
+          {arrType.map((item) => (
+            <TypeProducts key={item.id} name={item.name} />
           ))}
-        </WrapperProductList>
+        </WrapperTypeProduct>
+        <SliderComponent arrImages={[anh4, anh5]} />
+        <ClauseComponent />
+
+        <Title>Sản phẩm nổi bật</Title>
+        <div style={{ position: "relative" }}>
+          {products.length > 5 && (
+            <>
+              <ScrollButton left onClick={() => handleScroll("left")}>
+                <LeftOutlined />
+              </ScrollButton>
+              <ScrollButton right onClick={() => handleScroll("right")}>
+                <RightOutlined />
+              </ScrollButton>
+            </>
+          )}
+          <WrapperProductList ref={scrollRef}>
+            {products.map((product) => (
+              <ProductCard
+                key={product._id}
+                product={product}
+                isLoading={isLoading}
+              />
+            ))}
+          </WrapperProductList>
+        </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 
