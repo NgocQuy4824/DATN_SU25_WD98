@@ -21,79 +21,102 @@ const getAllUsers = async () => {
 const getProfile = async (userId) => {
   try {
     const user = await User.findById(userId).select("-password").lean();
-    return {
-      status: "OK",
-      message: "Lấy thông tin người dùng thành công",
+    if (!user) {
+      return customResponse({
+        success: false,
+        message: "Không tìm thấy người dùng",
+        status: 404,
+      });
+    }
+    return customResponse({
+      success: true,
+      message: "Lấy thông tin thành công",
+      status: 200,
       data: user,
-    };
+    });
   } catch (error) {
     console.error(error);
-    return { status: "ERROR", message: "Lỗi khi lấy thông tin người dùng" };
+    return customResponse({
+      success: false,
+      message: "Lỗi máy chủ",
+      status: 500,
+    });
   }
 };
 
-// Update user profile (bỏ upload avatar)
-// const updateProfile = async (userId, data) => {
-//   try {
-//     const user = await User.findById(userId);
-//     if (!user) {
-//       return { status: "ERROR", message: "Không tìm thấy người dùng" };
-//     }
-
-//     user.set(data);
-//     await user.save();
-
-//     return {
-//       status: "OK",
-//       message: "Cập nhật thông tin thành công",
-//     };
-//   } catch (error) {
-//     console.error(error);
-//     return { status: "ERROR", message: "Cập nhật thông tin thất bại" };
-//   }
-// };
-
+// Update user profile
 const updateProfile = async (userId, data, avatarFile) => {
-  const user = await User.findById(userId);
-  if (!user) {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return customResponse({
+        success: false,
+        message: "Không tìm thấy người dùng",
+        status: 404,
+      });
+    }
+
+    // Xử lý ảnh nếu có
+    if (avatarFile.length > 0) {
+      user.avatar = avatarFile[0].path;
+      user.imageUrlRef = avatarFile[0].filename;
+    }
+
+    user.set(data);
+    await user.save();
+
+    return customResponse({
+      success: true,
+      message: "Cập nhật thành công",
+      status: 200,
+      data: user,
+    });
+  } catch (error) {
+    console.error(error);
     return customResponse({
       success: false,
-      message: "Không tìm thấy người dùng",
-      status: 404,
+      message: "Cập nhật thất bại",
+      status: 500,
     });
   }
-
-  // Xử lý avatar từ Cloudinary
-  if (avatarFile.length > 0) {
-    user.avatar = avatarFile[0].path;
-    user.imageUrlRef = avatarFile[0].filename; // Để sau này dùng để xóa nếu cần
-  }
-
-  user.set(data);
-  await user.save();
-
-  return customResponse({
-    success: true,
-    message: "Cập nhật thông tin thành công",
-    status: 200,
-    data: user,
-  });
 };
 
 // Change password
-const changePassword = async (userId, password, newPassword) => {
+const changePassword = async (userId, oldPassword, newPassword) => {
   try {
     const user = await User.findById(userId);
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return { status: "ERROR", message: "Mật khẩu cũ không chính xác" };
+    if (!user) {
+      return customResponse({
+        success: false,
+        message: "Không tìm thấy người dùng",
+        status: 404,
+      });
     }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return customResponse({
+        success: false,
+        message: "Mật khẩu cũ không chính xác",
+        status: 400,
+      });
+    }
+
     user.password = newPassword;
     await user.save();
-    return { status: "OK", message: "Đổi mật khẩu thành công" };
+
+    return customResponse({
+      success: true,
+      message: "Đổi mật khẩu thành công",
+      status: 200,
+    });
   } catch (error) {
     console.error(error);
-    return { status: "ERROR", message: "Đổi mật khẩu thất bại" };
+    return customResponse({
+      success: false,
+      message: "Lỗi máy chủ khi đổi mật khẩu",
+      status: 500,
+    });
   }
 };
 

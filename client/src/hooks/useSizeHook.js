@@ -7,7 +7,7 @@ export const useGetAllSizes = (onSuccessCallback) => {
     return useQuery({
         queryKey: ["sizes"],
         queryFn: getAllSizes,
-        staleTime: 5 * 60 * 1000, //5p để refetch lại dữ liệu do thêm sp mới k nhận được ngay
+        staleTime: 0, 
         onSuccess: (data) => {
             onSuccessCallback?.(data);
         },
@@ -26,7 +26,7 @@ export const useCreateSize = () => {
         mutationFn: (sizeData) => createSize(sizeData),
         onSuccess: () => {
             toast.success("Tạo kích thước thành công");
-            queryClient.invalidateQueries(["size"]);
+            queryClient.invalidateQueries(["sizes"]);
         },
         onError: (err) => {
             toast.error("Tạo kích thước thất bại");
@@ -42,7 +42,7 @@ export const useUpdateSize = () => {
         mutationFn: ({ id, updatedData }) => updateSizeById(id, updatedData),
         onSuccess: () => {
             toast.success("Cập nhật kích thước thành công");
-            queryClient.invalidateQueries(["size"]);
+            queryClient.invalidateQueries(["sizes"]);
         },
         onError: (err) => {
             toast.error("Cập nhật kích thước thất bại");

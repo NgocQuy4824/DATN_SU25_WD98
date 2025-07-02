@@ -8,7 +8,7 @@ import SignInPage from "../pages/Client/Auth/SignIn/SignInPage";
 import SignUpPage from "../pages/Client/Auth/SignUp/SignUpPage";
 import NotFoundPage from "../pages/Client/NotFoundPage/NotFoundPage";
 import ProfilePage from "../pages/Client/ProfilePage/ProfilePage";
-import UpdateProfilePage from "../pages/Client/ProfilePage/UpdateProfilePage";
+import Cart from "../pages/Client/Cart/Cart";
 
 export const clientRoutes = [
   {
@@ -21,10 +21,7 @@ export const clientRoutes = [
       { path: "signin", element: <SignInPage /> },
       { path: "signup", element: <SignUpPage /> },
       { path: "profile", element: <ProfilePage /> },
-      {
-        path: "profile/update",
-        element: <UpdateProfilePage />,
-      },
+      { path: "cart", element: <Cart /> },
     ],
   },
   {

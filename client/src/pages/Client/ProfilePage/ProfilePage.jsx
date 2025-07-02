@@ -110,12 +110,7 @@ const ProfilePage = () => {
 
               <Row gutter={16}>
                 <Col span={12}>
-                  <Button
-                    block
-                    type="primary"
-                    style={{ marginBottom: 8 }}
-                    onClick={() => navigate("/profile/update")}
-                  >
+                  <Button block type="primary" style={{ marginBottom: 8 }}>
                     Cập nhật thông tin
                   </Button>
                 </Col>

@@ -21,7 +21,6 @@ import {
   OptionGroup,
   Price,
   PriceSection,
-  QuantityControl,
   QuantityWrapper,
   RadioGroupWrapper,
   StyledRadioButton,
@@ -35,6 +34,11 @@ import {
 import ModalPickSize from "./ModalPickSize/ModalPickSize";
 import ProductSameSize from "./ProductSameSize/ProductSameSize";
 import BreadcrumbsNav from "./BreadcrumbNav/BreadcrumNav";
+import { useAddToCart } from "../../../hooks/useCartHook";
+import CartSide from "../Cart/CartSide/CartSide.jsx";
+import { toast } from "react-toastify";
+import UpdateQuantity from "../Cart/UpdateQuantity/UpdateQuantity.jsx";
+import Footer from "../../../components/FooterComponent/FooterComponent.jsx";
 
 const { Title } = Typography;
 
@@ -50,6 +54,34 @@ const ProductsDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [isCartDrawerOpen, setCartDrawerOpen] = useState(false);
+  const { mutate: addToCart } = useAddToCart();
+
+  const handleAddToCartClick = () => {
+    if (!selectedColor || !selectedSize) {
+      toast.error("Vui lòng chọn màu sắc và kích thước");
+      return;
+    }
+    const variantToAdd = product.variants.find(
+      (v) => v.color === selectedColor && v.size === selectedSize
+    );
+    if (!variantToAdd) {
+      toast.error("Không tìm thấy biến thể phù hợp");
+      return;
+    }
+    addToCart(
+      {
+        productId: product._id,
+        variantId: variantToAdd._id,
+        quantity,
+      },
+      {
+        onSuccess: () => setCartDrawerOpen(true),
+        onError: () => toast.error("Thêm vào giỏ thất bại"),
+      }
+    );
+  };
 
   const from = location.state?.from;
   const product = data?.data;
@@ -71,11 +103,6 @@ const ProductsDetailPage = () => {
     .filter((v) => v.color === selectedColor)
     .map((v) => v.size);
 
-  const totalStock = product.variants.reduce(
-    (acc, v) => acc + (v.countInStock || 0),
-    0
-  );
-
   const handleColorChange = (color) => {
     setSelectedColor(color);
     setSelectedSize(null);
@@ -85,7 +112,6 @@ const ProductsDetailPage = () => {
       setActiveImage(variant.image);
     }
   };
-
 
   return (
     <>
@@ -108,7 +134,6 @@ const ProductsDetailPage = () => {
                     }}
                     className={activeImage === variant.image ? "active" : ""}
                   />
-
                 </ThumbnailWrapper>
               ))}
             </Thumbnails>
@@ -162,17 +187,16 @@ const ProductsDetailPage = () => {
                 ))}
               </RadioGroupWrapper>
             </OptionGroup>
-            
+
             <QuantityWrapper>
               <strong>Số lượng:</strong>
-              <QuantityControl>
-                <button onClick={() => setQuantity((q) => Math.max(1, q - 1))}>
-                  -
-                </button>
-                <span>{quantity}</span>
-                <button onClick={() => setQuantity((q) => q + 1)}>+</button>
-              </QuantityControl>
-              <span>SL sản phẩm còn lại: {totalStock}</span>
+              <UpdateQuantity
+                value={quantity}
+                min={1}
+                max={activeVariant?.countInStock}
+                onChange={setQuantity}
+              />
+              <span>SL sản phẩm còn lại: {activeVariant?.countInStock}</span>
             </QuantityWrapper>
 
             <ActionButtons>
@@ -183,6 +207,7 @@ const ProductsDetailPage = () => {
                     <ShoppingCartOutlined />
                   </i>
                 }
+                onClick={handleAddToCartClick}
               >
                 Thêm vào giỏ hàng
               </Button>
@@ -219,13 +244,23 @@ const ProductsDetailPage = () => {
               setIsModalOpen={setIsModalOpen}
             />
           </InfoSection>
-        </TopSection> <br />
+        </TopSection>{" "}
+        <br />
         <ClauseComponent /> <br />
         <div>
-          <h3 style={{ fontSize: '25px' }} >Sản phẩm gợi ý</h3>
-          <ProductSameSize sizeId={activeVariant?.size} productId={product._id} />
+          <h3 style={{ fontSize: "25px" }}>Sản phẩm gợi ý</h3>
+          <ProductSameSize
+            sizeId={activeVariant?.size}
+            productId={product._id}
+          />
         </div>
       </Wrapper>
+      {/* phần hiển thị Modal giỏ hàng khi add ở trang chi tiết sản phẩm  */}
+      <CartSide
+        open={isCartDrawerOpen}
+        onClose={() => setCartDrawerOpen(false)}
+      />
+      <Footer />
     </>
   );
 };
