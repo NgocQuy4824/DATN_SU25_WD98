@@ -38,6 +38,7 @@ import { useAddToCart } from "../../../hooks/useCartHook";
 import CartSide from "../Cart/CartSide/CartSide.jsx";
 import { toast } from "react-toastify";
 import UpdateQuantity from "../Cart/UpdateQuantity/UpdateQuantity.jsx";
+import Footer from "../../../components/FooterComponent/FooterComponent.jsx";
 
 const { Title } = Typography;
 
@@ -53,7 +54,6 @@ const ProductsDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [showFullDesc, setShowFullDesc] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
 
   const [isCartDrawerOpen, setCartDrawerOpen] = useState(false);
   const { mutate: addToCart } = useAddToCart();
@@ -103,7 +103,6 @@ const ProductsDetailPage = () => {
     .filter((v) => v.color === selectedColor)
     .map((v) => v.size);
 
-
   const handleColorChange = (color) => {
     setSelectedColor(color);
     setSelectedSize(null);
@@ -113,7 +112,6 @@ const ProductsDetailPage = () => {
       setActiveImage(variant.image);
     }
   };
-
 
   return (
     <>
@@ -136,7 +134,6 @@ const ProductsDetailPage = () => {
                     }}
                     className={activeImage === variant.image ? "active" : ""}
                   />
-
                 </ThumbnailWrapper>
               ))}
             </Thumbnails>
@@ -247,11 +244,15 @@ const ProductsDetailPage = () => {
               setIsModalOpen={setIsModalOpen}
             />
           </InfoSection>
-        </TopSection> <br />
+        </TopSection>{" "}
+        <br />
         <ClauseComponent /> <br />
         <div>
-          <h3 style={{ fontSize: '25px' }} >Sản phẩm gợi ý</h3>
-          <ProductSameSize sizeId={activeVariant?.size} productId={product._id} />
+          <h3 style={{ fontSize: "25px" }}>Sản phẩm gợi ý</h3>
+          <ProductSameSize
+            sizeId={activeVariant?.size}
+            productId={product._id}
+          />
         </div>
       </Wrapper>
       {/* phần hiển thị Modal giỏ hàng khi add ở trang chi tiết sản phẩm  */}
@@ -259,6 +260,7 @@ const ProductsDetailPage = () => {
         open={isCartDrawerOpen}
         onClose={() => setCartDrawerOpen(false)}
       />
+      <Footer />
     </>
   );
 };
