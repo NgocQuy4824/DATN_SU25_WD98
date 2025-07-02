@@ -63,3 +63,16 @@ export const getProductDetailSameSize = async (sizeId, productId) => {
   });
   return res.data?.data;
 };
+
+export const getProductsByFilter = async ({ sizeId, color }) => {
+  if (!sizeId && !color) {
+    // Không có filter → gọi API lấy tất cả sản phẩm
+    const res = await API.get("/product/get-all"); 
+    return res.data?.data;
+  } else {
+    const res = await API.get("/product/filter", {
+      params: { sizeId, color },
+    });
+    return res.data?.data;
+  }
+};
