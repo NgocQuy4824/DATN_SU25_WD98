@@ -58,7 +58,7 @@ const HeaderComponent = ({ isAdmin = false }) => {
         <WrapperHeaderLogo flex={1}>PaceRun</WrapperHeaderLogo>
 
         {!isAdmin && (
-          <div style={{ flex: "none" }}>
+          <div style={{ flex: "none" , paddingLeft:"20px" }}>
             <ButtonInputSearch />
           </div>
         )}
