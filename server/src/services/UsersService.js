@@ -108,7 +108,7 @@ const changePassword = async (userId, oldPassword, newPassword) => {
     }
 
     user.password = newPassword;
-    await user.save(); // sẽ hash lại vì đã có pre('save')
+    await user.save();
 
     return customResponse({
       success: true,

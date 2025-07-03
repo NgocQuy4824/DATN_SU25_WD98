@@ -14,7 +14,7 @@ router.get("/profile", authenticate, UsersController.getProfile);
 
 // Cập nhật thông tin người dùng
 router.patch(
-  "/profile",
+  "/update-profile",
   authenticate,
   upload.fields([{ name: "avatar", maxCount: 1 }]),
   UsersController.updateProfile
