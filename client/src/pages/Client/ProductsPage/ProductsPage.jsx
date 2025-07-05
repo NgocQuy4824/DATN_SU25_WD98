@@ -5,6 +5,7 @@ import ProductList from "./ProductList/ProductList";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useProductsByFilter } from "../../../hooks/useProductHook";
+import Footer from "../../../components/FooterComponent/FooterComponent";
 
 
 const { Sider, Content } = Layout;
@@ -15,6 +16,7 @@ export default function ProductPage() {
   const [selectedColor, setSelectedColor] = useState(null);
 
   const { data: products = [] } = useProductsByFilter(selectedSize, selectedColor);
+  const sortedProducts = [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   return (
     <Layout style={{ background: "#fff", padding: "24px" }}>
@@ -34,9 +36,15 @@ export default function ProductPage() {
           />
         </Sider>
         <Content>
-          <ProductList products={products} />
+          <ProductList
+            sortedProducts={sortedProducts}
+            onResetFilters={() => {
+              setSelectedSize(null);
+              setSelectedColor(null);
+            }} />
         </Content>
-      </Layout>
+      </Layout> <br />
+      <Footer/>
     </Layout>
   );
 }

@@ -150,7 +150,6 @@ export const useProductsByFilter = (sizeId, color) => {
   return useQuery({
     queryKey: ["productsByFilter", sizeId, color],
     queryFn: () => getProductsByFilter({ sizeId, color }),
-    // enabled: !!sizeId || !!color,
     onError: () => {
       toast.error("Lấy sản phẩm theo bộ lọc thất bại");
     },
