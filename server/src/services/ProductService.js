@@ -212,8 +212,7 @@ const getHighlightProducts = async () => {
   try {
     const products = await Product.find({ isActive: true })
       .sort({ createdAt: -1 }) // mới nhất trước
-      .limit(6)
-      .populate("category"); // nếu cần dữ liệu danh mục
+      .limit(12);
 
     return {
       status: "OK",
@@ -288,8 +287,8 @@ const getProductsBySizeAndColorFlexible = async (sizeId, color) => {
       .lean();
 
     // enrich matchedVariant
-    const enrichedProducts = products.map(p => {
-      const matchedVariant = p.variants.find(v => {
+    const enrichedProducts = products.map((p) => {
+      const matchedVariant = p.variants.find((v) => {
         const sizeMatch = sizeId ? v.size.toString() === sizeId : true;
         const colorMatch = color ? v.color === color : true;
         return sizeMatch && colorMatch;
@@ -297,15 +296,16 @@ const getProductsBySizeAndColorFlexible = async (sizeId, color) => {
       return { ...p, matchedVariant };
     });
 
-    return { status: "OK", message: "Lấy sản phẩm thành công", data: enrichedProducts };
+    return {
+      status: "OK",
+      message: "Lấy sản phẩm thành công",
+      data: enrichedProducts,
+    };
   } catch (error) {
     console.error("Lỗi trong getProductsBySizeAndColorFlexible:", error);
     return { status: "ERROR", message: "Không thể lấy sản phẩm" };
   }
 };
-
-
-
 
 module.exports = {
   createProduct,
@@ -317,5 +317,5 @@ module.exports = {
   showProduct,
   getHighlightProducts,
   getProductsBySize,
-  getProductsBySizeAndColorFlexible
+  getProductsBySizeAndColorFlexible,
 };
