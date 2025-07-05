@@ -23,7 +23,7 @@ const Card = styled.div`
     transform: translateY(-2px);
   }
 
-   &:hover .add-to-cart-btn {
+  &:hover .add-to-cart-btn {
     opacity: 1;
     transform: translate(-50%, 0);
   }
@@ -46,16 +46,24 @@ const AddToCartButton = styled.button`
   transform: translate(-50%, 10px);
   opacity: 0;
   transition: all 0.3s ease;
+
   background-color: #1677ff;
   color: white;
   border: none;
-  border-radius: 4px;
-  padding: 10px 20px;
-  font-size: 12px;
-  cursor: pointer;
+  border-radius: 8px;
+
+  width: 100%;
+  height: 50px;
+
+  font-size: 16px;
+  font-weight: 500;
+
   display: flex;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 8px;
+
+  cursor: pointer;
 
   &:hover {
     background-color: #0958d9;
@@ -82,9 +90,9 @@ const ProductName = styled.div`
   color: #222;
   font-weight: 00;
   margin-bottom: 4px;
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const AuthBadge = styled.div`
@@ -93,10 +101,10 @@ const AuthBadge = styled.div`
   color: #d0011b;
   font-size: 13px;
   font-weight: 600;
-  padding: 2px 6px; 
+  padding: 2px 6px;
   border-radius: 4px;
   margin-bottom: 4px;
-  width: fit-content; 
+  width: fit-content;
 `;
 
 const PriceRow = styled.div`
@@ -130,10 +138,9 @@ const ProductCard = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState(firstVariant?.size);
   const [selectedColor, setSelectedColor] = useState(firstVariant?.color);
 
-
   const handleAddToCart = (e) => {
     e.stopPropagation();
-    setIsModalOpen(true)
+    setIsModalOpen(true);
     //api giỏ hàng
   };
 
@@ -150,8 +157,11 @@ const ProductCard = ({ product }) => {
       >
         <ImageWrapper>
           <ProductImage src={firstVariant?.image} alt={product.name} />
-          <AddToCartButton className="add-to-cart-btn" onClick={handleAddToCart}>
-            <ShoppingCartOutlined /> Thêm giỏ hàng
+          <AddToCartButton
+            className="add-to-cart-btn"
+            onClick={handleAddToCart}
+          >
+            <ShoppingCartOutlined style={{ fontSize: 24 }} /> Thêm giỏ hàng
           </AddToCartButton>
         </ImageWrapper>
         <ProductContent>
@@ -168,7 +178,7 @@ const ProductCard = ({ product }) => {
         open={isModalOpen}
         onClose={handleCloseModal}
         product={product}
-        variants={product.variants}  
+        variants={product.variants}
         variant={selectedVariant}
         quantity={quantity}
         selectedSize={selectedSize}

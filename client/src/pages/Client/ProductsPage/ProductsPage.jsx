@@ -7,22 +7,22 @@ import { useState } from "react";
 import { useProductsByFilter } from "../../../hooks/useProductHook";
 import Footer from "../../../components/FooterComponent/FooterComponent";
 
-
 const { Sider, Content } = Layout;
 
 export default function ProductPage() {
-
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
 
+
   const { data: products = [] } = useProductsByFilter(selectedSize, selectedColor);
   const sortedProducts = [...products].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
 
   return (
     <Layout style={{ background: "#fff", padding: "24px" }}>
       <Breadcrumb style={{ marginBottom: 16 }}>
         <Breadcrumb.Item>
-          <Link to='/'>Trang chủ</Link>
+          <Link to="/">Trang chủ</Link>
         </Breadcrumb.Item>
         <Breadcrumb.Item>Sản phẩm</Breadcrumb.Item>
       </Breadcrumb>
