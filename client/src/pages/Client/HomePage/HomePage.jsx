@@ -29,7 +29,9 @@ const HomePage = () => {
   const { data: allProductData } = useGetAllProducts();
   const allProducts = allProductData?.data || [];
 
-  const sortedProducts = [...allProducts].reverse(); // giữ nguyên thứ tự thêm đầu tiên
+  const sortedProducts = [...allProducts]
+    .filter((product) => product.isActive)
+    .reverse(); // giữ nguyên thứ tự thêm đầu tiên
 
   const [visibleRows, setVisibleRows] = useState(1);
 
