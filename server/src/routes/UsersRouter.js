@@ -16,7 +16,6 @@ router.get("/profile", authenticate, UsersController.getProfile);
 router.patch(
   "/update-profile",
   authenticate,
-  upload.fields([{ name: "avatar", maxCount: 1 }]),
   UsersController.updateProfile
 );
 

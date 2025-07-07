@@ -20,23 +20,20 @@ const getProfile = asyncHandler(async (req, res) => {
 
 // Cập nhật thông tin người dùng (không xử lý files)
 const updateProfile = asyncHandler(async (req, res) => {
-  const userId = req.userId;
-  const file = req.files?.avatar || [];
-  const body = req.body;
-
-  const response = await UserService.updateProfile(userId, body, file);
+  const response = await UserService.updateProfile(req.userId, req.body);
   return res.status(response.status).json(response);
 });
 
 // Đổi mật khẩu
 const changePassword = asyncHandler(async (req, res) => {
   const userId = req.userId;
-  const { password, newPassword } = req.body;
+  const { password, newPassword, confirmPassword } = req.body;
 
   const response = await UserService.changePassword(
     userId,
     password,
-    newPassword
+    newPassword,
+    confirmPassword
   );
   return res.status(response.status).json(response);
 });

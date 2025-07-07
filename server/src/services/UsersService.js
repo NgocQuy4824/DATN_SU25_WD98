@@ -49,45 +49,57 @@ const getProfile = async (userId) => {
   }
 };
 
-// Update user profile (bỏ upload avatar)
-const updateProfile = async (userId, data, avatarFile) => {
+
+const updateProfile = async (userId, data) => {
   try {
     const user = await User.findById(userId);
     if (!user) {
-      return customResponse({
+      return {
         success: false,
         message: "Không tìm thấy người dùng",
         status: 404,
-      });
+      };
     }
 
-    // Xử lý ảnh nếu có
-    if (avatarFile.length > 0) {
-      user.avatar = avatarFile[0].path;
-      user.imageUrlRef = avatarFile[0].filename;
+    // Kiểm tra email đã tồn tại chưa
+    if (data.email && data.email !== user.email) {
+      const existingUser = await User.findOne({ email: data.email });
+      if (existingUser) {
+        return {
+          success: false,
+          message: "Email đã được sử dụng bởi người dùng khác",
+          status: 400,
+        };
+      }
+      user.email = data.email;
     }
 
-    user.set(data);
+    // Cập nhật các field khác
+    const fieldsToUpdate = { ...data };
+    delete fieldsToUpdate.email;
+    user.set(fieldsToUpdate);
+
     await user.save();
 
-    return customResponse({
+    return {
       success: true,
       message: "Cập nhật thành công",
-      status: 200,
       data: user,
-    });
+      status: 200,
+    };
   } catch (error) {
     console.error(error);
-    return customResponse({
+    return {
       success: false,
       message: "Cập nhật thất bại",
       status: 500,
-    });
+    };
   }
 };
 
+
 // Change password
-const changePassword = async (userId, oldPassword, newPassword) => {
+const changePassword = async (userId, oldPassword, newPassword, confirmPassword) => {
   try {
     const user = await User.findById(userId);
     if (!user) {
@@ -107,6 +119,16 @@ const changePassword = async (userId, oldPassword, newPassword) => {
       });
     }
 
+  
+    if (newPassword !== confirmPassword) {
+      return customResponse({
+        success: false,
+        message: "Mật khẩu mới và xác nhận mật khẩu không khớp",
+        status: 400,
+      });
+    }
+
+
     user.password = newPassword;
     await user.save();
 
@@ -124,6 +146,7 @@ const changePassword = async (userId, oldPassword, newPassword) => {
     });
   }
 };
+
 
 // Forgot password
 const forgotPassword = async (userId, password) => {
