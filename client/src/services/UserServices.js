@@ -16,3 +16,13 @@ export const getProfileApi = async () => {
   const response = await API.get("/user/profile");
   return { ...response.data };
 };
+
+export const updateProfileApi = async (data) => {
+  const response = await API.patch("/user/update-profile", data);
+  return { ...response.data };
+}
+
+export const changePasswordApi = async (data) => {
+  const response = await API.patch("/user/change-password", data);
+  return { ...response.data };
+} 
