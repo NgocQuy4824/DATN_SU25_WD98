@@ -29,7 +29,11 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
   }, []);
 
-  //  kiểm tra token hết hạn
+  const updateUser = useCallback((newUserData) => {
+    setUser(newUserData);
+    localStorage.setItem("user", JSON.stringify(newUserData));
+  }, []);
+
   const checkTokenExpiration = useCallback(async () => {
     const storedToken = localStorage.getItem("accessToken");
     const storedUser = localStorage.getItem("user");
@@ -59,11 +63,12 @@ export const AuthProvider = ({ children }) => {
   }, [checkTokenExpiration]);
 
   return (
-    <AuthContext.Provider value={{ token, user, login, logout,isAuthLoading }}>
+    <AuthContext.Provider
+      value={{ token, user, login, logout, updateUser, isAuthLoading }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
-
 
 export const useAuth = () => useContext(AuthContext);

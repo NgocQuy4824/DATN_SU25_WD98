@@ -1,29 +1,25 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Card,
   Typography,
-  Form,
-  Input,
   Button,
   Row,
   Col,
   Avatar,
   Skeleton,
   Breadcrumb,
-  Modal,
 } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useGetProfile } from "../../../hooks/useUsersHook";
-import ProfileForm from "./ProfileForm"; //  file form cập nhật
+import ProfileForm from "./ProfileForm"; // Đã chỉnh sửa cho phép cập nhật trực tiếp
 
 const { Title } = Typography;
 
 const ProfilePage = () => {
   const { user, isAuthLoading, logout } = useAuth();
   const navigate = useNavigate();
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useGetProfile();
 
@@ -32,29 +28,21 @@ const ProfilePage = () => {
     navigate("/");
   };
 
-  const handleUpdateInfo = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
-
   if (!user || isAuthLoading) {
     return <Skeleton active paragraph={{ rows: 4 }} />;
   }
 
   return (
     <>
-      <Breadcrumb style={{ marginBottom: 24, paddingLeft: '150px' }}>
-        <Breadcrumb.Item onClick={() => navigate('/')} style={{ cursor: "pointer" }}>
+      <Breadcrumb style={{ marginBottom: 24, paddingLeft: "150px" }}>
+        <Breadcrumb.Item onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
           Trang chủ
         </Breadcrumb.Item>
         <Breadcrumb.Item>Thông tin người dùng</Breadcrumb.Item>
       </Breadcrumb>
 
       <Row gutter={[32, 32]} justify="center" style={{ padding: "40px 20px" }}>
-        {/* Sidebar */}
+        {/* Sidebar trái */}
         <Col xs={24} md={6}>
           <Card
             style={{ textAlign: "center", border: "none", background: "transparent" }}
@@ -84,57 +72,11 @@ const ProfilePage = () => {
           </Card>
         </Col>
 
-        {/* Thông tin người dùng */}
+        {/* Thông tin người dùng (có thể chỉnh sửa trực tiếp) */}
         <Col xs={24} md={12}>
-          <Card title="Thông Tin Của Tôi" bordered={false}>
-            <Form layout="vertical">
-              <Form.Item label="Avatar">
-                <Avatar
-                  size={100}
-                  src={user.avatar || user.imageUrlRef}
-                  icon={<UserOutlined />}
-                />
-              </Form.Item>
-
-              <Form.Item label="Họ và tên">
-                <Input value={user.name} disabled />
-              </Form.Item>
-
-              <Form.Item label="Số điện thoại">
-                <Input value={user.phone || "Chưa cập nhật"} disabled />
-              </Form.Item>
-
-              <Form.Item label="Email">
-                <Input value={user.email} disabled />
-              </Form.Item>
-
-              <Row gutter={16}>
-                <Col span={12}>
-                  <Button block type="primary" onClick={handleUpdateInfo}>
-                    Cập nhật thông tin
-                  </Button>
-                </Col>
-                <Col span={12}>
-                  <Button block type="primary" danger>
-                    Thay đổi mật khẩu
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Card>
+          <ProfileForm /> {/* Đây là form đã sửa ở phần trước */}
         </Col>
       </Row>
-
-      {/*  Modal chứa form cập nhật thông tin */}
-      <Modal
-        open={isModalOpen}
-        title="Cập nhật thông tin"
-        footer={null}
-        onCancel={handleModalClose}
-        destroyOnClose
-      >
-        <ProfileForm onSuccess={handleModalClose} />
-      </Modal>
     </>
   );
 };
