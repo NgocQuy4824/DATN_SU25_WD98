@@ -1,22 +1,43 @@
-import React from "react";
-import { Card, Typography, Form, Input, Button, Row, Col, Avatar, Skeleton, Breadcrumb } from "antd";
+import React, { useState } from "react";
+import {
+  Card,
+  Typography,
+  Form,
+  Input,
+  Button,
+  Row,
+  Col,
+  Avatar,
+  Skeleton,
+  Breadcrumb,
+  Modal,
+} from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { useAuth } from "../../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { useGetProfile } from "../../../hooks/useUsersHook";
-
-
+import ProfileForm from "./ProfileForm"; //  file form cập nhật
 
 const { Title } = Typography;
 
 const ProfilePage = () => {
   const { user, isAuthLoading, logout } = useAuth();
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  useGetProfile()
+  useGetProfile();
+
   const handleLogout = () => {
     logout();
     navigate("/");
+  };
+
+  const handleUpdateInfo = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
   };
 
   if (!user || isAuthLoading) {
@@ -25,13 +46,15 @@ const ProfilePage = () => {
 
   return (
     <>
-      <Breadcrumb style={{ marginBottom: 24, paddingLeft: '150px', cursor: 'pointer' }}>
+      <Breadcrumb style={{ marginBottom: 24, paddingLeft: '150px' }}>
         <Breadcrumb.Item onClick={() => navigate('/')} style={{ cursor: "pointer" }}>
           Trang chủ
         </Breadcrumb.Item>
         <Breadcrumb.Item>Thông tin người dùng</Breadcrumb.Item>
       </Breadcrumb>
+
       <Row gutter={[32, 32]} justify="center" style={{ padding: "40px 20px" }}>
+        {/* Sidebar */}
         <Col xs={24} md={6}>
           <Card
             style={{ textAlign: "center", border: "none", background: "transparent" }}
@@ -40,7 +63,7 @@ const ProfilePage = () => {
             <Avatar
               size={120}
               icon={<UserOutlined />}
-              src={user.imageUrlRef}
+              src={user.avatar || user.imageUrlRef}
               style={{ marginBottom: 16 }}
             />
             <Title level={5}>{user.name}</Title>
@@ -61,14 +84,14 @@ const ProfilePage = () => {
           </Card>
         </Col>
 
-        {/* Main form */}
+        {/* Thông tin người dùng */}
         <Col xs={24} md={12}>
           <Card title="Thông Tin Của Tôi" bordered={false}>
             <Form layout="vertical">
               <Form.Item label="Avatar">
                 <Avatar
                   size={100}
-                  src={user.imageUrlRef || undefined}
+                  src={user.avatar || user.imageUrlRef}
                   icon={<UserOutlined />}
                 />
               </Form.Item>
@@ -78,7 +101,7 @@ const ProfilePage = () => {
               </Form.Item>
 
               <Form.Item label="Số điện thoại">
-                <Input value={user.phone} disabled />
+                <Input value={user.phone || "Chưa cập nhật"} disabled />
               </Form.Item>
 
               <Form.Item label="Email">
@@ -87,7 +110,7 @@ const ProfilePage = () => {
 
               <Row gutter={16}>
                 <Col span={12}>
-                  <Button block type="primary">
+                  <Button block type="primary" onClick={handleUpdateInfo}>
                     Cập nhật thông tin
                   </Button>
                 </Col>
@@ -101,6 +124,17 @@ const ProfilePage = () => {
           </Card>
         </Col>
       </Row>
+
+      {/*  Modal chứa form cập nhật thông tin */}
+      <Modal
+        open={isModalOpen}
+        title="Cập nhật thông tin"
+        footer={null}
+        onCancel={handleModalClose}
+        destroyOnClose
+      >
+        <ProfileForm onSuccess={handleModalClose} />
+      </Modal>
     </>
   );
 };

@@ -2,7 +2,7 @@ const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
 const customResponse = require("../helpers/customResponse");
 
-// Get all users
+//  Get all users
 const getAllUsers = async () => {
   try {
     const users = await User.find().select("-password");
@@ -22,7 +22,7 @@ const getAllUsers = async () => {
   }
 };
 
-// Get user profile
+//  Get user profile
 const getProfile = async (userId) => {
   try {
     const user = await User.findById(userId).select("-password").lean();
@@ -49,8 +49,8 @@ const getProfile = async (userId) => {
   }
 };
 
-// Update user profile (bỏ upload avatar)
-const updateProfile = async (userId, data, avatarFile) => {
+//  Update user profile (avatarCloudinaryURL)
+const updateProfile = async (userId, data, avatarUrl = null) => {
   try {
     const user = await User.findById(userId);
     if (!user) {
@@ -61,10 +61,10 @@ const updateProfile = async (userId, data, avatarFile) => {
       });
     }
 
-    // Xử lý ảnh nếu có
-    if (avatarFile.length > 0) {
-      user.avatar = avatarFile[0].path;
-      user.imageUrlRef = avatarFile[0].filename;
+    // Gán avatar nếu có file mới
+    if (avatarUrl) {
+      user.avatar = avatarUrl;
+      // Nếu bạn cần lưu public_id để xoá sau thì xử lý ở đây
     }
 
     user.set(data);
@@ -86,7 +86,7 @@ const updateProfile = async (userId, data, avatarFile) => {
   }
 };
 
-// Change password
+//  Change password
 const changePassword = async (userId, oldPassword, newPassword) => {
   try {
     const user = await User.findById(userId);
@@ -125,7 +125,7 @@ const changePassword = async (userId, oldPassword, newPassword) => {
   }
 };
 
-// Forgot password
+//  Forgot password
 const forgotPassword = async (userId, password) => {
   try {
     const user = await User.findById(userId);
