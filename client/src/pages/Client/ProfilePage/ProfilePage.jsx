@@ -2,7 +2,7 @@ import React from "react";
 import { Card, Typography, Avatar, Button, Row, Col, Breadcrumb, Skeleton } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { useAuth } from "../../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useGetProfile } from "../../../hooks/useUsersHook";
 import ProfileForm from "./ProfileForm";
 
@@ -43,7 +43,9 @@ const ProfilePage = () => {
               <Button block>Đơn hàng</Button>
               {user.role === "admin" && (
                 <Button block style={{ marginTop: 8 }}>
-                  Quản lý Admin
+                  <Link to="/system/admin/products" style={{ color: "inherit", textDecoration: "none" }}>
+                    Quản lý Admin
+                  </Link>
                 </Button>
               )}
               <Button block style={{ marginTop: 24 }} danger onClick={handleLogout}>
