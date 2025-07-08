@@ -1,4 +1,4 @@
-import { Col, Dropdown, Menu } from "antd";
+import { Button, Col, Dropdown, Menu } from "antd";
 import {
   ShoppingCartOutlined,
   UserOutlined,
@@ -23,7 +23,7 @@ const HeaderComponent = ({ isAdmin = false }) => {
     user?.role === "admin" && {
       key: "admin",
       label: "Quản trị",
-      onClick: () => navigate("/system/admin"),
+      onClick: () => navigate("/system/admin/products"),
     },
     {
       key: "profile",
@@ -55,53 +55,66 @@ const HeaderComponent = ({ isAdmin = false }) => {
     <div>
       {!isAdmin && <TopNavBar />}
       <WrapperHeader>
-        <WrapperHeaderLogo flex={1}>PaceRun</WrapperHeaderLogo>
+        <WrapperHeaderLogo flex={1}>
+          {isAdmin ? "Trang quản trị" : "PaceRun"}
+        </WrapperHeaderLogo>
+
+        {isAdmin && (
+          <div style={{ paddingLeft: "20px" }}>
+            <Button type="primary" onClick={() => navigate("/")}>
+              Về trang chủ
+            </Button>
+          </div>
+        )}
 
         {!isAdmin && (
-          <div style={{ flex: "none" , paddingLeft:"20px" }}>
+          <div style={{ flex: "none", paddingLeft: "20px" }}>
             <ButtonInputSearch />
           </div>
         )}
 
-        <Col flex={2} style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            {user ? (
-              <>
+        {!isAdmin && (
+          <Col
+            flex={2}
+            style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+              {user ? (
                 <Dropdown overlay={accountMenu} placement="bottomRight" arrow>
                   <div style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
                     <UserOutlined />
                     <span>Tài khoản</span>
                   </div>
                 </Dropdown>
-              </>
-            ) : (
-              <>
-                <div
-                  style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
-                  onClick={() => navigate("/signup")}
-                >
-                  <UserOutlined />
-                  <span>Đăng ký</span>
-                </div>
-                <div
-                  style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
-                  onClick={() => navigate("/signin")}
-                >
-                  <UserOutlined />
-                  <span>Đăng nhập</span>
-                </div>
-              </>
-            )}
+              ) : (
+                <>
+                  <div
+                    style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                    onClick={() => navigate("/signup")}
+                  >
+                    <UserOutlined />
+                    <span>Đăng ký</span>
+                  </div>
+                  <div
+                    style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                    onClick={() => navigate("/signin")}
+                  >
+                    <UserOutlined />
+                    <span>Đăng nhập</span>
+                  </div>
+                </>
+              )}
 
-            <div
-              style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
-              onClick={() => navigate("/cart")}
-            >
-              <ShoppingCartOutlined />
-              <span>Giỏ hàng</span>
+              <div
+                style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                onClick={() => navigate("/cart")}
+              >
+                <ShoppingCartOutlined />
+                <span>Giỏ hàng</span>
+              </div>
             </div>
-          </div>
-        </Col>
+          </Col>
+        )}
       </WrapperHeader>
     </div>
   );
