@@ -10,7 +10,7 @@ export const useGetAllCategory = (onSuccessCallback) => {
   return useQuery({
     queryKey: ["typeproducts"],
     queryFn: getAllCategory,
-    staleTime: 5 * 60 * 1000, //5p để refetch lại dữ liệu do thêm sp mới k nhận được ngay
+    staleTime: 0, //5p để refetch lại dữ liệu do thêm sp mới k nhận được ngay
     onSuccess: (data) => {
       onSuccessCallback?.(data);
     },
