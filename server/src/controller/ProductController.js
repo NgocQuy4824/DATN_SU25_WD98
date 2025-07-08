@@ -4,26 +4,30 @@ const ProductService = require("../services/ProductService");
 const createProduct = async (req, res) => {
   try {
     const {
-      name = '',
-      category = '',
+      name = "",
+      category = "",
       price = 0,
       discount = 0,
-      description = '',
+      description = "",
       variants,
       isActive,
     } = req.body;
 
     if (!name || !category || !price || !discount || !variants) {
-      return res.status(400).json({ message: 'Bắt buộc phải nhập đầy đủ thông tin' });
+      return res
+        .status(400)
+        .json({ message: "Bắt buộc phải nhập đầy đủ thông tin" });
     }
 
     const parsedVariants = JSON.parse(variants);
 
     // Lấy các biến thể cần upload ảnh mới
-    const newImageVariants = parsedVariants.filter(v => !v.image);
+    const newImageVariants = parsedVariants.filter((v) => !v.image);
 
     if (!req.files || req.files.length !== newImageVariants.length) {
-      return res.status(400).json({ message: 'Số lượng ảnh không khớp với biến thể cần upload ảnh mới' });
+      return res.status(400).json({
+        message: "Số lượng ảnh không khớp với biến thể cần upload ảnh mới",
+      });
     }
 
     let fileIndex = 0;
@@ -34,7 +38,7 @@ const createProduct = async (req, res) => {
           variant.image = file.secure_url || file.path;
           fileIndex++;
         } else {
-          throw new Error('Thiếu ảnh cho biến thể mới');
+          throw new Error("Thiếu ảnh cho biến thể mới");
         }
       }
     });
@@ -46,36 +50,31 @@ const createProduct = async (req, res) => {
       discount,
       description,
       variants: parsedVariants,
-      isActive: isActive === 'false' ? false : true,
+      isActive: isActive === "false" ? false : true,
     });
 
     return res.status(200).json(response);
   } catch (error) {
-    console.error('Lỗi createProduct:', error);
-    return res.status(500).json({ message: 'Lỗi server khi tạo sản phẩm' });
+    console.error("Lỗi createProduct:", error);
+    return res.status(500).json({ message: "Lỗi server khi tạo sản phẩm" });
   }
 };
-
-
-
-
-
 
 // cập nhật sản phẩm
 const updateProduct = async (req, res) => {
   try {
     const {
-      name = '',
-      category = '',
+      name = "",
+      category = "",
       price = 0,
       discount = 0,
-      description = '',
+      description = "",
       variants,
       isActive,
     } = req.body;
 
     if (!name || !category || !price || !discount || !variants) {
-      return res.status(400).json({ message: 'Thiếu thông tin bắt buộc' });
+      return res.status(400).json({ message: "Thiếu thông tin bắt buộc" });
     }
 
     const parsedVariants = JSON.parse(variants);
@@ -97,19 +96,17 @@ const updateProduct = async (req, res) => {
       discount,
       description,
       variants: parsedVariants,
-      isActive: isActive === 'false' ? false : true,
+      isActive: isActive === "false" ? false : true,
     });
 
     return res.status(200).json(updated);
   } catch (error) {
-    console.error('Lỗi updateProduct:', error);
-    return res.status(500).json({ message: 'Lỗi server khi cập nhật sản phẩm' });
+    console.error("Lỗi updateProduct:", error);
+    return res
+      .status(500)
+      .json({ message: "Lỗi server khi cập nhật sản phẩm" });
   }
 };
-
-
-
-
 
 // lấy chi tiết sản phẩm
 const getDetailsProduct = async (req, res) => {
@@ -208,7 +205,7 @@ const getHighlightProducts = async (req, res) => {
   }
 };
 
-//hiển thị sp theo kích thước 
+//hiển thị sp theo kích thước
 const getProductsBySize = async (req, res) => {
   try {
     const { sizeId } = req.params;
@@ -221,7 +218,10 @@ const getProductsBySize = async (req, res) => {
       });
     }
 
-    const response = await ProductService.getProductsBySize(sizeId, excludeProductId);
+    const response = await ProductService.getProductsBySize(
+      sizeId,
+      excludeProductId
+    );
     return res.status(response.status === "OK" ? 200 : 404).json(response);
   } catch (error) {
     console.error("Lỗi khi lấy sản phẩm theo size:", error);
@@ -235,28 +235,29 @@ const getProductsBySize = async (req, res) => {
 //
 const getProductsByFilter = async (req, res) => {
   try {
-    const { sizeId, color } = req.query;
+    const { sizeId, color, categoryId } = req.query;
 
-    if (!sizeId && !color) {
+    if (!sizeId && !color && !categoryId) {
       return res.status(400).json({
         status: "ERROR",
-        message: "Cần ít nhất 1 tham số sizeId hoặc color"
+        message: "Cần ít nhất 1 tham số sizeId, color hoặc categoryId",
       });
     }
 
-    const response = await ProductService.getProductsBySizeAndColorFlexible(sizeId, color);
+    const response = await ProductService.getProductsBySizeAndColorFlexible(
+      sizeId,
+      color,
+      categoryId
+    );
     return res.status(response.status === "OK" ? 200 : 404).json(response);
   } catch (error) {
     console.error("Lỗi khi filter sản phẩm:", error);
     return res.status(500).json({
       status: "ERROR",
-      message: "Lỗi server khi filter sản phẩm"
+      message: "Lỗi server khi filter sản phẩm",
     });
   }
 };
-
-
-
 
 module.exports = {
   createProduct,
@@ -268,5 +269,5 @@ module.exports = {
   showProduct,
   getHighlightProducts,
   getProductsBySize,
-  getProductsByFilter
+  getProductsByFilter,
 };

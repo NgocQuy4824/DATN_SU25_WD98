@@ -143,13 +143,13 @@ export const useProductsSameSize = (sizeId, productId) => {
       toast.error("Lấy sản phẩm cùng size thất bại");
     },
   });
-}
+};
 
 //filter màu , size
-export const useProductsByFilter = (sizeId, color) => {
+export const useProductsByFilter = (sizeId, color, categoryId) => {
   return useQuery({
-    queryKey: ["productsByFilter", sizeId, color],
-    queryFn: () => getProductsByFilter({ sizeId, color }),
+    queryKey: ["productsByFilter", sizeId, color, categoryId],
+    queryFn: () => getProductsByFilter({ sizeId, color, categoryId }),
     onError: () => {
       toast.error("Lấy sản phẩm theo bộ lọc thất bại");
     },

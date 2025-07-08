@@ -270,7 +270,7 @@ const getProductsBySize = async (sizeId, excludeProductId) => {
 };
 
 //api filter theo size và color
-const getProductsBySizeAndColorFlexible = async (sizeId, color) => {
+const getProductsBySizeAndColorFlexible = async (sizeId, color, categoryId) => {
   try {
     const elemMatch = {};
     if (sizeId) elemMatch.size = sizeId;
@@ -280,6 +280,10 @@ const getProductsBySizeAndColorFlexible = async (sizeId, color) => {
       variants: { $elemMatch: elemMatch },
       isActive: true,
     };
+
+    if (categoryId) {
+      filter.category = categoryId;
+    }
 
     const products = await Product.find(filter)
       .populate("variants.size")
