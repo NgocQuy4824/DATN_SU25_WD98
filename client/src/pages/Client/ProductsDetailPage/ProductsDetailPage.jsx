@@ -2,15 +2,14 @@ import React, { useEffect, useState } from "react";
 
 import { useParams, useLocation } from "react-router-dom";
 import { useSizeOptions } from "../../../hooks/useSizeOptions";
-import { Spin, Typography, Tag, Button } from "antd";
+import { Spin, Typography, Tag, Button, Alert } from "antd";
 
 import { useProductDetail } from "../../../hooks/useProductHook";
 
 import ClauseComponent from "../../../components/ClauseComponent/ClauseComponent";
-import { ShoppingCartOutlined, ThunderboltOutlined } from "@ant-design/icons";
+import { ShoppingCartOutlined } from "@ant-design/icons";
 import {
   ActionButtons,
-  BuyButton,
   ClampedParagraph,
   DescriptionWrapper,
   Discount,
@@ -140,6 +139,15 @@ const ProductsDetailPage = () => {
           </ImageWrapper>
 
           <InfoSection>
+            {!product.isActive && (
+              <Alert
+                message="Sản phẩm này hiện không còn hoạt động"
+                description="Sản phẩm này đã bị ngừng kinh doanh hoặc tạm ẩn. Vui lòng quay lại sau hoặc chọn sản phẩm khác."
+                type="warning"
+                showIcon
+                style={{ marginBottom: '10px' }}
+              />
+            )}
             <Title level={3}>{product.name}</Title>
             <div>
               <Tag color="blue">Danh mục: {product.category?.name}</Tag>
@@ -208,11 +216,12 @@ const ProductsDetailPage = () => {
                   </i>
                 }
                 onClick={handleAddToCartClick}
+                disabled={!product.isActive}
               >
                 Thêm vào giỏ hàng
               </Button>
 
-              <BuyButton icon={<ThunderboltOutlined />}>Mua ngay</BuyButton>
+              {/* <BuyButton icon={<ThunderboltOutlined />} disabled={!product.isActive}>Mua ngay</BuyButton> */}
             </ActionButtons>
 
             <DescriptionWrapper>
