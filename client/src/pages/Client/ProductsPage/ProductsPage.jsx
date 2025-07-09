@@ -6,11 +6,12 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useProductsByFilter } from "../../../hooks/useProductHook";
 import Footer from "../../../components/FooterComponent/FooterComponent";
+import { useProductFilter } from "../../../context/ProductFilterContext";
 
 const { Sider, Content } = Layout;
 
 export default function ProductPage() {
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const { selectedCategory, setSelectedCategory, resetCategory } = useProductFilter();
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
 
@@ -46,7 +47,7 @@ export default function ProductPage() {
           <ProductList
             sortedProducts={sortedProducts}
             onResetFilters={() => {
-              setSelectedCategory(null);
+              resetCategory();
               setSelectedSize(null);
               setSelectedColor(null);
             }}

@@ -9,6 +9,7 @@ import { ToastContainer } from "react-toastify";
 import { ConfigProvider } from "antd";
 import enUS from "antd/es/calendar/locale/en_US";
 import { AuthProvider } from "./context/AuthContext";
+import { ProductFilterProvider } from "./context/ProductFilterContext";
 
 dayjs.locale("en");
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ function App() {
 
         <BrowserRouter>
           <AuthProvider>
+            <ProductFilterProvider>
             <Routes>{renderRoutes(allRoutes)}</Routes>
             <ToastContainer
               position="top-right"
@@ -33,6 +35,7 @@ function App() {
               draggable
               theme="light"
             />
+            </ProductFilterProvider>
           </AuthProvider>
         </BrowserRouter>
       </ConfigProvider>

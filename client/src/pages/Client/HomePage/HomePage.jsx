@@ -19,6 +19,7 @@ import ClauseComponent from "../../../components/ClauseComponent/ClauseComponent
 import Footer from "../../../components/FooterComponent/FooterComponent";
 import { Link } from "react-router-dom";
 import { Button, Space } from "antd";
+import CategoryClient from "./CategoryClient/CategoryClient";
 
 const HomePage = () => {
   const scrollRef = useRef();
@@ -54,9 +55,10 @@ const HomePage = () => {
     <>
       <div style={{ padding: "0 120px" }}>
         <WrapperTypeProduct>
-          <Link to="/products" style={{ textDecoration: "none" }}>
+          <Link to="/products" style={{ textDecoration: "none" ,fontSize: '16px',fontWeight: 'bold', color: '#333'}}>
             Sản phẩm
           </Link>
+          <CategoryClient />
         </WrapperTypeProduct>
 
         <SliderComponent arrImages={[anh4, anh5]} />
