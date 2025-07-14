@@ -57,7 +57,7 @@ const CartItem = ({ item }) => {
       <Row align="middle" gutter={12} wrap={false}>
         <Col flex="32px">
           <StyledCheckbox
-            checked={item.selected}
+            // checked={item.selected}
             disabled
           />
         </Col>
