@@ -99,9 +99,7 @@ const AuthBadge = styled.div`
   display: inline-block;
   background-color: #fef0f0;
   color: #d0011b;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 2px 6px;
+  padding: 4px 6px;
   border-radius: 4px;
   margin-bottom: 4px;
   width: fit-content;
