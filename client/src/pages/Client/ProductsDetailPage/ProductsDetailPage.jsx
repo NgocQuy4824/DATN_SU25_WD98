@@ -204,7 +204,7 @@ const ProductsDetailPage = () => {
                 max={activeVariant?.countInStock}
                 onChange={setQuantity}
               />
-              <span>SL sản phẩm còn lại: {activeVariant?.countInStock}</span>
+              <span style={{color:"red"}}>Số lượng còn lại: {activeVariant?.countInStock}</span>
             </QuantityWrapper>
 
             <ActionButtons>
