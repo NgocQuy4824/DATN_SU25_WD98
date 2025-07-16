@@ -1,5 +1,5 @@
 import React from "react";
-import { Row, Col, Button, Slider, Typography, Divider, Select } from "antd";
+import { Row, Col, Button,  Typography, Divider, Select } from "antd";
 import { useGetAllSizes } from "../../../../hooks/useSizeHook";
 import { colorOptions } from "../../../../utils/optionsColor";
 import { useCategoryOptions } from "../../../../hooks/useCategoryOptions";
@@ -86,16 +86,6 @@ export default function SidebarFilter({
             </Col>
           ))}
         </Row>
-      </div>
-      <Divider />
-      <div>
-        <Text strong>Khoảng giá</Text>
-        <Slider
-          range
-          defaultValue={[0, 15000000]}
-          max={15599990}
-          style={{ marginTop: 16 }}
-        />
       </div>
     </>
   );
