@@ -14,15 +14,14 @@ export default function ProductPage() {
   const { selectedCategory, setSelectedCategory, resetCategory } = useProductFilter();
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
+  const [sortOption, setSortOption] = useState("newprice");
 
   const { data: products = [] } = useProductsByFilter(
     selectedSize,
     selectedColor,
     selectedCategory
   );
-  const sortedProducts = [...products].sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
+  
 
   return (
     <Layout style={{ background: "#fff", padding: "24px" }}>
@@ -45,11 +44,14 @@ export default function ProductPage() {
         </Sider>
         <Content>
           <ProductList
-            sortedProducts={sortedProducts}
-            onResetFilters={() => {
+            products={products}
+            sortOption={sortOption}
+            setSortOption={setSortOption}
+            onResetFilters={() => {  
               resetCategory();
               setSelectedSize(null);
               setSelectedColor(null);
+              setSortOption("newprice");
             }}
           />
         </Content>

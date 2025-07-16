@@ -10,18 +10,18 @@ import useCartSelection from "../../../hooks/useCartSelected";
 const CartPage = () => {
   const { data, isLoading } = useMyCart();
   const removeAllCartMutation = useRemoveAllCart();
-
+  const {cartItems, toogleSelectAll} = useCartSelection()
   const items = data?.data?.items || [];
+  console.log(cartItems)
 
-  const { selectedItems, isAllSelected, toggleSelectAll, clearSelection } = useCartSelection(items);
 
   if (isLoading) return <Spin tip="Đang tải giỏ hàng..." />;
 
   const handleRemoveSelected = () => {
-    if (selectedItems.length === 0)
-      return;
+    // if (selectedItems.length === 0)
+    //   return;
     removeAllCartMutation.mutate();
-    clearSelection();
+    // clearSelection();
   };
 
   return (
@@ -41,14 +41,14 @@ const CartPage = () => {
             extra={items.length > 0 && (
               <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <Checkbox
-                  checked={isAllSelected}
-                  onChange={(e) => toggleSelectAll(e.target.checked)}
+                  // checked={isAllSelected}
+                  // onChange={(e) => toggleSelectAll(e.target.checked)}
                 >
                   Chọn tất cả
                 </Checkbox>
                 <Button
                   danger
-                  disabled={selectedItems.length === 0}
+                  // disabled={selectedItems.length === 0}
                   loading={removeAllCartMutation.isLoading}
                   onClick={handleRemoveSelected}
                 >
@@ -59,7 +59,7 @@ const CartPage = () => {
           >
             {items.length > 0 ? (
               items.map(item => (
-                <CartItem key={item.variantId} item={{ ...item, selected: selectedItems.includes(item.variantId) }} />
+                <CartItem key={item.variantId} item={item} />
               ))
             ) : (
               <Empty description="Giỏ hàng trống" />

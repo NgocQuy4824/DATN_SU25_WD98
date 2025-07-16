@@ -19,7 +19,7 @@ export const useGetAllProducts = () => {
   return useQuery({
     queryKey: ["products"],
     queryFn: getAllProducts,
-    staleTime: 5 * 60 * 1000, //5p để refetch lại dữ liệu do thêm sp mới k nhận được ngay
+    staleTime: 0,
 
     onError: (err) => {
       toast.error("Lấy danh sách sản phẩm thất bại");
