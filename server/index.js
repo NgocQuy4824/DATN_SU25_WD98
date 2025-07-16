@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
+const morgan = require("morgan");
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use(
     credentials: true,
   })
 );
+app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(bodyParser.json());
 
