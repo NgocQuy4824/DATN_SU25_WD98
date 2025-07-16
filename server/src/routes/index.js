@@ -5,6 +5,7 @@ const TypeProductRouter = require("./TypeProductRouter");
 const SizeRouter = require("./SizeRouter");
 const CartRouter = require("./CartRouter");
 const ShippingRouter = require("./ShippingRouter");
+const orderRouter = require("./OrderRouter");
 const routers = (app) => {
   app.use("/api/auth", AuthRouter);
   app.use("/api/user", UsersRouter);
@@ -13,6 +14,7 @@ const routers = (app) => {
   app.use("/api/size", SizeRouter);
   app.use("/api/cart", CartRouter);
   app.use("/api/shipping", ShippingRouter);
+  app.use("/api/orders", orderRouter);
 };
 
 module.exports = routers;
