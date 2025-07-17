@@ -5,30 +5,31 @@ function buildQueryOptions(query) {
     sort = "-createdAt",
     fields,
     search,
+    searchField,
     ...rest
   } = query;
 
-  const filter = { ...rest };
+  const filter = {};
 
-  if (search) {
-    filter.name = { $regex: search, $options: "i" };
+  if (search && searchField) {
+    const fields = searchField.split(",");
+    filter.$or = fields.map((field) => ({
+      [field]: { $regex: search, $options: "i" },
+    }));
   }
-
-  Object.keys(filter).forEach((key) => {
-    const value = filter[key];
-    if (
-      typeof value === "string" &&
-      value.match(/(.+)\[(gte|gt|lte|lt|in)\]/)
-    ) {
-      const [, field, operator] = key.match(/(.+)\[(gte|gt|lte|lt|in)\]/);
+  console.log(filter.name);
+  Object.entries(rest).forEach(([key, value]) => {
+    const match = key.match(/(.+)\[(gte|gt|lte|lt|in)\]/);
+    if (match) {
+      const [, field, operator] = match;
       if (!filter[field]) filter[field] = {};
       filter[field][`$${operator}`] = value.includes(",")
         ? value.split(",")
         : value;
-      delete filter[key];
-    }
-    if (typeof value === "string" && value.includes(",")) {
+    } else if (typeof value === "string" && value.includes(",")) {
       filter[key] = { $in: value.split(",") };
+    } else {
+      filter[key] = value;
     }
   });
 
