@@ -121,7 +121,7 @@ const CartPage = () => {
                     loading={removeAllCartMutation.isLoading}
                     onClick={handleRemoveSelected}
                   >
-                    Xoá sản phẩm đã chọn
+                    Xoá tất cả sản phẩm
                   </Button>
                 </div>
               )

@@ -9,7 +9,7 @@ export default function CartPersistenceProvider({ children }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const allowedPaths = ["/cart", "/checkout"];
+    const allowedPaths = ["/cart","/shipping" ,"/checkout"];
     const isAllowed = allowedPaths.includes(location.pathname);
 
     if (!isAllowed) {

@@ -10,7 +10,7 @@ const CartSummary = ({ totalItems = 0, items }) => {
 
   const handleClickCheckOut = () => {
     if (cartItems.length) {
-      navigate("/");
+      navigate("/shipping");
     }
   };
   const totalPrice = cartItems.reduce((acc, cartItem) => {
