@@ -1,5 +1,4 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import counterSlice from "./slides/couterSlider";
 import cartSlice from "./slides/cartSlice";
 
 import {
@@ -13,11 +12,11 @@ import {
   REGISTER,
 } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // localStorage
+import checkoutSlice from "./slides/checkout";
 
-// Gộp các reducer
 const rootReducer = combineReducers({
-  counter: counterSlice,
   cart: cartSlice,
+  checkout: checkoutSlice,
 });
 
 const persistConfig = {

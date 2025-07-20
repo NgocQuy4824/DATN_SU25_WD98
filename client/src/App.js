@@ -10,7 +10,7 @@ import { ConfigProvider } from "antd";
 import enUS from "antd/es/calendar/locale/en_US";
 import { AuthProvider } from "./context/AuthContext";
 import { ProductFilterProvider } from "./context/ProductFilterContext";
-import CartPersistenceProvider from "./context/CartPersistenceProvider";
+import PersistenceProvider from "./context/PersistenceProvider";
 
 dayjs.locale("en");
 const queryClient = new QueryClient();
@@ -24,7 +24,7 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <ProductFilterProvider>
-              <CartPersistenceProvider>
+              <PersistenceProvider>
                 <Routes>{renderRoutes(allRoutes)}</Routes>
                 <ToastContainer
                   position="top-right"
@@ -36,7 +36,7 @@ function App() {
                   draggable
                   theme="light"
                 />
-              </CartPersistenceProvider>
+              </PersistenceProvider>
             </ProductFilterProvider>
           </AuthProvider>
         </BrowserRouter>

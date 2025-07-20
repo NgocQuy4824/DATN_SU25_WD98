@@ -81,7 +81,7 @@ const orderModel = new mongoose.Schema(
         type: String,
         required: true,
       },
-      detai: {
+      detail: {
         type: String,
         required: true,
       },
