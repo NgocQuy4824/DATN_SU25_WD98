@@ -21,6 +21,20 @@ const statsService = {
     return data;
   },
 
+  async getProductByRange(startDate, endDate) {
+    if (!startDate || !endDate) {
+      return { data: [] };
+    }
+
+    const { data } = await API.get("stats/productStats", {
+      params: {
+        startDate: dayjs(startDate).format("DD-MM-YYYY"),
+        endDate: dayjs(endDate).format("DD-MM-YYYY"),
+      },
+    });
+    return data;
+  },
+
   async getTotalStatsByDateInput(dateInput) {
     let params = {};
 
@@ -56,6 +70,18 @@ const statsService = {
     }
 
     const { data } = await API.get("stats/total", { params });
+    return data;
+  },
+
+  async getTopBuyers(dateFilter, startDate, endDate, month, year) {
+    const params = { dateFilter };
+
+    if (startDate) params.startDate = dayjs(startDate).format("DD-MM-YYYY");
+    if (endDate) params.endDate = dayjs(endDate).format("DD-MM-YYYY");
+    if (month) params.month = month;
+    if (year) params.year = year;
+
+    const { data } = await API.get("stats/topBuyers", { params });
     return data;
   },
 };
