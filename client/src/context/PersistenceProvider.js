@@ -16,11 +16,11 @@ export default function PersistenceProvider({ children }) {
 
   useEffect(() => {
     const path = location.pathname;
-    const isCartAllowed = cartAllowedPaths.includes(path);
+    // const isCartAllowed = cartAllowedPaths.includes(path);
     const isCheckoutAllowed = checkoutAllowedPaths.includes(path);
-    if (!isCartAllowed && cart?.length > 0) {
-      dispatch(toogleAllCart([]));
-    }
+    // if (!isCartAllowed && cart?.length > 0) {
+    //   dispatch(toogleAllCart([]));
+    // }
     if (!isCheckoutAllowed && Object.keys(checkout || {}).length > 0) {
       dispatch(resetCheckout());
     }

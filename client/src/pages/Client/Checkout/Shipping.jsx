@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import tw from "twin.macro";
-import { Select, Form, Input, Breadcrumb } from "antd";
+import { Select, Form, Input, Breadcrumb, Card, Switch, Tooltip } from "antd";
 import {
   useGetDistrict,
   useGetProvince,
@@ -12,13 +12,15 @@ import { AddressSelect } from "./_components/SelectAddress";
 import { useDispatch } from "react-redux";
 import { setShippingInfor } from "../../../redux/slides/checkout";
 import { Link } from "react-router-dom";
+import { SubTitle } from "./checkOutStyle";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
 const WrapperLayoutCheckout = styled.div`
-  ${tw`grid grid-cols-[2fr,1fr] gap-12 mx-6 mt-8`}
+  ${tw`grid grid-cols-[2fr,1fr] gap-12 mx-6 mt-8 items-start`}
 `;
 
 const AddressInforWrapper = styled.div`
-  ${tw`bg-white py-6 px-24 rounded-lg shadow-lg`}
+  ${tw`bg-white py-12 px-24 rounded-lg shadow-lg`}
 `;
 
 const Title = styled.h2`
@@ -35,12 +37,18 @@ const WrapperBreadCrumb = styled.div`
   ${tw`mx-6 mt-8`}
 `;
 
+const { TextArea } = Input;
+
 export default function Shipping() {
+  const user = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   // Component State
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [showReceiverInfo, setShowRreceiverInfo] = useState(false);
   // Server State
   const { data: provincesData = [] } = useGetProvince();
   const { data: districtsData = [] } = useGetDistrict(selectedCity);
@@ -58,16 +66,8 @@ export default function Shipping() {
   };
   const onFinish = (value) => {
     const shippingPayload = {
-      customerInfo: {
-        name: value.name,
-        phone: value.phone,
-        email: value.email,
-      },
-      address: {
-        province: value.province,
-        district: value.district,
-        ward: value.ward,
-      },
+      ...value,
+      note: value.note || "",
     };
     dispatch(setShippingInfor(shippingPayload));
   };
@@ -93,65 +93,158 @@ export default function Shipping() {
             form={form}
             layout="vertical"
             onFinish={(values) => onFinish(values)}
+            initialValues={{
+              customerInfo: {
+                name: user?.name,
+                email: user?.email,
+                phone: user?.phone,
+              },
+            }}
           >
-            <Form.Item
-              name="name"
-              label="Họ và tên"
-              rules={[{ required: true, message: "Vui lòng nhập họ và tên" }]}
-            >
-              <Input placeholder="Nhập họ và tên" />
-            </Form.Item>
-            <Form.Item
-              name="email"
-              label="Email"
-              rules={[{ required: true, message: "Vui lòng nhập Email" }]}
-            >
-              <Input placeholder="Nhập Email" />
-            </Form.Item>
-            <Form.Item
-              name="phone"
-              label="Số điện thoại"
-              rules={[
-                { required: true, message: "Vui lòng nhập số điện thoại" },
-              ]}
-            >
-              <Input placeholder="Nhập số điện thoại" />
-            </Form.Item>
+            <Card>
+              <SubTitle>Thông tin người đặt hàng</SubTitle>
+              <Form.Item
+                style={{ marginTop: "15px" }}
+                name={["customerInfo", "name"]}
+                label="Họ và tên"
+                rules={[{ required: true, message: "Vui lòng nhập họ và tên" }]}
+              >
+                <Input disabled placeholder="Nhập họ và tên" />
+              </Form.Item>
+              <Form.Item
+                name={["customerInfo", "email"]}
+                label="Email"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng nhập email",
+                  },
+                  {
+                    type: "email",
+                    message: "Email không hợp lệ",
+                  },
+                ]}
+              >
+                <Input disabled placeholder="Nhập Email" />
+              </Form.Item>
+              <Form.Item
+                name={["customerInfo", "phone"]}
+                label="Số điện thoại"
+                rules={[
+                  { required: true, message: "Vui lòng nhập số điện thoại" },
+                ]}
+              >
+                <Input disabled placeholder="Nhập số điện thoại" />
+              </Form.Item>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <SubTitle style={{ margin: "15px 0px" }}>
+                  Giao tới người nhận khác{" "}
+                  <Tooltip
+                    color={"#108ee9"}
+                    title={
+                      "Thông tin ở trên là thông tin người đặt hàng bạn có thể thay đổi thông tin người nhận hàng ở đây"
+                    }
+                  >
+                    <QuestionCircleOutlined style={{ cursor: "pointer" }} />
+                  </Tooltip>
+                </SubTitle>
+                <Switch
+                  defaultChecked={showReceiverInfo}
+                  onChange={(e) => setShowRreceiverInfo(e)}
+                />
+              </div>
+              {showReceiverInfo && (
+                <>
+                  <Form.Item
+                    name={["receiverInfo", "name"]}
+                    label="Tên người nhận"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập tên người nhận",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Nhập tên người nhận khác" />
+                  </Form.Item>
+                  <Form.Item
+                    name={["receiverInfo", "email"]}
+                    label="Email"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập email",
+                      },
+                      {
+                        type: "email",
+                        message: "Email không hợp lệ",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Nhập email người nhận khác" />
+                  </Form.Item>
+                  <Form.Item
+                    name={["receiverInfo", "phone"]}
+                    label="Số điện thoại"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Vui lòng nhập số điện thoại",
+                      },
+                    ]}
+                  >
+                    <Input placeholder="Nhập số điện thoại người nhận khác" />
+                  </Form.Item>
+                </>
+              )}
+            </Card>
 
-            <WrapperAddressInput>
-              <AddressSelect
-                name="province"
-                label="Tỉnh/Thành phố"
-                placeholder="Tỉnh/thành phố"
-                options={provincesData}
-                onChange={handleCityChange}
-              />
-              <AddressSelect
-                name="district"
-                label="Quận/Huyện"
-                placeholder="Chọn quận/huyện"
-                options={districtsData}
-                disabled={!selectedCity}
-                onChange={handleDistrictChange}
-              />
-              <AddressSelect
-                name="ward"
-                label="Phường/Xã"
-                placeholder="Chọn phường/xã"
-                options={wardsData}
-                disabled={!selectedDistrict}
-              />
-            </WrapperAddressInput>
+            <Card style={{ marginTop: "25px" }}>
+              <SubTitle>Địa chỉ giao hàng</SubTitle>
+              <WrapperAddressInput style={{ marginTop: "15px" }}>
+                <AddressSelect
+                  name={["address", "province"]}
+                  label="Tỉnh/Thành phố"
+                  placeholder="Tỉnh/thành phố"
+                  options={provincesData}
+                  onChange={handleCityChange}
+                />
+                <AddressSelect
+                  name={["address", "district"]}
+                  label="Quận/Huyện"
+                  placeholder="Chọn quận/huyện"
+                  options={districtsData}
+                  disabled={!selectedCity}
+                  onChange={handleDistrictChange}
+                />
+                <AddressSelect
+                  name={["address", "ward"]}
+                  label="Phường/Xã"
+                  placeholder="Chọn phường/xã"
+                  options={wardsData}
+                  disabled={!selectedDistrict}
+                />
+              </WrapperAddressInput>
 
-            <Form.Item
-              name="detail"
-              label="Địa chỉ cụ thể"
-              rules={[
-                { required: true, message: "Vui lòng nhập địa chỉ cụ thể" },
-              ]}
-            >
-              <Input placeholder="Nhập địa chỉ cụ thể" />
-            </Form.Item>
+              <Form.Item
+                name={["address", "detail"]}
+                label="Địa chỉ cụ thể"
+                rules={[
+                  { required: true, message: "Vui lòng nhập địa chỉ cụ thể" },
+                ]}
+              >
+                <Input placeholder="Nhập địa chỉ cụ thể" />
+              </Form.Item>
+              <Form.Item name="note" label="Ghi chú đơn hàng (Tuỳ chọn)">
+                <TextArea rows={4} />
+              </Form.Item>
+            </Card>
           </Form>
         </AddressInforWrapper>
         <ProductsCheckOutItems isShippingPage form={form} />
