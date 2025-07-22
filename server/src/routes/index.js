@@ -6,6 +6,7 @@ const SizeRouter = require("./SizeRouter");
 const CartRouter = require("./CartRouter");
 const ShippingRouter = require("./ShippingRouter");
 const orderRouter = require("./OrderRouter");
+const statsRouter = require("./StatsRouter");
 const routers = (app) => {
   app.use("/api/auth", AuthRouter);
   app.use("/api/user", UsersRouter);
@@ -15,6 +16,7 @@ const routers = (app) => {
   app.use("/api/cart", CartRouter);
   app.use("/api/shipping", ShippingRouter);
   app.use("/api/orders", orderRouter);
+  app.use("/api/stats", statsRouter);
 };
 
 module.exports = routers;
