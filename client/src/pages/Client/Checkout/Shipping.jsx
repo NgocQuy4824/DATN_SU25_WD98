@@ -57,7 +57,9 @@ export default function Shipping() {
       ? Number(shippingInfo.address.districtId)
       : null
   );
-  const [showReceiverInfo, setShowRreceiverInfo] = useState(false);
+  const [showReceiverInfo, setShowRreceiverInfo] = useState(
+    shippingInfo?.receiverInfo !== shippingInfo?.customerInfo ? true : false
+  );
   // Server State
   const { data: provincesData = [] } = useGetProvince();
   const { data: districtsData = [] } = useGetDistrict(selectedCity);
@@ -97,8 +99,6 @@ export default function Shipping() {
     navigate("/checkout");
   };
 
-  const selectedValueCity = form.getFieldValue(["address", "province"]);
-  const selectedValueDistrict = form.getFieldValue(["address", "district"]);
   return (
     <>
       <WrapperBreadCrumb>
@@ -135,6 +135,15 @@ export default function Shipping() {
                 detail: shippingInfo?.address?.detail,
               },
               note: shippingInfo?.note,
+              receiverInfo: {
+                name: showReceiverInfo ? shippingInfo?.receiverInfo?.name : "",
+                email: showReceiverInfo
+                  ? shippingInfo?.receiverInfo?.email
+                  : "",
+                phone: showReceiverInfo
+                  ? shippingInfo?.receiverInfo?.phone
+                  : "",
+              },
             }}
           >
             <Card>
@@ -255,7 +264,7 @@ export default function Shipping() {
                   name={["address", "district"]}
                   label="Quận/Huyện"
                   placeholder="Chọn quận/huyện"
-                  disabled={!selectedValueCity || !selectedCity}
+                  disabled={!selectedCity}
                   onChange={handleDistrictChange}
                   options={districtsData}
                 />
@@ -264,7 +273,7 @@ export default function Shipping() {
                   label="Phường/Xã"
                   placeholder="Chọn phường/xã"
                   options={wardsData}
-                  disabled={!selectedValueDistrict || !selectedDistrict}
+                  disabled={!selectedDistrict}
                 />
               </WrapperAddressInput>
 

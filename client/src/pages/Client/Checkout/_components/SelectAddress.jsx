@@ -20,7 +20,6 @@ export const AddressSelect = ({
   options,
   disabled,
   onChange,
-  defaultValue,
 }) => {
   return (
     <Form.Item
@@ -33,8 +32,7 @@ export const AddressSelect = ({
         placeholder={placeholder}
         optionFilterProp="children"
         allowClear
-        defaultValue={defaultValue}
-        disabled={disabled && !defaultValue}
+        disabled={disabled}
         onChange={(value, option) => {
           onChange?.({ name: value, id: option?.key });
         }}
