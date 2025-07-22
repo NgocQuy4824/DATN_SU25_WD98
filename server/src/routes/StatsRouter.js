@@ -3,8 +3,10 @@ const authenticate = require("../middlewares/authenticate");
 const authorsize = require("../middlewares/authorize");
 const {
   getTotalStats,
+  getTop5Buyers,
   getPendingTask,
   getOrderByDateRangeStats,
+  getProductStats
   
 } = require("../controller/statsController");
 
@@ -19,6 +21,12 @@ router.get(
   authorsize("admin"),
   getOrderByDateRangeStats
 );
-
+router.get(
+  "/productStats",
+  authenticate,
+  authorsize("admin"),
+  getProductStats
+);
+router.get("/topBuyers", authenticate, authorsize("admin"), getTop5Buyers);
 
 module.exports = router;

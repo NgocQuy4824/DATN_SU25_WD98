@@ -270,8 +270,268 @@ const orderByDateRangeStats = async (req, res, next) => {
   };
 };
 
+const getProductStatsService = async (req, res, next) => {
+  const { startDate, endDate } = req.query;
+
+  if (!startDate || !endDate) {
+    return { status: "ERROR", message: "Thiếu trường startDate hoặc trường endDate!" };
+  }
+
+  const start = moment
+    .tz(startDate, "DD-MM-YYYY", VIET_NAM_TZ)
+    .startOf("day")
+    .toDate();
+  const end = moment
+    .tz(endDate, "DD-MM-YYYY", VIET_NAM_TZ)
+    .endOf("day")
+    .toDate();
+
+  if (
+    !moment(start).isValid() ||
+    !moment(end).isValid() ||
+    moment(start).isAfter(end)
+  ) {
+    return { status: "ERROR", message: "Khoảng thời gian không hợp lệ!" };
+  }
+
+//   lấy sản phẩm từ đơn hàng
+  const pipeline = [
+    {
+      $match: {
+        createdAt: { $gte: start, $lte: end },
+        status: STATUS.DONE,
+        isPaid: true,
+      },
+    },
+    { $unwind: "$items" },
+    {
+      $group: {
+        _id: "$items.productId",
+        name: { $first: "$items.name" },
+        totalQuantity: { $sum: "$items.quantity" },
+        totalRevenue: {
+          $sum: { $multiply: ["$items.quantity", "$items.price"] },
+        },
+        image: { $first: "$items.image" },
+        price: { $first: "$items.price" },
+      },
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "productId",
+        foreignField: "_id",
+        as: "productDetails",
+      },
+    },
+    { $unwind: "$productDetails" },
+    {
+      $addFields: {
+        productTotalStock: { $sum: "$variantDetails.countInStock" },
+      },
+    },
+    { $sort: { totalQuantity: -1 } },
+  ];
+
+  const allProductStats = await Order.aggregate(pipeline);
+
+  const totalStock = await Product.aggregate([
+    { $match: { isActive: false } },
+    {
+      $group: {
+        _id: null,
+        totalStock: { $sum: "$variants.countInStock" },
+      },
+    },
+  ]);
+
+  const totalStockValue = totalStock[0]?.totalStock || 0;
+
+  const formatProductStats = (products) =>
+    products.map((product) => ({
+      _id: product._id.toString(),
+      name: product.name,
+      totalQuantity: product.totalQuantity,
+      totalRevenue: parseFloat(product.totalRevenue.toFixed(2)),
+      image: product.image,
+      price: product.price,
+      percentageOfTotal: (
+        (product.totalQuantity /
+          (product.totalQuantity + (product.productTotalStock || 0))) *
+        100
+      ).toFixed(2),
+      percentageOfAllProducts:
+        totalStockValue > 0
+          ? ((product.productTotalStock / totalStockValue) * 100).toFixed(2)
+          : "0.00",
+    }));
+
+  const topSellingWithPercentage = formatProductStats(
+    allProductStats.slice(0, 5)
+  );
+  const leastSellingWithPercentage = formatProductStats(
+    allProductStats.slice(-5).reverse()
+  );
+
+  return {
+    status: "OK",
+    message: "Lấy thống kê sản phẩm bán chạy và bán chậm thành công",
+    data: {
+      topSellingProducts: topSellingWithPercentage,
+      leastSellingProducts: leastSellingWithPercentage,
+      dateRange: {
+        start: moment(start).format("YYYY-MM-DD"),
+        end: moment(end).format("YYYY-MM-DD"),
+      },
+    },
+  };
+};
+
+const findTop5Buyers = async (req, res, next) => {
+  const { dateFilter, startDate, endDate, month, year } = req.query;
+
+  let start, end;
+
+  if (dateFilter === "range" && startDate && endDate) {
+    start = moment
+      .tz(startDate, "DD-MM-YYYY", VIET_NAM_TZ)
+      .startOf("day")
+      .toDate();
+    end = moment.tz(endDate, "DD-MM-YYYY", VIET_NAM_TZ).endOf("day").toDate();
+  } else if (dateFilter === "monthly" && month && year) {
+    start = moment
+      .tz(`01-${month}-${year}`, "DD-MM-YYYY", VIET_NAM_TZ)
+      .startOf("month")
+      .toDate();
+    end = moment
+      .tz(`01-${month}-${year}`, "DD-MM-YYYY", VIET_NAM_TZ)
+      .endOf("month")
+      .toDate();
+  } else if (dateFilter === "yearly" && year) {
+    start = moment
+      .tz(`01-01-${year}`, "DD-MM-YYYY", VIET_NAM_TZ)
+      .startOf("year")
+      .toDate();
+    end = moment
+      .tz(`31-12-${year}`, "DD-MM-YYYY", VIET_NAM_TZ)
+      .endOf("year")
+      .toDate();
+  } else {
+    return { status: "OK", message: "Tham số lọc ngày không hợp lệ" };
+  }
+
+  if (
+    !moment(start).isValid() ||
+    !moment(end).isValid() ||
+    moment(start).isAfter(end)
+  ) {
+    return { status: "OK", message: "Khoảng thời gian không hợp lệ" };
+  }
+
+ // cách lấy top người dùng   
+  const topBuyersPipeline = [
+    {
+      $match: {
+        createdAt: { $gte: start, $lte: end },
+        status: STATUS.DONE,
+        isPaid: true,
+      },
+    },
+    {
+      $group: {
+        _id: "$userId",
+        totalOrders: { $sum: 1 },
+        totalSpent: { $sum: "$totalPrice" },
+        totalItems: { $sum: { $sum: "$items.quantity" } },
+        lastOrderDate: { $max: "$createdAt" },
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "_id",
+        foreignField: "_id",
+        as: "userInfo",
+      },
+    },
+    { $unwind: "$userInfo" },
+    {
+      $project: {
+        _id: 1,
+        totalOrders: 1,
+        totalSpent: 1,
+        totalItems: 1,
+        lastOrderDate: {
+          $dateToString: {
+            format: "%Y-%m-%d %H:%M:%S",
+            date: "$lastOrderDate",
+            timezone: VIET_NAM_TZ,
+          },
+        },
+        name: "$userInfo.name",
+        email: "$userInfo.email",
+        phone: "$userInfo.phone",
+        avatar: "$userInfo.avatar",
+      },
+    },
+    { $sort: { totalSpent: -1 } },
+    { $limit: 5 },
+  ];
+
+  const latestOrdersPipeline = [
+    { $sort: { createdAt: -1 } },
+    { $limit: 2 },
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "userInfo",
+      },
+    },
+    { $unwind: "$userInfo" },
+    {
+      $project: {
+        _id: 1,
+        customerName: "$userInfo.name",
+        customerAvatar: "$userInfo.avatar",
+        paymentMethod: 1,
+        totalPrice: 1,
+        status: 1,
+        createdAt: {
+          $dateToString: {
+            format: "%Y-%m-%d %H:%M:%S",
+            date: "$createdAt",
+            timezone: VIET_NAM_TZ,
+          },
+        },
+      },
+    },
+  ];
+
+  const [topBuyers, latestOrders] = await Promise.all([
+    Order.aggregate(topBuyersPipeline),
+    Order.aggregate(latestOrdersPipeline),
+  ]);
+
+  return {
+    status: "OK",
+    message: "Lấy danh sách người mua hàng nhiều nhất thành công",
+    data: {
+      topBuyers,
+      latestOrders,
+      dateRange: {
+        start: moment(start).format("YYYY-MM-DD"),
+        end: moment(end).format("YYYY-MM-DD"),
+      },
+    },
+  };
+};
+
 module.exports = {
   totalStats,
   getDashboardStats,
   orderByDateRangeStats,
+  getProductStatsService,
+  findTop5Buyers,
 };
