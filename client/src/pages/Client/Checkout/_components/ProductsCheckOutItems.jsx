@@ -1,6 +1,6 @@
-import tw, { styled } from "twin.macro";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import tw, { styled } from "twin.macro";
 import { useMyCart } from "../../../../hooks/useCartHook";
 const DividerProductItems = styled.div`
   ${tw`border border-gray-300 shadow-lg p-8 rounded-2xl bg-white flex flex-col gap-6`}
@@ -42,13 +42,17 @@ const ActionButton = styled.button`
 export default function ProductsCheckOutItems({ isShippingPage, form }) {
   const { items: cartItems } = useSelector((state) => state.cart);
   const { data } = useMyCart();
-
-  const handleContinueShipping = () => {
-    if (form) {
-      form.submit();
-    }
+  const handleContinueShipping = async () => {
+    form
+      .validateFields()
+      .then(() => {
+        form.submit();
+      })
+      .catch((err) => {
+        console.log("Form has errors", err);
+      });
   };
-  console.log(cartItems);
+
   const mergedCartItems = cartItems.map((cartItem) => {
     const fullItem = data?.data?.items.find(
       (p) => p.variantId === cartItem.variantId
@@ -115,9 +119,11 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
         </div>
       </div>
 
-      <ActionButton onClick={handleContinueShipping}>
-        {isShippingPage ? "Tiếp tục" : "Thanh toán"}
-      </ActionButton>
+      {isShippingPage ? (
+        <ActionButton onClick={handleContinueShipping}>Tiếp tục</ActionButton>
+      ) : (
+        <ActionButton>Đặt hàng</ActionButton>
+      )}
     </DividerProductItems>
   );
 }

@@ -12,6 +12,7 @@ import Cart from "../pages/Client/Cart/Cart";
 import ProfileForm from "../pages/Client/ProfilePage/ProfileForm";
 import OrderPage from "../pages/Client/ProfilePage/Order/OrderPage";
 import Shipping from "../pages/Client/Checkout/Shipping";
+import Checkout from "../pages/Client/Checkout/Checkout";
 // import ProfileForm from "../pages/Client/ProfilePage/ProfileForm";
 
 export const clientRoutes = [
@@ -25,13 +26,14 @@ export const clientRoutes = [
       { path: "signin", element: <SignInPage /> },
       { path: "signup", element: <SignUpPage /> },
       { path: "cart", element: <Cart /> },
-      { path: 'shipping', element: <Shipping/>},
+      { path: "shipping", element: <Shipping /> },
+      { path: "checkout", element: <Checkout /> },
       {
         path: "profile",
         element: <ProfilePage />,
         children: [
           { path: "", element: <ProfileForm /> },
-          { path: "orders", element: <OrderPage/> },
+          { path: "orders", element: <OrderPage /> },
         ],
       },
     ],

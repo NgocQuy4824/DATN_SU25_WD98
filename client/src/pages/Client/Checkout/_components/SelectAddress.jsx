@@ -20,30 +20,37 @@ export const AddressSelect = ({
   options,
   disabled,
   onChange,
-}) => (
-  <Form.Item
-    name={name}
-    label={label}
-    rules={[{ required: true, message: "" }]}
-  >
-    <StyledSelect
-      showSearch
-      placeholder={placeholder}
-      optionFilterProp="children"
-      allowClear
-      disabled={disabled}
-      onChange={(value, option) => {
-        onChange?.({ name: value, id: option?.key });
-      }}
-      filterOption={(input, option) =>
-        option?.children?.toString().toLowerCase().includes(input.toLowerCase())
-      }
+  defaultValue,
+}) => {
+  return (
+    <Form.Item
+      name={name}
+      label={label}
+      rules={[{ required: true, message: "" }]}
     >
-      {options?.map((item) => (
-        <Option key={item._id} value={item.name}>
-          {item.name}
-        </Option>
-      ))}
-    </StyledSelect>
-  </Form.Item>
-);
+      <StyledSelect
+        showSearch
+        placeholder={placeholder}
+        optionFilterProp="children"
+        allowClear
+        defaultValue={defaultValue}
+        disabled={disabled && !defaultValue}
+        onChange={(value, option) => {
+          onChange?.({ name: value, id: option?.key });
+        }}
+        filterOption={(input, option) =>
+          option?.children
+            ?.toString()
+            .toLowerCase()
+            .includes(input.toLowerCase())
+        }
+      >
+        {options?.map((item) => (
+          <Option key={item._id} value={item.name}>
+            {item.name}
+          </Option>
+        ))}
+      </StyledSelect>
+    </Form.Item>
+  );
+};

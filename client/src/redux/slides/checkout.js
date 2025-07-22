@@ -15,11 +15,13 @@ export const checkoutSlice = createSlice({
       state.customerInfo = customerInfo;
       state.receiverInfo = receiverInfo || customerInfo;
       state.address = address;
+      state.note = action.payload.note || undefined;
     },
     resetCheckout: (state) => {
       state.customerInfo = null;
       state.receiverInfo = null;
       state.address = null;
+      state.note = null;
     },
   },
 });

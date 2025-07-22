@@ -9,9 +9,9 @@ import {
 } from "../../../hooks/useAddressHook";
 import ProductsCheckOutItems from "./_components/ProductsCheckOutItems";
 import { AddressSelect } from "./_components/SelectAddress";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setShippingInfor } from "../../../redux/slides/checkout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { SubTitle } from "./checkOutStyle";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 
@@ -43,11 +43,20 @@ export default function Shipping() {
   const user = localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user"))
     : null;
+  const shippingInfo = useSelector((state) => state.checkout);
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   // Component State
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [selectedCity, setSelectedCity] = useState(
+    shippingInfo?.address?.provinceId
+      ? Number(shippingInfo.address.provinceId)
+      : null
+  );
+  const [selectedDistrict, setSelectedDistrict] = useState(
+    shippingInfo?.address?.districtId
+      ? Number(shippingInfo.address.districtId)
+      : null
+  );
   const [showReceiverInfo, setShowRreceiverInfo] = useState(false);
   // Server State
   const { data: provincesData = [] } = useGetProvince();
@@ -57,20 +66,39 @@ export default function Shipping() {
   const handleCityChange = ({ id }) => {
     setSelectedCity(id);
     setSelectedDistrict(null);
-    form.setFieldsValue({ district: undefined, ward: undefined });
+    form.setFieldsValue({
+      address: {
+        district: undefined,
+        ward: undefined,
+      },
+    });
   };
 
   const handleDistrictChange = ({ id }) => {
     setSelectedDistrict(id);
-    form.setFieldsValue({ ward: undefined });
+    form.setFieldsValue({
+      address: {
+        ward: undefined,
+      },
+    });
   };
+  const navigate = useNavigate();
   const onFinish = (value) => {
     const shippingPayload = {
       ...value,
       note: value.note || "",
+      address: {
+        ...value.address,
+        provinceId: selectedCity,
+        districtId: selectedDistrict,
+      },
     };
     dispatch(setShippingInfor(shippingPayload));
+    navigate("/checkout");
   };
+
+  const selectedValueCity = form.getFieldValue(["address", "province"]);
+  const selectedValueDistrict = form.getFieldValue(["address", "district"]);
   return (
     <>
       <WrapperBreadCrumb>
@@ -99,6 +127,14 @@ export default function Shipping() {
                 email: user?.email,
                 phone: user?.phone,
               },
+
+              address: {
+                province: shippingInfo?.address?.province,
+                district: shippingInfo?.address?.district,
+                ward: shippingInfo?.address?.ward,
+                detail: shippingInfo?.address?.detail,
+              },
+              note: shippingInfo?.note,
             }}
           >
             <Card>
@@ -219,16 +255,16 @@ export default function Shipping() {
                   name={["address", "district"]}
                   label="Quận/Huyện"
                   placeholder="Chọn quận/huyện"
-                  options={districtsData}
-                  disabled={!selectedCity}
+                  disabled={!selectedValueCity || !selectedCity}
                   onChange={handleDistrictChange}
+                  options={districtsData}
                 />
                 <AddressSelect
                   name={["address", "ward"]}
                   label="Phường/Xã"
                   placeholder="Chọn phường/xã"
                   options={wardsData}
-                  disabled={!selectedDistrict}
+                  disabled={!selectedValueDistrict || !selectedDistrict}
                 />
               </WrapperAddressInput>
 
