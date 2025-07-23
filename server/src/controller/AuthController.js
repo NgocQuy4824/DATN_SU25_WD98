@@ -1,4 +1,3 @@
-
 // const bcrypt = require("bcrypt");
 
 const { register, login } = require("../services/AuthService");
@@ -8,7 +7,22 @@ const {
   verifyAccessToken,
   verifyRefreshToken,
 } = require("../utils/jwt");
+const User = require("../models/UserModel");
+const buildQueryOptions = require("../helpers/buildQueryOptions");
 
+const testCustomQuery = async (req, res) => {
+  try {
+    console.log(req.query);
+    const { filter, options } = buildQueryOptions(req.query);
+    const { search, searchField } = req.query;
+    const orders = await User.paginate(filter, options);
+
+    return res.status(200).json(orders);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+};
 
 const registerController = async (req, res) => {
   try {
@@ -95,4 +109,5 @@ module.exports = {
   loginController,
   refreshTokenController,
   logoutController,
+  testCustomQuery,
 };

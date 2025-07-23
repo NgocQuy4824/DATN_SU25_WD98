@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const ROLE = require("../constants/role");
-const bcrypt = require('bcrypt')
+const bcrypt = require("bcrypt");
+const paginate = require("mongoose-paginate-v2");
 
 const userSchema = new mongoose.Schema(
   {
@@ -55,6 +56,8 @@ const userSchema = new mongoose.Schema(
     versionKey: false,
   }
 );
+
+userSchema.plugin(paginate);
 
 // hashpassword
 userSchema.pre("save", async function () {

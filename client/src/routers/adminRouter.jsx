@@ -7,6 +7,7 @@ import Statistic from "../components/Admin/Statistic/Statistic.jsx";
 import Variants from "../components/Admin/Variants/Variants.jsx";
 import Size from "../components/Admin/Variants/Size/Size.jsx";
 import { PrivateRouter } from "./privateRouter.jsx";
+import OrderDetail from "../components/Admin/Orders/OrderDetail/OrderDetail.jsx";
 
 
 
@@ -23,7 +24,15 @@ export const adminRoutes = [
         children: [
           { path: "products", element: <Products /> },
           { path: "users", element: <User /> },
-          { path: "orders", element: <Order /> },
+          {
+            path: "orders", element: <Order />,
+            children: [
+              {
+                path: "detail/:orderId",
+                element: <OrderDetail />
+              }
+            ]
+          },
           {
             path: "variants",
             element: <Variants />,

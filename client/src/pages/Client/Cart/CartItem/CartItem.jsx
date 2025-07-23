@@ -3,7 +3,11 @@ import { Row, Col, Typography, Button, Checkbox, Alert } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import UpdateQuantity from "../UpdateQuantity/UpdateQuantity";
-import { useRemoveCartItem, useUpdateCartItemQuantity } from "../../../../hooks/useCartHook";
+import {
+  useRemoveCartItem,
+  useUpdateCartItemQuantity,
+} from "../../../../hooks/useCartHook";
+import useCartSelection from "../../../../hooks/useCartSelected";
 
 const { Text } = Typography;
 
@@ -37,9 +41,15 @@ const StyledCheckbox = styled(Checkbox)`
 `;
 
 const CartItem = ({ item }) => {
+  console.log(item);
   const removeCartItemMutation = useRemoveCartItem();
   const updateQuantityMutation = useUpdateCartItemQuantity();
-
+  const {
+    handleSelectItem,
+    handleRemoveItem,
+    handleUpdateQuantity,
+    existsVariantId,
+  } = useCartSelection();
   const handleRemove = () => {
     removeCartItemMutation.mutate(item.variantId);
   };
@@ -50,15 +60,22 @@ const CartItem = ({ item }) => {
       variantId: item.variantId,
       quantity: newQuantity,
     });
+    handleUpdateQuantity(item.variantId, newQuantity);
   };
-
+  const handleToogleSelect = (e) => {
+    if (e) {
+      handleSelectItem(item);
+    } else {
+      handleRemoveItem(item.variantId);
+    }
+  };
   return (
     <ItemWrapper>
       <Row align="middle" gutter={12} wrap={false}>
         <Col flex="32px">
           <StyledCheckbox
-            // checked={item.selected}
-            disabled
+            checked={existsVariantId.includes(item.variantId)}
+            onChange={(e) => handleToogleSelect(e.target.checked)}
           />
         </Col>
         <Col flex="70px">
@@ -66,11 +83,20 @@ const CartItem = ({ item }) => {
         </Col>
         <Col flex="auto">
           <ProductName title={item.name}>{item.name}</ProductName>
-          <Text type="secondary">Màu sắc: <b>{item.variant?.color}</b></Text><br />
-          <Text type="secondary">Kích cỡ: {item.variant?.size?.name}</Text><br />
+          <Text type="secondary">
+            Màu sắc: <b>{item.variant?.color}</b>
+          </Text>
+          <br />
+          <Text type="secondary">Kích cỡ: {item.variant?.size?.name}</Text>
+          <br />
           <Text strong>{item.price?.toLocaleString()} ₫</Text>
           {item.warning && (
-            <Alert message={item.warning} type="warning" showIcon style={{ marginTop: 8 }} />
+            <Alert
+              message={item.warning}
+              type="warning"
+              showIcon
+              style={{ marginTop: 8 }}
+            />
           )}
         </Col>
         <Col flex="100px">
@@ -83,7 +109,9 @@ const CartItem = ({ item }) => {
           />
         </Col>
         <Col flex="100px" style={{ textAlign: "right" }}>
-          <Text strong>{(item?.price * item?.quantity).toLocaleString()} ₫</Text>
+          <Text strong>
+            {(item?.price * item?.quantity).toLocaleString()} ₫
+          </Text>
         </Col>
         <Col flex="40px" style={{ textAlign: "center" }}>
           <Button
