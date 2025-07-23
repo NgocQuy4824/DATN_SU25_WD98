@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const orderService = require("../services/OrderService");
 const Order = require("../models/OrderModel");
 const buildQueryOptions = require("../helpers/buildQueryOptions");
 
@@ -24,6 +25,17 @@ const getAllOrder = async (req, res) => {
   }
 };
 
+const createOrder = async (req, res, next) => {
+  try {
+    const result = await orderService.createOrder(req, res, next);
+    return res.status(result.status).json(result);
+  } catch (error) {
+    console.log("Error fetching orders:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   getAllOrder,
+  createOrder,
 };
