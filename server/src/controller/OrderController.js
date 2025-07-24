@@ -30,7 +30,7 @@ const createOrder = async (req, res, next) => {
     const result = await orderService.createOrder(req, res, next);
     return res.status(result.status).json(result);
   } catch (error) {
-    console.log("Error fetching orders:", err);
+    console.log("Error fetching orders:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
