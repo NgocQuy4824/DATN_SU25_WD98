@@ -69,11 +69,13 @@ const CartItem = ({ item }) => {
       handleRemoveItem(item.variantId);
     }
   };
+  const isOutStock = !item.variant.countInStock;
   return (
     <ItemWrapper>
       <Row align="middle" gutter={12} wrap={false}>
         <Col flex="32px">
           <StyledCheckbox
+            disabled={isOutStock}
             checked={existsVariantId.includes(item.variantId)}
             onChange={(e) => handleToogleSelect(e.target.checked)}
           />
@@ -82,14 +84,23 @@ const CartItem = ({ item }) => {
           <Image src={item.variant?.image} alt={item.name} />
         </Col>
         <Col flex="auto">
-          <ProductName title={item.name}>{item.name}</ProductName>
-          <Text type="secondary">
-            Màu sắc: <b>{item.variant?.color}</b>
-          </Text>
-          <br />
-          <Text type="secondary">Kích cỡ: {item.variant?.size?.name}</Text>
-          <br />
-          <Text strong>{item.price?.toLocaleString()} ₫</Text>
+          {isOutStock ? (
+            <>
+              <ProductName title={item.name}>{item.name}</ProductName>
+              <Text type="danger">Sản phẩm đã hết hàng</Text>
+            </>
+          ) : (
+            <>
+              <ProductName title={item.name}>{item.name}</ProductName>
+              <Text type="secondary">
+                Màu sắc: <b>{item.variant?.color}</b>
+              </Text>
+              <br />
+              <Text type="secondary">Kích cỡ: {item.variant?.size?.name}</Text>
+              <br />
+              <Text strong>{item.price?.toLocaleString()} ₫</Text>
+            </>
+          )}
           {item.warning && (
             <Alert
               message={item.warning}
@@ -100,18 +111,22 @@ const CartItem = ({ item }) => {
           )}
         </Col>
         <Col flex="100px">
-          <UpdateQuantity
-            value={item?.quantity}
-            min={1}
-            max={item.variant?.countInStock}
-            onChange={handleChangeQuantity}
-            loading={updateQuantityMutation.isLoading}
-          />
+          {!isOutStock && (
+            <UpdateQuantity
+              value={item?.quantity}
+              min={1}
+              max={item.variant?.countInStock}
+              onChange={handleChangeQuantity}
+              loading={updateQuantityMutation.isLoading}
+            />
+          )}
         </Col>
         <Col flex="100px" style={{ textAlign: "right" }}>
-          <Text strong>
-            {(item?.price * item?.quantity).toLocaleString()} ₫
-          </Text>
+          {!isOutStock && (
+            <Text strong>
+              {(item?.price * item?.quantity).toLocaleString()} ₫
+            </Text>
+          )}
         </Col>
         <Col flex="40px" style={{ textAlign: "center" }}>
           <Button

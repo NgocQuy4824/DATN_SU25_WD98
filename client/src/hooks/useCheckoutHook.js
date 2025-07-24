@@ -9,5 +9,9 @@ export const useCreateOrder = () => {
     onSuccess: () => {
       toast.success("Đặt hàng thành công");
     },
+    onError: (err) => {
+      const { response } = err;
+      toast.error(response.data.message);
+    },
   });
 };

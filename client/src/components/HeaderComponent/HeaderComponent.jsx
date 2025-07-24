@@ -1,8 +1,5 @@
 import { Button, Col, Dropdown, Menu } from "antd";
-import {
-  ShoppingCartOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
 import { WrapperHeader, WrapperHeaderLogo } from "./style";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -33,7 +30,7 @@ const HeaderComponent = ({ isAdmin = false }) => {
     {
       key: "orders",
       label: "Đơn hàng",
-      onClick: () => navigate("/orders"),
+      onClick: () => navigate("/profile/orders"),
     },
     {
       key: "logout",
@@ -44,11 +41,13 @@ const HeaderComponent = ({ isAdmin = false }) => {
   ].filter(Boolean);
 
   const accountMenu = (
-    <Menu items={menuItems.map(({ key, label, onClick, danger }) => ({
-      key,
-      label: <span onClick={onClick}>{label}</span>,
-      danger,
-    }))} />
+    <Menu
+      items={menuItems.map(({ key, label, onClick, danger }) => ({
+        key,
+        label: <span onClick={onClick}>{label}</span>,
+        danger,
+      }))}
+    />
   );
 
   return (
@@ -76,12 +75,23 @@ const HeaderComponent = ({ isAdmin = false }) => {
         {!isAdmin && (
           <Col
             flex={2}
-            style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              alignItems: "center",
+            }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               {user ? (
                 <Dropdown overlay={accountMenu} placement="bottomRight" arrow>
-                  <div style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
+                  <div
+                    style={{
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                    }}
+                  >
                     <UserOutlined />
                     <span>Tài khoản</span>
                   </div>
@@ -89,14 +99,24 @@ const HeaderComponent = ({ isAdmin = false }) => {
               ) : (
                 <>
                   <div
-                    style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                    style={{
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                    }}
                     onClick={() => navigate("/signup")}
                   >
                     <UserOutlined />
                     <span>Đăng ký</span>
                   </div>
                   <div
-                    style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                    style={{
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 6,
+                    }}
                     onClick={() => navigate("/signin")}
                   >
                     <UserOutlined />
@@ -106,7 +126,12 @@ const HeaderComponent = ({ isAdmin = false }) => {
               )}
 
               <div
-                style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}
+                style={{
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6,
+                }}
                 onClick={() => navigate("/cart")}
               >
                 <ShoppingCartOutlined />

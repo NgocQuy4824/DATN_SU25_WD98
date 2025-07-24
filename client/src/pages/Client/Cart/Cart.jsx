@@ -127,10 +127,8 @@ const CartPage = () => {
               )
             }
           >
-            {filteredItems.length > 0 ? (
-              filteredItems.map((item) => (
-                <CartItem key={item.variantId} item={item} />
-              ))
+            {items.length > 0 ? (
+              items.map((item) => <CartItem key={item.variantId} item={item} />)
             ) : (
               <Empty description="Giỏ hàng trống" />
             )}
