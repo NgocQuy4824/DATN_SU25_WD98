@@ -6,15 +6,6 @@ const buildQueryOptions = require("../helpers/buildQueryOptions");
 const getAllOrder = async (req, res) => {
   try {
     const { filter, options } = buildQueryOptions(req.query);
-    const { search, searchField } = req.query;
-
-    if (search && searchField) {
-      if (searchField === "_id" && mongoose.Types.ObjectId.isValid(search)) {
-        filter._id = search;
-      } else {
-        filter[searchField] = { $regex: search, $options: "i" };
-      }
-    }
 
     const orders = await Order.paginate(filter, options);
 
@@ -35,7 +26,23 @@ const createOrder = async (req, res, next) => {
   }
 };
 
+const getDetailOrder = async (req, res, next) => {
+  try {
+    const result = await orderService.getDetailOrder(req, res, next);
+    return res.status(result.status || 500).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const getMyOrder = async (req, res, next) => {
+  const result = await orderService.getMyOrder(req, res, next);
+  return res.status(200).json(result);
+};
+
 module.exports = {
   getAllOrder,
   createOrder,
+  getMyOrder,
+  getDetailOrder,
 };

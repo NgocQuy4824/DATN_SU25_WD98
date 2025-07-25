@@ -106,7 +106,7 @@ const orderModel = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    description: {
+    note: {
       type: String,
     },
     canceled: {
