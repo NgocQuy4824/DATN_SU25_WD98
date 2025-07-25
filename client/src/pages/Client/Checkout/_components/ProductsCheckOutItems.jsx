@@ -78,6 +78,8 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
         price: item.price,
         image: item.variant.image,
         quantity: item.quantity,
+        size: item.variant.size.name,
+        color: item.variant.color,
       };
     });
     const payload = {

@@ -1,29 +1,17 @@
 import React from "react";
 import tw from "twin.macro";
 import StatusOrder from "./StatusOrder";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ServicesInfo from "./ServicesInfo";
 import CustomerInfo from "./CustomerInfo";
 import TabelOrderItems from "./TabelOrderItems";
-import { useGetDetailOrder } from "../../../../hooks/useOrderHook";
 import { Spin } from "antd";
-import ActionStatusOrder from "./ActionStatusOrder";
+import { useGetDetailOrder } from "../../../../../hooks/useOrderHook";
+import ActionStatusOrderUser from "./ActionStatusOrder";
+import { translateRole } from "../../../../../components/Admin/Orders/OrderDetail/OrderDetail";
 import { CloseCircleOutlined } from "@ant-design/icons";
 
-export const translateRole = (role) => {
-  switch (role) {
-    case "user":
-      return "Người dùng";
-      break;
-    case "admin":
-      return "Quản trị viên";
-    case "system":
-      return "system";
-    default:
-      break;
-  }
-};
-const OrderDetail = () => {
+const OrderDetailUser = () => {
   const { orderId } = useParams();
   const { data, isLoading } = useGetDetailOrder(orderId);
   const servicesInfo = {
@@ -64,6 +52,7 @@ const OrderDetail = () => {
   const totalPrice = data?.totalPrice;
   return (
     <div css={tw`pl-4`}>
+      <Link to={"/profile/orders"}>Quay về danh sách</Link>
       {isLoading ? (
         <div tw="min-h-[70vh] flex items-center justify-center">
           <Spin size="large" spinning />
@@ -74,13 +63,14 @@ const OrderDetail = () => {
             <h2 css={tw`text-lg text-blue-800 py-12`}>
               Thông tin đơn hàng #{orderId}
             </h2>
-            <ActionStatusOrder status={data?.status} id={orderId} />
+            <ActionStatusOrderUser status={data?.status} id={orderId} />
           </div>
           {data?.canceled.isCancel ? (
             <div tw="flex justify-center py-4 flex-col items-center gap-2">
               <CloseCircleOutlined tw="text-4xl mb-4 text-red-500" />
               <p tw="text-xl font-semibold text-red-500">
-                Đơn hàng đã bị huỷ bởi {translateRole(data?.canceled.by)}
+                Đơn hàng của bạn đã bị huỷ bởi{" "}
+                {translateRole(data?.canceled.by)}
               </p>
               <p tw="text-lg text-red-700">{data?.canceled.description}</p>
             </div>
@@ -106,4 +96,4 @@ const OrderDetail = () => {
   );
 };
 
-export default OrderDetail;
+export default OrderDetailUser;

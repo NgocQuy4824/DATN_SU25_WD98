@@ -40,9 +40,27 @@ const getMyOrder = async (req, res, next) => {
   return res.status(200).json(result);
 };
 
+const updateStatusOrder = async (req, res, next) => {
+  const result = await orderService.updateStatusOrder(req, res, next);
+  return res.status(200).json(result);
+};
+
+const completeOrder = async (req, res, next) => {
+  const result = await orderService.completeOrder(req, res, next);
+  return res.status(200).json(result);
+};
+
+const cancelOrder = async (req, res, next) => {
+  const result = await orderService.cancelOrder(req, res, next);
+  return res.status(200).json(result);
+};
+
 module.exports = {
   getAllOrder,
   createOrder,
   getMyOrder,
   getDetailOrder,
+  updateStatusOrder,
+  completeOrder,
+  cancelOrder,
 };

@@ -3,6 +3,7 @@ const customResponse = require("../helpers/customResponse");
 const Order = require("../models/OrderModel");
 const Product = require("../models/ProductsModel");
 const buildQueryOptions = require("../helpers/buildQueryOptions");
+const STATUS = require("../constants/status");
 
 const createOrder = async (req, res, next) => {
   const session = await mongoose.startSession();
@@ -125,8 +126,115 @@ const getMyOrder = async (req, res, next) => {
   }
 };
 
+const updateStatusOrder = async (req, res, next) => {
+  const { orderId } = req.params;
+  if (!orderId) {
+    return res.status(400).json(
+      customResponse({
+        message: "Chưa có id của đơn hàng",
+        status: 400,
+        success: false,
+      })
+    );
+  }
+  const foundOrder = await Order.findOne({ _id: orderId });
+  if (!foundOrder) {
+    return res.status(400).json(
+      customResponse({
+        message: "Không tìm thấy đơn hàng",
+        status: 400,
+        success: false,
+      })
+    );
+  }
+  foundOrder.status = req.body.status;
+  if (!foundOrder.isPaid && req.body.status === STATUS.DELIVERED) {
+    foundOrder.isPaid = true;
+  }
+  await foundOrder.save();
+  return customResponse({
+    message: `Cập nhật trạng thái đơn hàng thành công sang thành ${req.body.status}`,
+    status: 200,
+    success: true,
+    data: null,
+  });
+};
+
+const completeOrder = async (req, res, next) => {
+  const { orderId } = req.params;
+  if (!orderId) {
+    return res.status(400).json(
+      customResponse({
+        message: "Chưa có id của đơn hàng",
+        status: 400,
+        success: false,
+      })
+    );
+  }
+  const foundOrder = await Order.findOne({ _id: orderId });
+  if (!foundOrder) {
+    return res.status(400).json(
+      customResponse({
+        message: "Không tìm thấy đơn hàng",
+        status: 400,
+        success: false,
+      })
+    );
+  }
+  foundOrder.status = "done";
+  await foundOrder.save();
+  return customResponse({
+    message: `Hoàn thành đơn hàng`,
+    status: 200,
+    success: true,
+    data: null,
+  });
+};
+
+const cancelOrder = async (req, res, next) => {
+  const { orderId } = req.params;
+  if (!orderId) {
+    return res.status(400).json(
+      customResponse({
+        message: "Chưa có id của đơn hàng",
+        status: 400,
+        success: false,
+      })
+    );
+  }
+  const foundOrder = await Order.findOne({
+    _id: orderId,
+    "canceled.isCancel": false,
+  });
+  if (!foundOrder) {
+    return res.status(400).json(
+      customResponse({
+        message: "Không tìm thấy đơn hàng",
+        status: 400,
+        success: false,
+      })
+    );
+  }
+  foundOrder.canceled = {
+    isCancel: true,
+    by: req.body.role,
+    description: req.body.description,
+  };
+  foundOrder.status = STATUS.CANCELLED;
+  await foundOrder.save();
+  return customResponse({
+    message: `huỷ đơn hàng thành công`,
+    status: 200,
+    success: true,
+    data: null,
+  });
+};
+
 module.exports = {
   createOrder,
   getDetailOrder,
   getMyOrder,
+  updateStatusOrder,
+  completeOrder,
+  cancelOrder,
 };
