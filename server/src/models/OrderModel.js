@@ -93,7 +93,7 @@ const orderModel = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: "COD" | "ONLINE",
+      enum: ["COD", "ONLINE"],
       default: "COD",
     },
     status: {
@@ -106,13 +106,22 @@ const orderModel = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    description: {
+    note: {
       type: String,
     },
-    canceledBy: {
-      type: String,
-      enum: Object.values(ROLE),
-      default: ROLE.SYSTEM,
+    canceled: {
+      isCancel: {
+        type: Boolean,
+        default: false,
+      },
+      by: {
+        type: String,
+        enum: Object.values(ROLE),
+        default: ROLE.SYSTEM,
+      },
+      description: {
+        type: String,
+      },
     },
   },
   {

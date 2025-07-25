@@ -1,23 +1,47 @@
+const { default: mongoose } = require("mongoose");
+
 function buildQueryOptions(query) {
   const {
     page = 1,
     limit = 10,
-    sort = "-createdAt",
+    sortBy = "createdAt",
+    sortOrder = "desc",
     fields,
     search,
-    searchField,
+    searchField = "_id",
     ...rest
   } = query;
 
+  const sort = `${sortOrder === "desc" ? "-" : ""}${sortBy}`;
   const filter = {};
 
   if (search && searchField) {
     const fields = searchField.split(",");
-    filter.$or = fields.map((field) => ({
-      [field]: { $regex: search, $options: "i" },
-    }));
+    const orConditions = [];
+    for (const field of fields) {
+      if (field === "_id") {
+        if (mongoose.Types.ObjectId.isValid(search)) {
+          orConditions.push({ _id: new mongoose.Types.ObjectId(search) });
+        }
+        orConditions.push({
+          $expr: {
+            $regexMatch: {
+              input: { $toString: "$_id" },
+              regex: search,
+              options: "i",
+            },
+          },
+        });
+      } else {
+        orConditions.push({ [field]: { $regex: search, $options: "i" } });
+      }
+    }
+
+    if (orConditions.length > 0) {
+      filter.$or = orConditions;
+    }
   }
-  console.log(filter.name);
+
   Object.entries(rest).forEach(([key, value]) => {
     const match = key.match(/(.+)\[(gte|gt|lte|lt|in)\]/);
     if (match) {

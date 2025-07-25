@@ -1,104 +1,229 @@
-import React from 'react';
-import { Table, Tag, Button } from 'antd';
+import React, { useState, useMemo } from "react";
+import { Table, Tag, Input, Radio, Button } from "antd";
+import { useGetMyOrder } from "../../../../hooks/useOrderHook";
+import { FilterFilled } from "@ant-design/icons";
+import { Select } from "antd";
+
+const { Option } = Select;
+
+const statusMap = {
+  pending: { color: "default", label: "Chờ xác nhận" },
+  confirmed: { color: "blue", label: "Đã xác nhận" },
+  delivered: { color: "purple", label: "Đã giao" },
+  cancelled: { color: "red", label: "Đã hủy" },
+  completed: { color: "green", label: "Hoàn thành" },
+};
+
+const searchFields = [
+  { label: "Mã đơn hàng", value: "_id" },
+  { label: "Tên người nhận", value: "receiverInfo.name" },
+  { label: "SĐT người nhận", value: "receiverInfo.phone" },
+  { label: "Email người nhận", value: "receiverInfo.email" },
+  { label: "Tên người đặt", value: "customerInfo.name" },
+  { label: "SĐT người đặt", value: "customerInfo.phone" },
+];
 
 const OrderTable = () => {
-  const columns = [
-    {
-      title: 'ID',
-      dataIndex: 'id',
-      key: 'id',
-      width: '20%',
-    },
-    {
-      title: 'Hình thức thanh toán',
-      dataIndex: 'payment',
-      key: 'payment',
-    },
-    {
-      title: 'Tổng giá trị',
-      dataIndex: 'price',
-      key: 'price',
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status) => {
-        let color = '';
-        switch(status) {
-          case 'Đã giao': color = 'purple'; break;
-          case 'Đã hủy': color = 'red'; break;
-          case 'Chờ xác nhận': color = 'default'; break;
-          case 'Đã xác nhận': color = 'blue'; break;
-          case 'Hoàn thành': color = 'green'; break;
-          default: color = 'default';
-        }
-        return <Tag color={color}>{status}</Tag>
-      }
-    },
-    {
-      title: 'Ngày đặt',
-      dataIndex: 'date',
-      key: 'date',
-    },
-    {
-      title: 'Thao tác',
-      key: 'action',
-      render: () => (
-        <Button type="primary" size="small">Xem chi tiết</Button>
-      ),
-    },
-  ];
+  const [params, setParams] = useState({
+    page: 1,
+    limit: 10,
+    sortBy: "createdAt",
+    sortOrder: "desc",
+    search: "",
+    searchField: "_id",
+    status: "",
+  });
 
-  const data = [
-    {
-      key: '1',
-      id: '686e3f84ace6ab2094a07ab5',
-      payment: 'Thanh toán khi nhận hàng (COD)',
-      price: '986.501 ₫',
-      status: 'Đã giao',
-      date: '09/07/2025 05-08',
-    },
-    {
-      key: '2',
-      id: '686cf078e9239b09e378cd98',
-      payment: 'Thanh toán online',
-      price: '986.501 ₫',
-      status: 'Đã hủy',
-      date: '08/07/2025 05-18',
-    },
-    {
-      key: '3',
-      id: '686c80a43e43e63507bc8e96',
-      payment: 'Thanh toán khi nhận hàng (COD)',
-      price: '986.501 ₫',
-      status: 'Chờ xác nhận',
-      date: '08/07/2025 09-21',
-    },
-    {
-      key: '4',
-      id: '686b920d96115f11c587e206',
-      payment: 'Thanh toán khi nhận hàng (COD)',
-      price: '1.010.945 ₫',
-      status: 'Đã xác nhận',
-      date: '07/07/2025 04-23',
-    },
-    {
-      key: '5',
-      id: '686b31b23d249437ebdb56e5',
-      payment: 'Thanh toán khi nhận hàng (COD)',
-      price: '60.945 ₫',
-      status: 'Hoàn thành',
-      date: '07/07/2025 09-32',
-    },
-  ];
+  const { data, isLoading } = useGetMyOrder(params);
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    const sortField = sorter.field;
+    const sortOrder =
+      sorter.order === "ascend"
+        ? "asc"
+        : sorter.order === "descend"
+        ? "desc"
+        : undefined;
+
+    setParams((prev) => {
+      const updated = {
+        ...prev,
+        page: pagination.current,
+        limit: pagination.pageSize,
+        sortBy: sortField || prev.sortBy,
+        sortOrder: sortOrder || prev.sortOrder,
+        status: filters.status?.[0] || "",
+      };
+
+      if (!sortField || !sortOrder) {
+        delete updated.sortBy;
+        delete updated.sortOrder;
+      }
+
+      return updated;
+    });
+  };
+
+  const handleSearch = (e) => {
+    setParams((prev) => ({
+      ...prev,
+      page: 1,
+      search: e.target.value,
+    }));
+  };
+
+  const columns = useMemo(() => {
+    const getSortOrder = (field) => {
+      return params.sortBy === field
+        ? params.sortOrder === "asc"
+          ? "ascend"
+          : "descend"
+        : null;
+    };
+
+    return [
+      {
+        title: "ID",
+        dataIndex: "_id",
+        key: "_id",
+      },
+      {
+        title: "Người nhận",
+        dataIndex: "receiverInfo",
+        key: "receiverInfo",
+        render: (items) => `${items.name}`,
+      },
+      {
+        title: "Trạng thái",
+        dataIndex: "status",
+        key: "status",
+        filterDropdown: ({
+          setSelectedKeys,
+          selectedKeys,
+          confirm,
+          clearFilters,
+        }) => (
+          <div style={{ padding: 8 }}>
+            <Radio.Group
+              value={selectedKeys[0]}
+              onChange={(e) =>
+                setSelectedKeys(e.target.value ? [e.target.value] : [])
+              }
+              style={{ display: "flex", flexDirection: "column", gap: 4 }}
+            >
+              {Object.entries(statusMap).map(([value, { label }]) => (
+                <Radio key={value} value={value}>
+                  {label}
+                </Radio>
+              ))}
+            </Radio.Group>
+            <div
+              style={{
+                marginTop: 8,
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <Button type="primary" onClick={() => confirm()} size="small">
+                OK
+              </Button>
+              <Button onClick={() => clearFilters()} size="small">
+                Đặt lại
+              </Button>
+            </div>
+          </div>
+        ),
+        filterIcon: (filtered) => (
+          <FilterFilled style={{ color: filtered ? "#1890ff" : undefined }} />
+        ),
+        filteredValue: params.status ? [params.status] : null,
+        onFilter: () => true, // giữ để bật icon, không dùng để lọc
+        render: (status) => {
+          const { color, label } = statusMap[status] || {
+            color: "default",
+            label: status,
+          };
+          return <Tag color={color}>{label}</Tag>;
+        },
+      },
+
+      {
+        title: "Tổng tiền",
+        dataIndex: "totalPrice",
+        key: "totalPrice",
+        sorter: true,
+        sortOrder: getSortOrder("totalPrice"),
+        render: (totalPrice) => `${totalPrice.toLocaleString("vi-VN")} ₫`,
+      },
+      {
+        title: "Ngày tạo",
+        dataIndex: "createdAt",
+        key: "createdAt",
+        sorter: true,
+        sortOrder: getSortOrder("createdAt"),
+        render: (createdAt) => new Date(createdAt).toLocaleString("vi-VN"),
+      },
+    ];
+  }, [params.sortBy, params.sortOrder, params.status]);
 
   return (
-    <Table
-      columns={columns}
-      dataSource={data}
-      pagination={false}
-    />
+    <div>
+      <div style={{ marginBottom: 16, display: "flex", gap: 8 }}>
+        <Input.Search
+          placeholder="Tìm kiếm đơn hàng"
+          onChange={handleSearch}
+          value={params.search}
+          allowClear
+          style={{ width: 300 }}
+        />
+        <Select
+          value={params.searchField}
+          onChange={(value) =>
+            setParams((prev) => ({
+              ...prev,
+              page: 1,
+              searchField: value,
+            }))
+          }
+          style={{ width: 180 }}
+          placeholder="Chọn trường tìm kiếm"
+        >
+          {searchFields.map((field) => (
+            <Option key={field.value} value={field.value}>
+              {field.label}
+            </Option>
+          ))}
+        </Select>
+        <Button
+          onClick={() =>
+            setParams({
+              page: 1,
+              limit: 10,
+              sortBy: "createdAt",
+              sortOrder: "desc",
+              search: "",
+              status: "",
+            })
+          }
+        >
+          Đặt lại bộ lọc
+        </Button>
+      </div>
+
+      <Table
+        rowKey="_id"
+        loading={isLoading}
+        dataSource={data?.docs || []}
+        columns={columns}
+        pagination={{
+          current: params.page,
+          pageSize: params.limit,
+          total: data?.totalDocs || 0,
+          showSizeChanger: true,
+        }}
+        onChange={handleTableChange}
+      />
+    </div>
   );
 };
 

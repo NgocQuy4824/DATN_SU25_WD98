@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   List,
@@ -16,6 +16,7 @@ import { useMyCart } from "../../../../hooks/useCartHook";
 import styled from "styled-components";
 import tw from "twin.macro";
 import { Card as AntCard, Button as AntButton } from "antd";
+import { useCreateOrder } from "../../../../hooks/useCheckoutHook";
 
 const { Text } = Typography;
 
@@ -35,14 +36,10 @@ const Button = styled(AntButton)`
 export default function ProductsCheckOutItems({ isShippingPage, form }) {
   const { items: cartItems } = useSelector((state) => state.cart);
   const { data } = useMyCart();
+  const checkoutInfo = useSelector((state) => state.checkout);
   const [paymentMethod, setPaymentMethod] = useState("cod");
-
-  const handleContinueShipping = () => {
-    form
-      .validateFields()
-      .then(() => form.submit())
-      .catch((err) => console.log("Form has errors", err));
-  };
+  const [agreePolicy, setAgreePolicy] = useState(false);
+  const createOrder = useCreateOrder();
 
   const mergedCartItems = cartItems.map((cartItem) => {
     const fullItem = data?.data?.items.find(
@@ -65,12 +62,39 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
     0
   );
 
+  const handleContinueShipping = () => {
+    form
+      .validateFields()
+      .then(() => form.submit())
+      .catch((err) => console.log("Form has errors", err));
+  };
+
+  const handleCreateOrder = () => {
+    const items = mergedCartItems.map((item) => {
+      return {
+        productId: item.productId,
+        variantId: item.variantId,
+        name: item.name,
+        price: item.price,
+        image: item.variant.image,
+        quantity: item.quantity,
+      };
+    });
+    const payload = {
+      ...checkoutInfo,
+      items,
+      totalPrice: totalPrice,
+    };
+    if (paymentMethod === "cod" && !createOrder.isPending) {
+      createOrder.mutate(payload);
+    }
+  };
+
   const formatCurrency = (value) =>
     new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(value);
-
   return (
     <Card title="Sản phẩm thanh toán">
       <div style={{ maxHeight: "300px", overflowY: "auto", paddingRight: 8 }}>
@@ -152,7 +176,10 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
       {!isShippingPage && (
         <>
           <div tw="my-8">
-            <Checkbox onChange={(e) => console.log(e)}>
+            <Checkbox
+              value={agreePolicy}
+              onChange={(e) => setAgreePolicy(e.target.checked)}
+            >
               Đồng ý với <span>điều khoản và chính sách</span>
             </Checkbox>
           </div>
@@ -160,19 +187,21 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
       )}
       <InnerCard>
         <Tooltip
-          // title={
-          //   policyAgreed
-          //     ? ""
-          //     : "Bạn cần đồng ý với điều khoản và chính sách của chúng tôi để tiếp tục đặt hàng"
-          // }
+          title={
+            !isShippingPage && !agreePolicy
+              ? "Bạn cần đồng ý với điều khoản và chính sách của chúng tôi để tiếp tục đặt hàng"
+              : ""
+          }
           color="blue"
         >
           <Button
             type="primary"
             size="large"
             block
-            onClick={isShippingPage ? handleContinueShipping : undefined}
-            // disabled={!policyAgreed || !paymentMethod}
+            onClick={
+              isShippingPage ? handleContinueShipping : handleCreateOrder
+            }
+            disabled={!agreePolicy && !isShippingPage}
           >
             {isShippingPage ? "Tiếp tục" : "Đặt hàng"}
           </Button>
