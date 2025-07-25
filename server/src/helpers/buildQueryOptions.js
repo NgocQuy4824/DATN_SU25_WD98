@@ -4,14 +4,17 @@ function buildQueryOptions(query) {
   const {
     page = 1,
     limit = 10,
-    sort = "-createdAt",
+    sortBy = "createdAt",
+    sortOrder = "desc",
     fields,
     search,
     searchField = "_id",
     ...rest
   } = query;
 
+  const sort = `${sortOrder === "desc" ? "-" : ""}${sortBy}`;
   const filter = {};
+
   if (search && searchField) {
     const fields = searchField.split(",");
     const orConditions = [];
