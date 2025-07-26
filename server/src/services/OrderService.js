@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const customResponse = require("../helpers/customResponse");
 const Order = require("../models/OrderModel");
 const Product = require("../models/ProductsModel");
+const buildQueryOptions = require("../helpers/buildQueryOptions");
 
 const createOrder = async (req, res, next) => {
   const session = await mongoose.startSession();
@@ -69,6 +70,63 @@ const createOrder = async (req, res, next) => {
   }
 };
 
+const getDetailOrder = async (req, res, next) => {
+  const userId = req.userId;
+  const foundOrder = await Order.findOne({ _id: req.params.id, userId });
+  if (!foundOrder) {
+    return customResponse({
+      status: "ERROR",
+      message: `Không tìm thấy đơn hàng với mã ${req.params.id}`,
+    });
+  }
+  return customResponse({
+    data: foundOrder,
+    message: "Success",
+    status: 200,
+    success: true,
+  });
+};
+
+const getMyOrder = async (req, res, next) => {
+  const userId = req.userId;
+
+  if (!userId) {
+    return res.status(401).json(
+      customResponse({
+        status: "ERROR",
+        message: "Không tìm thấy userId",
+      })
+    );
+  }
+
+  const { filter, options } = buildQueryOptions(req.query);
+  filter.userId = userId;
+  try {
+    const orders = await Order.paginate(filter, options);
+
+    return res.status(200).json(
+      customResponse({
+        data: orders,
+        message: "Lấy đơn hàng thành công",
+        status: 200,
+        success: true,
+      })
+    );
+  } catch (error) {
+    console.error("Lỗi khi lấy đơn hàng:", error);
+    return res.status(500).json(
+      customResponse({
+        message: "Lỗi máy chủ khi lấy đơn hàng",
+        status: 500,
+        success: false,
+        data: null,
+      })
+    );
+  }
+};
+
 module.exports = {
   createOrder,
+  getDetailOrder,
+  getMyOrder,
 };
