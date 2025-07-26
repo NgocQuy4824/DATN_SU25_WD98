@@ -1,26 +1,133 @@
-import React from 'react'
-import TypeProducts from '../../../components/Client/TypeProducts/TypeProducts'
-import { WrapperTypeProduct } from './style'
+import React, { useRef, useState } from "react";
+import {
+  ScrollButton,
+  Title,
+  WrapperProductList,
+  WrapperTypeProduct,
+} from "./style";
+import SliderComponent from "../../../components/SliderComponent/SliderComponent";
+import anh4 from "../../asset/images/anh4.jpg";
+import anh5 from "../../asset/images/anh5.jpg";
+import ProductCard from "./ProductCard";
+import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import {
+  useGetAllProducts,
+  useHighlightProducts,
+} from "../../../hooks/useProductHook";
 
+import ClauseComponent from "../../../components/ClauseComponent/ClauseComponent";
+import Footer from "../../../components/FooterComponent/FooterComponent";
+import { Link } from "react-router-dom";
+import { Button, Space } from "antd";
+import CategoryClient from "./CategoryClient/CategoryClient";
 
 const HomePage = () => {
-  const arrType = [
-    { id: 1, name: 'Giày Nam' },
-    { id: 2, name: 'Giày Nữ' },
-    { id: 3, name: 'Giày Trẻ Em' },
-    { id: 4, name: 'Phụ Kiện' },
-    { id: 5, name: 'Khuyến Mãi' }
-  ]
-  return (
-    <div style={{ padding: '0 120px' }}>
-      <WrapperTypeProduct>
-      {arrType.map((item) => (
-        <TypeProducts key={item.id} name={item.name} />
-      ))}
-      </WrapperTypeProduct>
-      HomePage
-    </div>
-  )
-}
+  const scrollRef = useRef();
 
-export default HomePage
+  const { data, isLoading } = useHighlightProducts();
+  const products = data?.data || [];
+
+  const { data: allProductData } = useGetAllProducts();
+  const allProducts = allProductData?.data || [];
+
+  const sortedProducts = [...allProducts]
+    .filter((product) => product.isActive)
+    .reverse(); // giữ nguyên thứ tự thêm đầu tiên
+
+  const [visibleRows, setVisibleRows] = useState(1);
+
+  const handleScroll = (direction) => {
+    const container = scrollRef.current;
+    if (container) {
+      const scrollAmount = 250 + 20;
+      container.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  const visibleProducts = sortedProducts.slice(0, visibleRows * 5);
+
+  const canShowMore = visibleRows * 5 < sortedProducts.length;
+
+  return (
+    <>
+      <div style={{ padding: "0 120px" }}>
+        <WrapperTypeProduct>
+          <Link to="/products" style={{ textDecoration: "none" ,fontSize: '16px',fontWeight: 'bold', color: '#333'}}>
+            Sản phẩm
+          </Link>
+          <CategoryClient />
+        </WrapperTypeProduct>
+
+        <SliderComponent arrImages={[anh4, anh5]} />
+        <ClauseComponent />
+
+        <Title>Sản phẩm nổi bật</Title>
+        <div style={{ position: "relative" }}>
+          {products.length > 5 && (
+            <>
+              <ScrollButton left onClick={() => handleScroll("left")}>
+                <LeftOutlined />
+              </ScrollButton>
+              <ScrollButton right onClick={() => handleScroll("right")}>
+                <RightOutlined />
+              </ScrollButton>
+            </>
+          )}
+          <WrapperProductList ref={scrollRef}>
+            {products.map((product) => (
+              <ProductCard
+                key={product._id}
+                product={product}
+                isLoading={isLoading}
+              />
+            ))}
+          </WrapperProductList>
+        </div>
+
+        <hr
+          style={{
+            border: "none",
+            borderTop: "1px solid #ddd",
+            margin: "32px 0",
+          }}
+        />
+
+        <Title>Sản phẩm</Title>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(5, 1fr)",
+            gap: "20px",
+            marginBottom: "20px",
+          }}
+        >
+          {visibleProducts.map((product) => (
+            <ProductCard key={product._id} product={product} />
+          ))}
+        </div>
+
+        <div style={{ textAlign: "center", marginBottom: "40px" }}>
+          <Space>
+            {canShowMore && (
+              <Button onClick={() => setVisibleRows(visibleRows + 1)}>
+                Xem thêm
+              </Button>
+            )}
+            {visibleRows > 1 && (
+              <Button onClick={() => setVisibleRows(1)} danger>
+                Thu gọn
+              </Button>
+            )}
+          </Space>
+        </div>
+      </div>
+
+      <Footer />
+    </>
+  );
+};
+
+export default HomePage;
