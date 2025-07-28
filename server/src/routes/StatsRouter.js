@@ -6,7 +6,8 @@ const {
   getTop5Buyers,
   getPendingTask,
   getOrderByDateRangeStats,
-  getProductStats
+  getProductStats,
+  getOrderByYearRangeStats
   
 } = require("../controller/statsController");
 
@@ -21,6 +22,13 @@ router.get(
   authorsize("admin"),
   getOrderByDateRangeStats
 );
+router.get(
+  "/yearRange",
+  authenticate,
+  authorsize("admin"),
+  getOrderByYearRangeStats
+);
+
 router.get(
   "/productStats",
   authenticate,

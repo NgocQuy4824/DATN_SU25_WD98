@@ -270,11 +270,93 @@ const orderByDateRangeStats = async (req, res, next) => {
   };
 };
 
+ const orderByYearStats = async (req, res, next) => {
+  const { year } = req.query;
+
+  if (!year) {
+    return { status: "ERROR", message: "Năm không được để trống!" };
+  }
+
+  const startDate = moment
+    .tz(`01-01-${year}`, "DD-MM-YYYY", VIET_NAM_TZ)
+    .startOf("year");
+  const endDate = moment
+    .tz(`31-12-${year}`, "DD-MM-YYYY", VIET_NAM_TZ)
+    .endOf("year");
+
+  const start = startDate.utc().toDate();
+  const end = endDate.utc().toDate();
+
+  const pipeline = [
+    {
+      $match: {
+        createdAt: { $gte: start, $lte: end },
+        status: { $ne: STATUS.CANCELLED },
+        isPaid: true,
+      },
+    },
+    {
+      $addFields: {
+        createdAtVN: {
+          $dateToString: {
+            format: "%Y-%m-%d %H:%M:%S",
+            date: "$createdAt",
+            timezone: "+07:00",
+          },
+        },
+      },
+    },
+    {
+      $group: {
+        _id: {
+          month: { $month: { $toDate: "$createdAtVN" } },
+        },
+        totalOrders: { $sum: 1 },
+        totalRevenue: {
+          $sum: {
+            $cond: [{ $eq: ["$status", STATUS.DONE] }, "$totalPrice", 0],
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        month: "$_id.month",
+        totalOrders: 1,
+        totalRevenue: 1,
+      },
+    },
+    {
+      $sort: { month: 1 },
+    },
+  ];
+
+  const data = await Order.aggregate(pipeline);
+
+  const totalOrders = data.reduce((acc, curr) => acc + curr.totalOrders, 0);
+  const totalRevenue = data.reduce((acc, curr) => acc + curr.totalRevenue, 0);
+
+  return {
+    status: "OK",
+    message: "Lấy thống kê đơn hàng và doanh thu theo năm thành công",
+    data: {
+      year: parseInt(year),
+      months: data,
+      totalOrders,
+      totalRevenue,
+    },
+  };
+};
+
 const getProductStatsService = async (req, res, next) => {
   const { startDate, endDate } = req.query;
 
   if (!startDate || !endDate) {
-    return { status: "ERROR", message: "Thiếu trường startDate hoặc trường endDate!" };
+    return {
+      status: "ERROR",
+      message: "Thiếu trường startDate hoặc trường endDate!",
+    };
   }
 
   const start = moment
@@ -294,7 +376,7 @@ const getProductStatsService = async (req, res, next) => {
     return { status: "ERROR", message: "Khoảng thời gian không hợp lệ!" };
   }
 
-//   lấy sản phẩm từ đơn hàng
+  //   lấy sản phẩm từ đơn hàng
   const pipeline = [
     {
       $match: {
@@ -428,7 +510,7 @@ const findTop5Buyers = async (req, res, next) => {
     return { status: "OK", message: "Khoảng thời gian không hợp lệ" };
   }
 
- // cách lấy top người dùng   
+  // cách lấy top người dùng
   const topBuyersPipeline = [
     {
       $match: {
@@ -534,4 +616,5 @@ module.exports = {
   orderByDateRangeStats,
   getProductStatsService,
   findTop5Buyers,
+  orderByYearStats
 };
