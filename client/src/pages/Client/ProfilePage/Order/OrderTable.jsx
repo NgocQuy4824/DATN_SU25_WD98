@@ -10,9 +10,10 @@ const { Option } = Select;
 const statusMap = {
   pending: { color: "default", label: "Chờ xác nhận" },
   confirmed: { color: "blue", label: "Đã xác nhận" },
+  shipping: { color: "pink", label: "Đang giao" },
   delivered: { color: "purple", label: "Đã giao" },
   cancelled: { color: "red", label: "Đã hủy" },
-  completed: { color: "green", label: "Hoàn thành" },
+  done: { color: "green", label: "Hoàn thành" },
 };
 
 const searchFields = [

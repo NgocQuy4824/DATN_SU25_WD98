@@ -69,7 +69,7 @@ const CartItem = ({ item }) => {
       handleRemoveItem(item.variantId);
     }
   };
-  const isOutStock = !item.variant.countInStock;
+  const isOutStock = item.variant ? !item.variant.countInStock : true;
   return (
     <ItemWrapper>
       <Row align="middle" gutter={12} wrap={false}>

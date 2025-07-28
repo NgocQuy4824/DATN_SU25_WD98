@@ -3,6 +3,7 @@ import {
   cancelOrder,
   completeOrder,
   getAllOrder,
+  getMyDetailOrder,
   getMyOrder,
   getOrderDetail,
   updateOrderStatus,
@@ -29,6 +30,13 @@ export const useGetDetailOrder = (id) => {
     queryKey: ["ORDERS", id],
     queryFn: () => getOrderDetail(id),
     enabled: !!id,
+  });
+};
+
+export const useGetMyDetailOrder = (id) => {
+  return useQuery({
+    queryKey: ["ORDERS", "MY-ORDER", id],
+    queryFn: () => getMyDetailOrder(id),
   });
 };
 

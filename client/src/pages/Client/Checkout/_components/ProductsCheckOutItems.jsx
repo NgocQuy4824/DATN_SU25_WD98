@@ -17,6 +17,7 @@ import styled from "styled-components";
 import tw from "twin.macro";
 import { Card as AntCard, Button as AntButton } from "antd";
 import { useCreateOrder } from "../../../../hooks/useCheckoutHook";
+import { toast } from "react-toastify";
 
 const { Text } = Typography;
 
@@ -70,18 +71,27 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
   };
 
   const handleCreateOrder = () => {
+    let mergedItems = false;
     const items = mergedCartItems.map((item) => {
+      if (!item.variant) {
+        toast.error("Biến thể của sản phẩm đã không còn vui lòng thử lại");
+        mergedItems = true;
+        return;
+      }
       return {
         productId: item.productId,
         variantId: item.variantId,
         name: item.name,
         price: item.price,
-        image: item.variant.image,
+        image: item.variant?.image,
         quantity: item.quantity,
-        size: item.variant.size.name,
-        color: item.variant.color,
+        size: item.variant?.size.name,
+        color: item.variant?.color,
       };
     });
+    if (mergedItems) {
+      return;
+    }
     const payload = {
       ...checkoutInfo,
       items,
@@ -110,7 +120,7 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
                   <Image width={60} src={item.variant?.image} preview={false} />
                 }
                 title={
-                  <Link to={`/products/${item._id}`}>
+                  <Link to={`/products/${item.productId}`}>
                     <Text strong>{item.name}</Text>
                   </Link>
                 }

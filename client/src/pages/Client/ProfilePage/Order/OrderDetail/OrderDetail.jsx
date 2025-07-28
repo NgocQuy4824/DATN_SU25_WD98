@@ -6,14 +6,14 @@ import ServicesInfo from "./ServicesInfo";
 import CustomerInfo from "./CustomerInfo";
 import TabelOrderItems from "./TabelOrderItems";
 import { Spin } from "antd";
-import { useGetDetailOrder } from "../../../../../hooks/useOrderHook";
+import { useGetMyDetailOrder } from "../../../../../hooks/useOrderHook";
 import ActionStatusOrderUser from "./ActionStatusOrder";
 import { translateRole } from "../../../../../components/Admin/Orders/OrderDetail/OrderDetail";
 import { CloseCircleOutlined } from "@ant-design/icons";
 
 const OrderDetailUser = () => {
   const { orderId } = useParams();
-  const { data, isLoading } = useGetDetailOrder(orderId);
+  const { data, isLoading } = useGetMyDetailOrder(orderId);
   const servicesInfo = {
     isPaid: data?.isPaid,
     paymentMethod: data?.paymentMethod,

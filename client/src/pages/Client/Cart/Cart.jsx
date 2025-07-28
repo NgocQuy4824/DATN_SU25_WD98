@@ -31,7 +31,8 @@ const CartPage = () => {
   const items = data?.data?.items || [];
 
   const filteredItems = useMemo(
-    () => items.filter((item) => item.variant?.countInStock > 0),
+    () =>
+      items.filter((item) => item.variant && item.variant?.countInStock > 0),
     [items]
   );
 
@@ -44,14 +45,13 @@ const CartPage = () => {
     );
   }, [filteredItems, cartItems]);
 
-  // Chọn mặc định 1 lần
   useEffect(() => {
     if (!hasInitialSelected && filteredItems.length > 0) {
       toogleSelectAll(filteredItems);
       setHasInitialSelected(true);
     }
   }, [filteredItems, hasInitialSelected]);
-  // update quantity on server when stock < quantity
+
   useEffect(() => {
     filteredItems.forEach((item) => {
       const stock = item.variant?.countInStock ?? 0;
@@ -64,7 +64,7 @@ const CartPage = () => {
       }
     });
   }, [filteredItems]);
-  // update items cart selected when stock < quantity
+
   useEffect(() => {
     cartItems.forEach((cartItem) => {
       const item = items.find((i) => i.variantId === cartItem.variantId);

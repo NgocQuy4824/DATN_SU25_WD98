@@ -23,6 +23,11 @@ export const getOrderDetail = async (id) => {
   return data.data;
 };
 
+export const getMyDetailOrder = async (id) => {
+  const { data } = await API.get(`/orders/my-orders/detail/${id}`);
+  return data.data;
+};
+
 export const updateOrderStatus = async (id, body) => {
   const { data } = await API.patch(`/orders/update/${id}`, body);
   return data;

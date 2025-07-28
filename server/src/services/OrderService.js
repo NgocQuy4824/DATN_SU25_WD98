@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const customResponse = require("../helpers/customResponse");
 const Order = require("../models/OrderModel");
+const Cart = require("../models/CartModel");
 const Product = require("../models/ProductsModel");
 const buildQueryOptions = require("../helpers/buildQueryOptions");
 const STATUS = require("../constants/status");
@@ -27,7 +28,9 @@ const createOrder = async (req, res, next) => {
         if (!product) {
           throw new Error("Không tìm thấy sản phẩm");
         }
-
+        if (!product.isActive) {
+          throw new Error(`Sản phẩm ${product.name} đã ngừng bán`);
+        }
         const variant = product.variants.id(variantId);
         if (!variant) {
           throw new Error("Không tìm thấy biến thể");
@@ -42,11 +45,25 @@ const createOrder = async (req, res, next) => {
         variant.countInStock -= quantity;
         await product.save({ session });
       }
-
+      await Promise.all(
+        items.map(async (item) => {
+          await Cart.updateOne(
+            { userId },
+            {
+              $pull: {
+                items: {
+                  product: item.productId,
+                  variant: item.variantId,
+                },
+              },
+            },
+            { session }
+          );
+        })
+      );
       const newOrder = await Order.create([{ ...req.body, userId }], {
         session,
       });
-
       res.json(
         customResponse({
           data: newOrder[0],
@@ -72,11 +89,27 @@ const createOrder = async (req, res, next) => {
 };
 
 const getDetailOrder = async (req, res, next) => {
+  const foundOrder = await Order.findOne({ _id: req.params.id });
+  if (!foundOrder) {
+    return customResponse({
+      status: 400,
+      message: `Không tìm thấy đơn hàng với mã ${req.params.id}`,
+    });
+  }
+  return customResponse({
+    data: foundOrder,
+    message: "Success",
+    status: 200,
+    success: true,
+  });
+};
+
+const getMyDetailOrder = async (req, res, next) => {
   const userId = req.userId;
   const foundOrder = await Order.findOne({ _id: req.params.id, userId });
   if (!foundOrder) {
     return customResponse({
-      status: "ERROR",
+      status: 400,
       message: `Không tìm thấy đơn hàng với mã ${req.params.id}`,
     });
   }
@@ -233,6 +266,7 @@ const cancelOrder = async (req, res, next) => {
 module.exports = {
   createOrder,
   getDetailOrder,
+  getMyDetailOrder,
   getMyOrder,
   updateStatusOrder,
   completeOrder,
