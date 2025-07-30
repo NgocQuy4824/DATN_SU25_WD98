@@ -222,7 +222,7 @@ const DateRangePickerCard = ({ onDateChange, initialDate }) => {
   ];
 
   return (
-    <Dropdown open={openDropdown} menu={{ items }} trigger={["click"]}>
+    <Dropdown open={openDropdown} menu={{ items }} trigger={["click"]} className="remove-bg">
       <Wrapper>
         <PickerContainer>
           <Label onClick={() => setOpenDropdown(!openDropdown)}>

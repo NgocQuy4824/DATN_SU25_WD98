@@ -8,7 +8,8 @@ import { optionsBarChart } from "./_option";
 
 const BarChartRangePicker = () => {
   const today = dayjs();
-  const [dateRange, setDateRange] = useState([today, today]);
+  const sevenDaysAgo = today.subtract(7, 'day');
+  const [dateRange, setDateRange] = useState([sevenDaysAgo, today]);
 
   const { data: dailyStats } = UseRangePicker(dateRange[0], dateRange[1]);
 
@@ -45,7 +46,7 @@ const BarChartRangePicker = () => {
 
   return (
     <WrapperList
-      title="Đơn hàng và doanh thu"
+      title="Đơn hàng và doanh thu theo khoảng thời gian"
       option={
         <DateRangePickerComponent
           onDateRangeChange={handleDateRangeChange}

@@ -84,6 +84,14 @@ const statsService = {
     const { data } = await API.get("stats/topBuyers", { params });
     return data;
   },
+  async getTotalStatsByYearInput(year) {
+    const { data } = await API.get(`stats/yearRange`, {
+      params: {
+        year,
+      },
+    });
+    return data;
+  },
 };
 
 export default statsService;

@@ -19,7 +19,7 @@ const OrdersContainer = styled(Flex)`
 `;
 
 const StyledCard = styled(Card)`
-  ${tw`w-1/2 shadow-md transition-shadow duration-300 hover:shadow-lg`}
+  ${tw`w-1/2  duration-300`}
 `;
 
 const CustomerInfoFlex = styled(Flex)`
@@ -87,7 +87,7 @@ const LatestOrders = ({ orders }) => {
                 {Currency.format(order.totalPrice)}
               </CustomerNameText>
 
-              <OrderStatusTag status={order.orderStatus} />
+              <OrderStatusTag status={order.status} />
 
               <Tooltip title="Xem chi tiết">
                 <Button

@@ -49,7 +49,8 @@ const StyledLink = styled(Link)`
 
 export const TopProducts = () => {
   const today = dayjs();
-  const [dateRange, setDateRange] = useState([today, today]);
+  const sevenDaysAgo = today.subtract(7, 'day');
+  const [dateRange, setDateRange] = useState([sevenDaysAgo, today]);
   const { data, isLoading, error } = useGetProductStatsByRange(
     dateRange[0],
     dateRange[1]

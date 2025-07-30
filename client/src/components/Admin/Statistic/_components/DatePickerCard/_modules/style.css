@@ -1,0 +1,3 @@
+.remove-bg .ant-dropdown-menu-item.ant-dropdown-menu-item-only-child {
+    background-color: #fff !important;
+}

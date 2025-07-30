@@ -71,8 +71,8 @@ const TopUsers = () => {
           </Button>
         }
       >
-        {topBuyersData.latestOrders && (
-          <LatestOrders orders={topBuyersData.latestOrders} />
+        {topBuyersData?.data.latestOrders && (
+          <LatestOrders orders={topBuyersData?.data.latestOrders} />
         )}
       </StyledCard>
 

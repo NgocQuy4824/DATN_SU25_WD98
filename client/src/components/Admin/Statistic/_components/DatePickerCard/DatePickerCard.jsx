@@ -6,7 +6,6 @@ import { forwardRef, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import tw from "twin.macro";
 import DropDownItem from "./_modules/DropDownItem";
-
 const { RangePicker } = DatePicker;
 
 const Picker = {
@@ -269,7 +268,7 @@ const DatePickerCard = ({ onDateChange, initialDate }) => {
   ];
 
   return (
-    <Dropdown open={openDropdown} menu={{ items }} trigger={["click"]}>
+    <Dropdown open={openDropdown} menu={{ items }} trigger={["click"]} className="remove-bg" >
       <Wrapper>
         <Trigger>
           <ClickableText onClick={() => setOpenDropdown(!openDropdown)}>

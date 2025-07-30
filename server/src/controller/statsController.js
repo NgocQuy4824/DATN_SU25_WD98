@@ -5,7 +5,7 @@ const {
   getProductStatsService,
   orderByDateRangeStats,
   totalStats,
-  orderByYearStats
+  orderByYearStats,
 } = require("../services/StatsService");
 
 const getTotalStats = asyncHandler(async (req, res, next) => {
@@ -23,9 +23,8 @@ const getOrderByDateRangeStats = asyncHandler(async (req, res, next) => {
   return res.status(response?.status === "ERROR" ? 400 : 200).json(response);
 });
 
-
 const getOrderByYearRangeStats = asyncHandler(async (req, res, next) => {
-  const response = await getOrderByYearRangeStats(req, res, next);
+  const response = await orderByYearStats(req, res, next);
   return res.status(response?.status === "ERROR" ? 400 : 200).json(response);
 });
 
@@ -45,5 +44,5 @@ module.exports = {
   getOrderByDateRangeStats,
   getProductStats,
   getTop5Buyers,
-  getOrderByYearRangeStats
+  getOrderByYearRangeStats,
 };
