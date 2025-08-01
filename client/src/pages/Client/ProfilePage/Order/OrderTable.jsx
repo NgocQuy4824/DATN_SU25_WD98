@@ -3,15 +3,17 @@ import { Table, Tag, Input, Radio, Button } from "antd";
 import { useGetMyOrder } from "../../../../hooks/useOrderHook";
 import { FilterFilled } from "@ant-design/icons";
 import { Select } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const { Option } = Select;
 
 const statusMap = {
   pending: { color: "default", label: "Chờ xác nhận" },
   confirmed: { color: "blue", label: "Đã xác nhận" },
+  shipping: { color: "pink", label: "Đang giao" },
   delivered: { color: "purple", label: "Đã giao" },
   cancelled: { color: "red", label: "Đã hủy" },
-  completed: { color: "green", label: "Hoàn thành" },
+  done: { color: "green", label: "Hoàn thành" },
 };
 
 const searchFields = [
@@ -27,7 +29,7 @@ const OrderTable = () => {
   const [params, setParams] = useState({
     page: 1,
     limit: 10,
-    sortBy: "createdAt",
+    sortBy: null,
     sortOrder: "desc",
     search: "",
     searchField: "_id",
@@ -35,7 +37,7 @@ const OrderTable = () => {
   });
 
   const { data, isLoading } = useGetMyOrder(params);
-
+  const navigate = useNavigate();
   const handleTableChange = (pagination, filters, sorter) => {
     const sortField = sorter.field;
     const sortOrder =
@@ -162,6 +164,18 @@ const OrderTable = () => {
         sorter: true,
         sortOrder: getSortOrder("createdAt"),
         render: (createdAt) => new Date(createdAt).toLocaleString("vi-VN"),
+      },
+      {
+        title: "Xem chi tiết",
+        key: "detail",
+        render: (record) => (
+          <Button
+            type="primary"
+            onClick={() => navigate(`/profile/orders/detail/${record._id}`)}
+          >
+            Xem chi tiết
+          </Button>
+        ),
       },
     ];
   }, [params.sortBy, params.sortOrder, params.status]);

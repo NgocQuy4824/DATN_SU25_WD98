@@ -7,7 +7,8 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const path = require("path");
 const morgan = require("morgan");
-
+const { handleConfirmWebhookUrl } = require("./src/services/PayOsService");
+const redisClient = require("./src/utils/redis");
 dotenv.config();
 
 const app = express();
@@ -24,11 +25,17 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 
 routers(app);
-
 mongoose
   .connect(`${process.env.MONGO_DB}`)
-  .then(() => {
+  .then(async () => {
     console.log("Kết nối MongoDB thành công");
+    const ngrok = await require("@ngrok/ngrok");
+    const listener = await ngrok.forward({
+      addr: 3001,
+      authtoken: process.env.NGROK_AUTH_ENV,
+    });
+    const webhook = `${listener.url()}/api/orders/payos/webhook`;
+    await handleConfirmWebhookUrl(webhook);
   })
   .catch((err) => {
     console.error("Lỗi kết nối MongoDB:", err);
