@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const orderController = require("../controller/OrderController");
 const authenticate = require("../middlewares/authenticate");
+const payOsRouter = require("./PayOsRouter");
+
 router.get("/my-orders", authenticate, orderController.getMyOrder);
 router.get(
   "/my-orders/detail/:id",
@@ -18,4 +20,5 @@ router.patch(
 );
 router.patch("/complete/:orderId", authenticate, orderController.completeOrder);
 router.patch("/cancel/:orderId", authenticate, orderController.cancelOrder);
+router.use("/payos", payOsRouter);
 module.exports = router;

@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@ngrok/ngrok": "^1.5.1",
+    "@payos/node": "^1.0.10",
     "axios": "^1.10.0",
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
@@ -20,6 +22,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "ioredis": "^5.7.0",
+    "ioredis-mock": "^8.9.0",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
@@ -29,6 +33,7 @@
     "multer": "^2.0.1",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemon": "^3.1.10",
+    "redis": "^5.7.0",
     "server": "file:"
   }
 }

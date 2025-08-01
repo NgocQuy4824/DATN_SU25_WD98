@@ -5,6 +5,7 @@ const Cart = require("../models/CartModel");
 const Product = require("../models/ProductsModel");
 const buildQueryOptions = require("../helpers/buildQueryOptions");
 const STATUS = require("../constants/status");
+const redisClient = require("../utils/redis");
 
 const createOrder = async (req, res, next) => {
   const session = await mongoose.startSession();
@@ -23,7 +24,7 @@ const createOrder = async (req, res, next) => {
 
       for (const item of items) {
         const { productId, variantId, quantity } = item;
-
+        console.log("vao vong lap");
         const product = await Product.findById(productId).session(session);
         if (!product) {
           throw new Error("Không tìm thấy sản phẩm");
@@ -35,15 +36,39 @@ const createOrder = async (req, res, next) => {
         if (!variant) {
           throw new Error("Không tìm thấy biến thể");
         }
+        const redisUserKey = `stock_lock:${item.variantId}:${userId}`;
+        const existingLocked =
+          parseInt(await redisClient.get(redisUserKey)) || 0;
+        const redisKeysPattern = `stock_lock:${item.variantId}:*`;
+        const keys = await redisClient.keys(redisKeysPattern);
+        const totalLocked = await Promise.all(
+          keys.map(async (key) => parseInt(await redisClient.get(key)) || 0)
+        );
+        const total = totalLocked.reduce((sum, n) => sum + n, 0);
 
+        const available = variant.countInStock - total;
+
+        const needToLock = item.quantity - existingLocked;
+
+        if (available < needToLock) {
+          throw new Error(
+            `Sản phẩm ${product.name} (${variant.color}) không đủ hàng. Còn lại: ${available}`
+          );
+        }
         if (variant.countInStock < quantity) {
           throw new Error(
             `Sản phẩm ${product.name} (${variant.color}) không đủ hàng. Còn lại: ${variant.countInStock}`
           );
         }
-
+        console.log("tru stock");
         variant.countInStock -= quantity;
         await product.save({ session });
+        if (keys.length > 0) {
+          await redisClient.del(...keys);
+          console.log(`Đã xoá ${keys.length} key Redis cache stock_lock`);
+        } else {
+          console.log("✅ Không có key stock_lock nào trong Redis");
+        }
       }
       await Promise.all(
         items.map(async (item) => {

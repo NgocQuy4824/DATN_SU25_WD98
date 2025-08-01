@@ -18,8 +18,7 @@ const getAllOrder = async (req, res) => {
 
 const createOrder = async (req, res, next) => {
   try {
-    const result = await orderService.createOrder(req, res, next);
-    return res.status(result.status).json(result);
+    return await orderService.createOrder(req, res, next);
   } catch (error) {
     console.log("Error fetching orders:", error);
     res.status(500).json({ message: "Server error" });

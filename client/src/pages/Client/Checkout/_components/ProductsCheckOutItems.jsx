@@ -16,7 +16,10 @@ import { useMyCart } from "../../../../hooks/useCartHook";
 import styled from "styled-components";
 import tw from "twin.macro";
 import { Card as AntCard, Button as AntButton } from "antd";
-import { useCreateOrder } from "../../../../hooks/useCheckoutHook";
+import {
+  useCreateOrder,
+  useCreateOrderPayos,
+} from "../../../../hooks/useCheckoutHook";
 import { toast } from "react-toastify";
 
 const { Text } = Typography;
@@ -41,7 +44,7 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [agreePolicy, setAgreePolicy] = useState(false);
   const createOrder = useCreateOrder();
-
+  const createOrderPayOs = useCreateOrderPayos();
   const mergedCartItems = cartItems.map((cartItem) => {
     const fullItem = data?.data?.items.find(
       (p) => p.variantId === cartItem.variantId
@@ -99,6 +102,8 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
     };
     if (paymentMethod === "cod" && !createOrder.isPending) {
       createOrder.mutate(payload);
+    } else if (paymentMethod === "online" && !createOrderPayOs.isPending) {
+      createOrderPayOs.mutate(payload);
     }
   };
 
@@ -163,7 +168,7 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
               onChange={(e) => setPaymentMethod(e.target.value)}
             >
               <Radio value={"cod"}>Thanh toán khi nhận hàng</Radio>
-              <Radio value={"online"}>Thanh toán qua VNPAY</Radio>
+              <Radio value={"online"}>Thanh toán Online</Radio>
             </Radio.Group>
           </div>
         </div>
@@ -213,6 +218,7 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
             onClick={
               isShippingPage ? handleContinueShipping : handleCreateOrder
             }
+            loading={createOrder.isPending || createOrderPayOs.isPending}
             disabled={!agreePolicy && !isShippingPage}
           >
             {isShippingPage ? "Tiếp tục" : "Đặt hàng"}

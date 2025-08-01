@@ -13,7 +13,7 @@ export const getPaymentMethod = (paymentMethod) => {
   switch (paymentMethod) {
     case "COD":
       return "Thanh toán khi nhận hàng";
-    case "Online":
+    case "ONLINE":
       return "Thanh toán Online";
     default:
       break;
