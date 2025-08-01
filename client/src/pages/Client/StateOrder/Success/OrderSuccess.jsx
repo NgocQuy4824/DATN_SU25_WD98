@@ -35,6 +35,13 @@ export default function OrderSuccess() {
           >
             Quay về trang chủ
           </Button>
+          <Button
+            type="default"
+            style={{ marginTop: 16, marginLeft: 8 }} 
+            onClick={() => (window.location.href = "/profile/orders")}
+          >
+            Xem đơn hàng của bạn
+          </Button>
         </StyledCard>
       </WrapperOrderSuccess>
     </Watermark>
