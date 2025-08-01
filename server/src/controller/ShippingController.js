@@ -2,7 +2,7 @@ const axios = require("axios");
 
 const getProvince = async (req, res) => {
   try {
-    const { data } = await axios.get(`https://provinces.open-api.vn/api`);
+    const { data } = await axios.get(`https://provinces.open-api.vn/api/v1`);
     const newResponse = data.map((item) => {
       return {
         name: item.name,
@@ -28,7 +28,7 @@ const getDistrict = async (req, res) => {
       });
     }
     const { data } = await axios.get(
-      `https://provinces.open-api.vn/api/p/${provinceId}?depth=2`
+      `https://provinces.open-api.vn/api/v1/p/${provinceId}?depth=2`
     );
     const response = data.districts.map((item) => {
       return {
@@ -56,7 +56,7 @@ const getWard = async (req, res) => {
       });
     }
     const { data } = await axios.get(
-      `https://provinces.open-api.vn/api/d/${districtId}?depth=2`
+      `https://provinces.open-api.vn/api/v1/d/${districtId}?depth=2`
     );
     const response = data.wards.map((item) => {
       return {
