@@ -59,7 +59,7 @@ const CardSubtitle = styled.p`
 const RateBadge = styled.span`
   ${tw`mt-1 inline-block rounded-full px-2 py-1 text-xs font-medium font-sans`}
   ${({ levelUp }) =>
-    levelUp ? tw`bg-green-100 text-green-700` : tw`bg-red-100 text-red-700`}
+    levelUp ? tw`bg-red-100 text-red-700` : tw`bg-green-100 text-green-700`}
 `;
 
 const LoadingContainer = styled.div`
