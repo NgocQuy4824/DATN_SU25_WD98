@@ -9,6 +9,7 @@ import HomePage from "../pages/Client/HomePage/HomePage";
 import NotFoundPage from "../pages/Client/NotFoundPage/NotFoundPage";
 import ProductsDetailPage from "../pages/Client/ProductsDetailPage/ProductsDetailPage";
 import ProductsPage from "../pages/Client/ProductsPage/ProductsPage";
+import OrderDetailUser from "../pages/Client/ProfilePage/Order/OrderDetail/OrderDetail";
 import OrderPage from "../pages/Client/ProfilePage/Order/OrderPage";
 import ProfileForm from "../pages/Client/ProfilePage/ProfileForm";
 import ProfilePage from "../pages/Client/ProfilePage/ProfilePage";
@@ -34,6 +35,7 @@ export const clientRoutes = [
         children: [
           { path: "", element: <ProfileForm /> },
           { path: "orders", element: <OrderPage /> },
+          { path: "orders/detail/:orderId", element: <OrderDetailUser /> },
         ],
       },
     ],

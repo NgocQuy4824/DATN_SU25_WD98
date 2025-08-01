@@ -16,7 +16,11 @@ import { useMyCart } from "../../../../hooks/useCartHook";
 import styled from "styled-components";
 import tw from "twin.macro";
 import { Card as AntCard, Button as AntButton } from "antd";
-import { useCreateOrder } from "../../../../hooks/useCheckoutHook";
+import {
+  useCreateOrder,
+  useCreateOrderPayos,
+} from "../../../../hooks/useCheckoutHook";
+import { toast } from "react-toastify";
 
 const { Text } = Typography;
 
@@ -40,7 +44,7 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [agreePolicy, setAgreePolicy] = useState(false);
   const createOrder = useCreateOrder();
-
+  const createOrderPayOs = useCreateOrderPayos();
   const mergedCartItems = cartItems.map((cartItem) => {
     const fullItem = data?.data?.items.find(
       (p) => p.variantId === cartItem.variantId
@@ -70,16 +74,27 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
   };
 
   const handleCreateOrder = () => {
+    let mergedItems = false;
     const items = mergedCartItems.map((item) => {
+      if (!item.variant) {
+        toast.error("Biến thể của sản phẩm đã không còn vui lòng thử lại");
+        mergedItems = true;
+        return;
+      }
       return {
         productId: item.productId,
         variantId: item.variantId,
         name: item.name,
         price: item.price,
-        image: item.variant.image,
+        image: item.variant?.image,
         quantity: item.quantity,
+        size: item.variant?.size.name,
+        color: item.variant?.color,
       };
     });
+    if (mergedItems) {
+      return;
+    }
     const payload = {
       ...checkoutInfo,
       items,
@@ -87,6 +102,8 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
     };
     if (paymentMethod === "cod" && !createOrder.isPending) {
       createOrder.mutate(payload);
+    } else if (paymentMethod === "online" && !createOrderPayOs.isPending) {
+      createOrderPayOs.mutate(payload);
     }
   };
 
@@ -108,7 +125,7 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
                   <Image width={60} src={item.variant?.image} preview={false} />
                 }
                 title={
-                  <Link to={`/products/${item._id}`}>
+                  <Link to={`/products/${item.productId}`}>
                     <Text strong>{item.name}</Text>
                   </Link>
                 }
@@ -151,7 +168,7 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
               onChange={(e) => setPaymentMethod(e.target.value)}
             >
               <Radio value={"cod"}>Thanh toán khi nhận hàng</Radio>
-              <Radio value={"online"}>Thanh toán qua VNPAY</Radio>
+              <Radio value={"online"}>Thanh toán Online</Radio>
             </Radio.Group>
           </div>
         </div>
@@ -201,6 +218,7 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
             onClick={
               isShippingPage ? handleContinueShipping : handleCreateOrder
             }
+            loading={createOrder.isPending || createOrderPayOs.isPending}
             disabled={!agreePolicy && !isShippingPage}
           >
             {isShippingPage ? "Tiếp tục" : "Đặt hàng"}
