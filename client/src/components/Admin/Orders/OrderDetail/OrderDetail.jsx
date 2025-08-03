@@ -47,7 +47,7 @@ const OrderDetail = () => {
   };
 
   const addressData = {
-    title: `${data?.address?.detail} - ${data?.address?.ward}, ${data?.address?.district}, ${data?.address?.province}, Việt Nam`,
+    title: `${data?.address?.detail} - ${data?.address?.ward}, ${data?.address?.province}, Việt Nam`,
   };
   const productItems = data?.items.map((item, index) => {
     return {

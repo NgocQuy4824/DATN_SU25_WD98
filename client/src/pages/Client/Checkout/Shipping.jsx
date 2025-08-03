@@ -52,7 +52,7 @@ export default function Shipping() {
       ? Number(shippingInfo.address.provinceId)
       : null
   );
-  const [selectedDistrict, setSelectedDistrict] = useState(
+  const [selectedWard, setSelectedWard] = useState(
     shippingInfo?.address?.districtId
       ? Number(shippingInfo.address.districtId)
       : null
@@ -62,27 +62,19 @@ export default function Shipping() {
   );
   // Server State
   const { data: provincesData = [] } = useGetProvince();
-  const { data: districtsData = [] } = useGetDistrict(selectedCity);
-  const { data: wardsData = [] } = useGetWard(selectedDistrict);
+  const { data: wardsData = [] } = useGetWard(selectedCity);
 
   const handleCityChange = ({ id }) => {
     setSelectedCity(id);
-    setSelectedDistrict(null);
     form.setFieldsValue({
       address: {
-        district: undefined,
         ward: undefined,
       },
     });
   };
 
   const handleDistrictChange = ({ id }) => {
-    setSelectedDistrict(id);
-    form.setFieldsValue({
-      address: {
-        ward: undefined,
-      },
-    });
+    setSelectedWard(id);
   };
   const navigate = useNavigate();
   const onFinish = (value) => {
@@ -92,13 +84,15 @@ export default function Shipping() {
       address: {
         ...value.address,
         provinceId: selectedCity,
-        districtId: selectedDistrict,
+        wardId: selectedWard,
       },
     };
     dispatch(setShippingInfor(shippingPayload));
     navigate("/checkout");
   };
-
+  useEffect(() => {
+    console.log(form.getFieldsError());
+  }, []);
   return (
     <>
       <WrapperBreadCrumb>
@@ -130,7 +124,6 @@ export default function Shipping() {
 
               address: {
                 province: shippingInfo?.address?.province,
-                district: shippingInfo?.address?.district,
                 ward: shippingInfo?.address?.ward,
                 detail: shippingInfo?.address?.detail,
               },
@@ -261,19 +254,12 @@ export default function Shipping() {
                   onChange={handleCityChange}
                 />
                 <AddressSelect
-                  name={["address", "district"]}
-                  label="Quận/Huyện"
-                  placeholder="Chọn quận/huyện"
-                  disabled={!selectedCity}
-                  onChange={handleDistrictChange}
-                  options={districtsData}
-                />
-                <AddressSelect
                   name={["address", "ward"]}
                   label="Phường/Xã"
                   placeholder="Chọn phường/xã"
+                  onChange={handleDistrictChange}
+                  disabled={!selectedCity}
                   options={wardsData}
-                  disabled={!selectedDistrict}
                 />
               </WrapperAddressInput>
 

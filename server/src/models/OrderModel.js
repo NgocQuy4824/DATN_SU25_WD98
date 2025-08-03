@@ -81,10 +81,6 @@ const orderModel = new mongoose.Schema(
         type: String,
         required: true,
       },
-      district: {
-        type: String,
-        required: true,
-      },
       ward: {
         type: String,
         required: true,
