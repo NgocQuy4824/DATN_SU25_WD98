@@ -2,8 +2,11 @@ const axios = require("axios");
 
 const getProvince = async (req, res) => {
   try {
-    const { data } = await axios.get(`https://provinces.open-api.vn/api/v1`);
-    const newResponse = data.map((item) => {
+
+    const { data } = await axios.get(
+      `https://production.cas.so/address-kit/2025-07-01/provinces`
+    );
+    const newResponse = data?.provinces?.map((item) => {
       return {
         name: item.name,
         _id: item.code,
@@ -18,52 +21,23 @@ const getProvince = async (req, res) => {
   }
 };
 
-const getDistrict = async (req, res) => {
+const getWard = async (req, res) => {
   try {
     const { provinceId } = req.params;
     if (!provinceId) {
       return res.status(400).json({
-        message: "Yêu cầu có province Id để lấy được danh sách quận huyện",
+        message: "Yêu cầu có province Id để lấy được danh sách Phường xã",
         success: false,
       });
     }
     const { data } = await axios.get(
-      `https://provinces.open-api.vn/api/v1/p/${provinceId}?depth=2`
+      `https://production.cas.so/address-kit/2025-07-01/provinces/${provinceId}/communes`
     );
-    const response = data.districts.map((item) => {
+    const response = data.communes.map((item) => {
       return {
         _id: item.code,
-        provinceId: item.province_code,
+        provinceId: item.provinceCode,
         name: item.name,
-      };
-    });
-    return res.status(200).json({
-      data: response,
-      success: true,
-    });
-  } catch (error) {
-    return res.status(500);
-  }
-};
-
-const getWard = async (req, res) => {
-  try {
-    const { districtId } = req.params;
-    if (!districtId) {
-      return res.status(400).json({
-        message: "Phải có id của quận huyện để lấy được xã phường",
-        success: false,
-      });
-    }
-    const { data } = await axios.get(
-      `https://provinces.open-api.vn/api/v1/d/${districtId}?depth=2`
-    );
-    const response = data.wards.map((item) => {
-      return {
-        _id: item.code,
-        name: item.name,
-        districtId: item.district_code,
-        provinceId: data.province_code,
       };
     });
     return res.status(200).json({
@@ -77,6 +51,5 @@ const getWard = async (req, res) => {
 
 module.exports = {
   getProvince,
-  getDistrict,
   getWard,
 };

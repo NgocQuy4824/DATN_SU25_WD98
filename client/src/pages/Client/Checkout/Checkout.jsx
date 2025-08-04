@@ -107,12 +107,6 @@ export default function Checkout() {
                 label: "Phường/Xã",
                 value: address.ward || "",
               },
-
-              {
-                key: "district",
-                label: "Quận/Huyện",
-                value: address.district || "",
-              },
               {
                 key: "detail",
                 label: "Địa chỉ chi tiết",
