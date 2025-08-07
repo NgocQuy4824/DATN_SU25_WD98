@@ -8,6 +8,7 @@ import Variants from "../components/Admin/Variants/Variants.jsx";
 import Size from "../components/Admin/Variants/Size/Size.jsx";
 import { PrivateRouter } from "./privateRouter.jsx";
 import OrderDetail from "../components/Admin/Orders/OrderDetail/OrderDetail.jsx";
+import Voucher from "../components/Admin/Vouchers/Voucher.jsx";
 
 
 
@@ -42,6 +43,7 @@ export const adminRoutes = [
             ],
           },
           { path: "statistics", element: <Statistic /> },
+          { path: "vouchers", element: <Voucher /> },
         ],
       },
     ],

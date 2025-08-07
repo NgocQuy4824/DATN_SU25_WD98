@@ -9,7 +9,8 @@ import {
   BarChartOutlined,
   PieChartOutlined,
   AlignCenterOutlined,
-  HighlightOutlined
+  HighlightOutlined,
+  CreditCardOutlined
 } from '@ant-design/icons';
 
 const items = [
@@ -49,6 +50,11 @@ const items = [
     key: 'statistics',
     label: 'Thống kê',
     icon: <PieChartOutlined />,
+  },
+  {
+    key: 'vouchers',
+    label: 'Voucher',
+    icon: <CreditCardOutlined />
   },
 ];
 

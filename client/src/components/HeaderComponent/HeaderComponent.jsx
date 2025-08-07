@@ -1,5 +1,5 @@
 import { Button, Col, Dropdown, Menu } from "antd";
-import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
+import { ShoppingCartOutlined, UserOutlined, GiftOutlined } from "@ant-design/icons";
 import { WrapperHeader, WrapperHeaderLogo } from "./style";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -81,6 +81,13 @@ const HeaderComponent = ({ isAdmin = false }) => {
               alignItems: "center",
             }}
           >
+            <div
+              style={{ marginRight: "13px", cursor: "pointer", display: "flex", alignItems: "center" }}
+              onClick={() => navigate("/my-vouchers")}
+            >
+              <GiftOutlined style={{ fontSize: 18, color: '#ff4d4f', marginRight: "5px" }} />
+              Mã giảm giá
+            </div>
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               {user ? (
                 <Dropdown overlay={accountMenu} placement="bottomRight" arrow>
@@ -93,7 +100,7 @@ const HeaderComponent = ({ isAdmin = false }) => {
                     }}
                   >
                     <UserOutlined />
-                    <span>Tài khoản</span>
+                    <div>Tài khoản</div>
                   </div>
                 </Dropdown>
               ) : (
