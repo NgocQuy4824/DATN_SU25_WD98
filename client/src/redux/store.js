@@ -13,10 +13,12 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // localStorage
 import checkoutSlice from "./slides/checkout";
+import voucherSlice from "./slides/voucherSlice";
 
 const rootReducer = combineReducers({
   cart: cartSlice,
   checkout: checkoutSlice,
+  voucher: voucherSlice,
 });
 
 const persistConfig = {

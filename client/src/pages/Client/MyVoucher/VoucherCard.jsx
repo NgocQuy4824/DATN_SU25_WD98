@@ -2,10 +2,13 @@ import React from "react";
 import { ShoppingBag } from "lucide-react";
 import tw from "twin.macro";
 import { useGetAllVouchers } from "../../../hooks/useVoucherHook";
+import { useClaimVoucher } from "../../../hooks/useMyVoucherHook";
 
 const VoucherCard = () => {
   const { data: response } = useGetAllVouchers();
   const vouchers = response?.data ?? [];
+
+  const { mutate: claim } = useClaimVoucher();
 
   return (
     <div css={tw`flex overflow-x-auto space-x-5 p-5`}>
@@ -48,7 +51,7 @@ const VoucherCard = () => {
               </span>
             </p>
 
-            <p css={tw`text-red-500 font-semibold mt-2 cursor-pointer hover:underline`}>
+            <p css={tw`text-red-500 font-semibold mt-2 cursor-pointer hover:underline`} onClick={() => claim(voucher.code)}>
               Nhận mã &gt;
             </p>
           </div>
