@@ -1,3 +1,4 @@
+const ROLE = require("../constants/role");
 const STATUS = require("../constants/status");
 const customResponse = require("../helpers/customResponse");
 const Cart = require("../models/CartModel");
@@ -168,13 +169,22 @@ const handleWebhookPayos = async (req, res, next) => {
         );
       })
     );
+    const orderLogCreate = {
+      status: STATUS.PENDING,
+      updateDate: new Date(),
+      description: `${parsedOrder.customerInfo.name} đã đặt một đơn hàng mới`,
+      updateBy: {
+        name: "SPACERUN",
+        role: ROLE.SYSTEM,
+      },
+    };
     const newOrder = await Order.create({
       ...parsedOrder,
       status: STATUS.CONFIRMED,
       isPaid: true,
       paymentMethod: "ONLINE",
+      orderLog: [orderLogCreate],
     });
-
     return customResponse({
       data: newOrder,
       success: true,

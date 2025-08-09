@@ -13,7 +13,7 @@ const CartSummary = ({ totalItems = 0, items }) => {
       navigate("/shipping");
     }
   };
-  const totalPrice = cartItems.reduce((acc, cartItem) => {
+  const totalPrice = cartItems?.reduce((acc, cartItem) => {
     const product = items.find((item) => item.variantId === cartItem.variantId);
     if (!product) return acc;
 
@@ -26,12 +26,12 @@ const CartSummary = ({ totalItems = 0, items }) => {
     <Card bordered style={{ border: "1px solid red" }}>
       <div style={{ marginBottom: 12 }}>
         <Text>Sản phẩm được chọn: </Text>
-        <Text strong>{cartItems.length}</Text>
+        <Text strong>{cartItems?.length}</Text>
       </div>
       <div style={{ marginBottom: 12 }}>
         <Text>Tổng tiền: </Text>
         <Text strong style={{ color: "green", fontSize: 18 }}>
-          {totalPrice.toLocaleString()} ₫
+          {totalPrice?.toLocaleString()} ₫
         </Text>
       </div>
       <Text type="secondary">Phí vận chuyển sẽ được tính khi thanh toán.</Text>
@@ -39,7 +39,7 @@ const CartSummary = ({ totalItems = 0, items }) => {
         <Button
           block
           onClick={handleClickCheckOut}
-          disabled={!cartItems.length}
+          disabled={!cartItems?.length}
           type="primary"
         >
           Thanh Toán

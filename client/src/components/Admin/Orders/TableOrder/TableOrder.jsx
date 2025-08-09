@@ -11,6 +11,7 @@ const statusMap = {
   shipping: { color: "pink", label: "Đang giao" },
   delivered: { color: "purple", label: "Đã giao" },
   cancelled: { color: "red", label: "Đã hủy" },
+  pendingCancelled: {color: 'red', label: 'Đang chờ huỷ'},
   done: { color: "green", label: "Hoàn thành" },
 };
 

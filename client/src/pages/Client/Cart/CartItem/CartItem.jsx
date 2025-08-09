@@ -76,7 +76,7 @@ const CartItem = ({ item }) => {
         <Col flex="32px">
           <StyledCheckbox
             disabled={isOutStock}
-            checked={existsVariantId.includes(item.variantId)}
+            checked={existsVariantId?.includes(item.variantId)}
             onChange={(e) => handleToogleSelect(e.target.checked)}
           />
         </Col>

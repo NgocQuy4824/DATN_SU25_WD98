@@ -9,16 +9,16 @@ import { useGetDetailOrder } from "../../../../hooks/useOrderHook";
 import { Spin } from "antd";
 import ActionStatusOrder from "./ActionStatusOrder";
 import { CloseCircleOutlined } from "@ant-design/icons";
+import RefundStatus from "./RefundStatus";
 
 export const translateRole = (role) => {
   switch (role) {
     case "user":
       return "Người dùng";
-      break;
     case "admin":
       return "Quản trị viên";
     case "system":
-      return "system";
+      return "Hệ thống";
     default:
       break;
   }
@@ -62,6 +62,8 @@ const OrderDetail = () => {
     };
   });
   const totalPrice = data?.totalPrice;
+  const orderLog = data?.orderLog || null;
+  const pendingRefund = ["pendingCancelled", "refund"];
   return (
     <div css={tw`pl-4`}>
       {isLoading ? (
@@ -84,6 +86,8 @@ const OrderDetail = () => {
               </p>
               <p tw="text-lg text-red-700">{data?.canceled.description}</p>
             </div>
+          ) : pendingRefund.includes(data?.status) ? (
+            <RefundStatus currentStatus={data?.status} id={orderId} />
           ) : (
             <StatusOrder currentStatus={data?.status} />
           )}
@@ -98,6 +102,7 @@ const OrderDetail = () => {
             <TabelOrderItems
               productsItems={productItems}
               totalPrice={totalPrice}
+              orderStatusLog={orderLog}
             />
           </div>
         </>

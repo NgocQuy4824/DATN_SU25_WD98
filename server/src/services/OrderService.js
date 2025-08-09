@@ -6,6 +6,8 @@ const Product = require("../models/ProductsModel");
 const buildQueryOptions = require("../helpers/buildQueryOptions");
 const STATUS = require("../constants/status");
 const redisClient = require("../utils/redis");
+const ROLE = require("../constants/role");
+const User = require("../models/UserModel");
 
 const createOrder = async (req, res, next) => {
   const session = await mongoose.startSession();
@@ -86,9 +88,21 @@ const createOrder = async (req, res, next) => {
           );
         })
       );
-      const newOrder = await Order.create([{ ...req.body, userId }], {
-        session,
-      });
+      const orderLogCreate = {
+        status: STATUS.PENDING,
+        updateDate: new Date(),
+        description: `${req.body.customerInfo.name} đã đặt một đơn hàng mới`,
+        updateBy: {
+          name: "SPACERUN",
+          role: ROLE.SYSTEM,
+        },
+      };
+      const newOrder = await Order.create(
+        [{ ...req.body, userId, orderLog: [orderLogCreate] }],
+        {
+          session,
+        }
+      );
       res.json(
         customResponse({
           data: newOrder[0],
@@ -186,6 +200,7 @@ const getMyOrder = async (req, res, next) => {
 
 const updateStatusOrder = async (req, res, next) => {
   const { orderId } = req.params;
+  const userId = req.userId;
   if (!orderId) {
     return res.status(400).json(
       customResponse({
@@ -205,10 +220,20 @@ const updateStatusOrder = async (req, res, next) => {
       })
     );
   }
+  const user = await User.findById(userId);
   foundOrder.status = req.body.status;
   if (!foundOrder.isPaid && req.body.status === STATUS.DELIVERED) {
     foundOrder.isPaid = true;
   }
+  foundOrder.orderLog.unshift({
+    status: req.body.status,
+    description: req.body.description,
+    updateDate: new Date(),
+    updateBy: {
+      name: user.name,
+      role: user.role,
+    },
+  });
   await foundOrder.save();
   return customResponse({
     message: `Cập nhật trạng thái đơn hàng thành công sang thành ${req.body.status}`,
@@ -251,6 +276,7 @@ const completeOrder = async (req, res, next) => {
 
 const cancelOrder = async (req, res, next) => {
   const { orderId } = req.params;
+  const userId = req.userId;
   if (!orderId) {
     return res.status(400).json(
       customResponse({
@@ -273,12 +299,34 @@ const cancelOrder = async (req, res, next) => {
       })
     );
   }
+  const user = await User.findById(userId);
   foundOrder.canceled = {
-    isCancel: true,
+    isCancel: foundOrder.isPaid ? false : true,
     by: req.body.role,
-    description: req.body.description,
+    description: foundOrder.isPaid
+      ? `${req.body.description} - Đang chờ hoàn tiền`
+      : req.body.description,
   };
-  foundOrder.status = STATUS.CANCELLED;
+  foundOrder.orderLog.unshift({
+    status:
+      foundOrder.isPaid && req.body.description !== "Thanh toán thất bại"
+        ? STATUS.PENDINGCANCELLED
+        : STATUS.CANCELLED,
+    updateDate: new Date(),
+    description: `${
+      foundOrder.isPaid && req.body.description !== "Thanh toán thất bại"
+        ? `Đơn hàng đã bị huỷ đang chờ hoàn tiền`
+        : `Đơn hàng đã bị huỷ`
+    }`,
+    updateBy: {
+      name: user.name,
+      role: req.body.role,
+    },
+  });
+  foundOrder.status =
+    foundOrder.isPaid && req.body.description !== "Thanh toán thất bại"
+      ? STATUS.PENDINGCANCELLED
+      : STATUS.CANCELLED;
   await foundOrder.save();
   return customResponse({
     message: `huỷ đơn hàng thành công`,

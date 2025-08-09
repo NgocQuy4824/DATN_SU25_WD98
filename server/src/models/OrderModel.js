@@ -41,6 +41,34 @@ const orderProductSchema = new mongoose.Schema(
   { _id: false, id: false, versionKey: false, timestamps: false }
 );
 
+const orderStatusLog = new mongoose.Schema(
+  {
+    status: {
+      type: String,
+      enum: Object.values(STATUS),
+    },
+    updateDate: {
+      type: Date,
+      required: true,
+    },
+    description: {
+      type: String,
+    },
+    updateBy: {
+      name: String,
+      role: {
+        type: String,
+        enum: Object.values(ROLE),
+      },
+    },
+  },
+  {
+    timestamp: false,
+    versionKey: false,
+    _id: false,
+  }
+);
+
 const orderModel = new mongoose.Schema(
   {
     userId: {
@@ -127,6 +155,7 @@ const orderModel = new mongoose.Schema(
         type: String,
       },
     },
+    orderLog: [orderStatusLog],
   },
   {
     timestamps: true,
