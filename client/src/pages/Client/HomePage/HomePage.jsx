@@ -20,6 +20,7 @@ import Footer from "../../../components/FooterComponent/FooterComponent";
 import { Link } from "react-router-dom";
 import { Button, Space } from "antd";
 import CategoryClient from "./CategoryClient/CategoryClient";
+import ProductWrapper from "../../../components/SlideProducts/SlideProducts";
 
 const HomePage = () => {
   const scrollRef = useRef();
@@ -53,9 +54,17 @@ const HomePage = () => {
 
   return (
     <>
-      <div style={{ padding: "0 120px" }}>
+      <div style={{ padding: "0 120px", overflow: "hidden" }}>
         <WrapperTypeProduct>
-          <Link to="/products" style={{ textDecoration: "none" ,fontSize: '16px',fontWeight: 'bold', color: '#333'}}>
+          <Link
+            to="/products"
+            style={{
+              textDecoration: "none",
+              fontSize: "16px",
+              fontWeight: "bold",
+              color: "#333",
+            }}
+          >
             Sản phẩm
           </Link>
           <CategoryClient />
@@ -65,7 +74,7 @@ const HomePage = () => {
         <ClauseComponent />
 
         <Title>Sản phẩm nổi bật</Title>
-        <div style={{ position: "relative" }}>
+        {/* <div style={{ position: "relative" }}>
           {products.length > 5 && (
             <>
               <ScrollButton left onClick={() => handleScroll("left")}>
@@ -85,7 +94,8 @@ const HomePage = () => {
               />
             ))}
           </WrapperProductList>
-        </div>
+        </div> */}
+        <ProductWrapper data={products} />
 
         <hr
           style={{
@@ -99,8 +109,9 @@ const HomePage = () => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(5, 1fr)",
+            gridTemplateColumns: "repeat(4, 1fr)",
             gap: "20px",
+            marginTop: "25px",
             marginBottom: "20px",
           }}
         >
