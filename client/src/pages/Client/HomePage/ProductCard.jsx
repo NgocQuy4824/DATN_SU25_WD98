@@ -188,11 +188,11 @@ const ProductCard = ({ product }) => {
           </Link>
           <button onClick={handleAddToCart}>Thêm vào giỏ hàng</button>
         </div>
-        <div tw="mt-4 mx-4 flex flex-col items-center">
-          <h3 tw="text-xl line-clamp-1 overflow-hidden text-center font-semibold uppercase">
-            Adidas ultraboost 3.0 - White
+        <div tw="mt-6 mx-4 flex flex-col">
+          <h3 tw="text-xl line-clamp-1 overflow-hidden font-semibold capitalize">
+            {product.name}
           </h3>
-          <p tw="mt-4 text-lg text-red-400 font-semibold flex items-center gap-5">
+          <p tw="mt-4 text-base flex items-center font-semibold gap-5">
             {formatCurrency(product.price || 0)}
           </p>
         </div>

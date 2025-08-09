@@ -1,7 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import "slick-carousel/slick/slick.css";
 @import "slick-carousel/slick/slick-theme.css";
 @import "antd/es/style/reset.css";
@@ -13,6 +13,7 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Roboto", sans-serif;
 }
 
 .ant-dropdown-menu-item.ant-dropdown-menu-item-only-child:hover {
@@ -22,6 +23,8 @@ body {
 .product_card {
   position: relative;
   overflow: hidden;
+  border-radius: 5px;
+  overflow: hidden;
   cursor: pointer;
   .hover_product {
     display: flex !important;
@@ -29,7 +32,8 @@ body {
     flex-direction: column;
     gap: 15px;
     align-items: center;
-    border-radius: 0px;
+    border-radius: 5px;
+    backdrop-filter: blur(2px);
     background-color: rgba(0, 0, 0, 0.7);
     height: 100%;
     z-index: 99;
