@@ -5,7 +5,7 @@ import { useSizeOptions } from "../../../hooks/useSizeOptions";
 import { Spin, Typography, Tag, Button, Alert } from "antd";
 
 import { useProductDetail } from "../../../hooks/useProductHook";
-
+import tw from "twin.macro";
 import ClauseComponent from "../../../components/ClauseComponent/ClauseComponent";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import {
@@ -145,13 +145,11 @@ const ProductsDetailPage = () => {
                 description="Sản phẩm này đã bị ngừng kinh doanh hoặc tạm ẩn. Vui lòng quay lại sau hoặc chọn sản phẩm khác."
                 type="warning"
                 showIcon
-                style={{ marginBottom: '10px' }}
+                style={{ marginBottom: "10px" }}
               />
             )}
-            <Title level={3}>{product.name}</Title>
-            <div>
-              <Tag color="blue">Danh mục: {product.category?.name}</Tag>
-            </div>
+            <Title level={2}>{product.name}</Title>
+
             <PriceSection>
               <Price>
                 ₫
@@ -166,7 +164,7 @@ const ProductsDetailPage = () => {
             </PriceSection>
             <OptionGroup>
               <div>
-                <strong>Màu sắc:</strong>
+                <p tw="text-base">Kích thước:</p>
               </div>
               <RadioGroupWrapper
                 value={selectedColor}
@@ -182,7 +180,7 @@ const ProductsDetailPage = () => {
 
             <OptionGroup>
               <div>
-                <strong>Kích thước:</strong>
+                <p tw="text-base">Kích thước:</p>
               </div>
               <RadioGroupWrapper
                 value={selectedSize}
@@ -196,34 +194,36 @@ const ProductsDetailPage = () => {
               </RadioGroupWrapper>
             </OptionGroup>
 
-            <QuantityWrapper>
-              <strong>Số lượng:</strong>
+            <QuantityWrapper
+              style={{ display: "flex", flexDirection: "column", gap: 10 }}
+            >
+              <p tw="text-base mb-0 text-[#777777]">Số lượng:</p>
               <UpdateQuantity
                 value={quantity}
                 min={1}
                 max={activeVariant?.countInStock}
                 onChange={setQuantity}
               />
-              <span style={{color:"red"}}>Số lượng còn lại: {activeVariant?.countInStock}</span>
+              <span tw="text-xs" style={{ color: "red" }}>
+                Số lượng còn lại: {activeVariant?.countInStock}
+              </span>
             </QuantityWrapper>
 
             <ActionButtons>
-              <Button
-                type="primary"
-                icon={
-                  <i className="fa fa-cart-plus">
-                    <ShoppingCartOutlined />
-                  </i>
-                }
+              <button
+                className="btn-add-cart"
+                tw="w-full h-[45px] text-base text-white bg-black duration-300  cursor-pointer"
                 onClick={handleAddToCartClick}
                 disabled={!product.isActive}
               >
-                Thêm vào giỏ hàng
-              </Button>
+                <ShoppingCartOutlined /> Thêm vào giỏ hàng
+              </button>
 
               {/* <BuyButton icon={<ThunderboltOutlined />} disabled={!product.isActive}>Mua ngay</BuyButton> */}
             </ActionButtons>
-
+            <div tw="mt-4">
+              <Tag color="blue">Danh mục: {product.category?.name}</Tag>
+            </div>
             <DescriptionWrapper>
               <Title level={4}>Mô tả sản phẩm</Title>
               <ClampedParagraph expanded={showFullDesc}>

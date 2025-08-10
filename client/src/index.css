@@ -88,3 +88,17 @@ body {
     transform: translateX(0);
   }
 }
+
+
+.btn-add-cart{
+  background-color: #000;
+  color: #fff;
+  transition: all 300ms ease-in-out;
+  border-radius: 5px;
+}
+.btn-add-cart:hover{
+  opacity: 0.8;
+}
+.custom-input-number .ant-input-number-input {
+  text-align: center;
+}
