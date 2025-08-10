@@ -7,7 +7,6 @@ const { Paragraph } = Typography;
 export const Wrapper = styled.div`
   max-width: 1250px;
   margin: 24px auto;
-  padding: 24px;
   border: 1px solid #f0f0f0;
   border-radius: 12px;
   background-color: #fafafa;
@@ -58,9 +57,7 @@ export const InfoSection = styled.div`
 `;
 
 export const PriceSection = styled.div`
-  background-color: #f2f2f2;
   padding: 12px 16px;
-
   display: inline-block;
 `;
 
@@ -88,9 +85,10 @@ export const OptionGroup = styled.div`
 `;
 
 export const StyledRadioButton = styled(Radio.Button)`
-  padding: 3px 6px;
-  font-size: 10px;
-  min-width: 0px;
+  padding: 6px 6px;
+  font-size: 14px;
+  min-width: 45px;
+  min-heigth: 45px
   text-align: center;
   display: flex;
   justify-content: center;
@@ -105,9 +103,6 @@ export const RadioGroupWrapper = styled(Radio.Group)`
 `;
 
 export const QuantityWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
 `;
 
 export const QuantityControl = styled.div`
@@ -178,7 +173,7 @@ export const AddToCartButton = styled.button`
   position: absolute;
   bottom: 8px;
   left: 50%;
-  transform: translate(-50%, 10px); 
+  transform: translate(-50%, 10px);
   opacity: 0;
   transition: all 0.3s ease;
   background-color: #1677ff;

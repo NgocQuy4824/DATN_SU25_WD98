@@ -2,6 +2,7 @@ import React from "react";
 import { Row, Col, Button, Select } from "antd";
 import ProductCart from "../ProductCart/ProductCart";
 import { CheckOutlined } from "@ant-design/icons";
+import ProductCard from "../../HomePage/ProductCard";
 
 const { Option } = Select;
 
@@ -53,7 +54,7 @@ export default function ProductList({ products, sortOption, setSortOption, onRes
           .filter((p) => p.isActive)
           .map((product, idx) => (
             <Col xs={24} sm={12} md={8} lg={6} key={idx}>
-              <ProductCart product={product} />
+              <ProductCard product={product} />
             </Col>
           ))}
       </Row>
