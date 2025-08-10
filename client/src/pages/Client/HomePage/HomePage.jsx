@@ -55,20 +55,7 @@ const HomePage = () => {
   return (
     <>
       <div style={{ padding: "0 120px", overflow: "hidden" }}>
-        <WrapperTypeProduct>
-          <Link
-            to="/products"
-            style={{
-              textDecoration: "none",
-              fontSize: "16px",
-              fontWeight: "bold",
-              color: "#333",
-            }}
-          >
-            Sản phẩm
-          </Link>
-          <CategoryClient />
-        </WrapperTypeProduct>
+        
 
         <SliderComponent arrImages={[anh4, anh5]} />
         <ClauseComponent />

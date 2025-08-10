@@ -71,7 +71,7 @@ const AdminLayout = () => {
       <div style={{ display: 'flex' }}>
         <Menu
           onClick={handleMenuClick}
-          style={{ width: 200 }}
+          style={{ width: 200 ,backgroundColor: '#f0f2f5',height:'100vh'}}
           mode="inline"
           items={items}
         />

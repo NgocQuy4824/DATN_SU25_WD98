@@ -17,7 +17,7 @@ export const WrapperHeaderText = styled.div`
 
 export const WrapperHeaderLogo = styled.div`
     color: #f7c600;
-    font-size: 14px;
+    font-size: 40px;
     font-weight: bold;
     cursor: pointer;
 

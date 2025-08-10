@@ -21,9 +21,7 @@ const CategoryClient = () => {
             textDecoration: 'none',
             color: '#333',
             cursor: 'pointer',
-            border: '1px solid #ccc',
-            borderRadius: '4px',
-            padding: '4px 8px',
+            
           }}
         >
           {category.label}

@@ -6,6 +6,7 @@ export const WrapperTypeProduct = styled.div`
   justify-content: flex-start;
   gap: 20px;
   height: 44px;
+  margin-left: 20px;
 `;
 
 export const WrapperProductList = styled.div`
