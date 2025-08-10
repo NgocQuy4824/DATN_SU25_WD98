@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ShoppingCartOutlined } from "@ant-design/icons";
 import ModalAddToCart from "../Cart/ModalAddToCart/ModalAddToCart";
-
+import tw from "twin.macro";
+import { Badge, Tag } from "antd";
+import { formatCurrency } from "../../../utils/formatCurrency";
 const Card = styled.div`
   width: 230px;
   height: 350px;
@@ -148,7 +150,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <>
-      <Card
+      {/* <Card
         onClick={() =>
           navigate(`/products/${product._id}`, { state: { from: "home" } })
         }
@@ -170,7 +172,38 @@ const ProductCard = ({ product }) => {
             {product.discount > 0 && <Discount>-{product.discount}%</Discount>}
           </PriceRow>
         </ProductContent>
-      </Card>
+      </Card> */}
+
+      <div className="product_card">
+        <div tw=" h-[350px] overflow-hidden bg-gray-200 ">
+          <img
+            tw="w-full h-full object-contain"
+            src={firstVariant?.image}
+            alt=""
+          />
+        </div>
+        <div tw="hidden" className="hover_product">
+          <Link className="link_to" to={`/products/${product._id}`}>
+            Xem chi tiết
+          </Link>
+          <button onClick={handleAddToCart}>Thêm vào giỏ hàng</button>
+        </div>
+        <div tw="mt-6 mx-4 flex flex-col">
+          <h3 tw="text-xl line-clamp-1 overflow-hidden font-semibold capitalize">
+            {product.name}
+          </h3>
+          <p tw="mt-4 text-base flex items-center font-semibold gap-5">
+            {formatCurrency(product.price || 0)}
+          </p>
+        </div>
+        {product.discount > 0 && (
+          <Badge
+            count={`-${product.discount}%`}
+            style={{ backgroundColor: "#f87171", borderColor: "#ef4444" }} // tailwind đỏ sáng và đỏ đậm
+            tw="absolute top-3 left-4 rounded-full text-xs px-2 py-1 font-semibold"
+          />
+        )}
+      </div>
 
       <ModalAddToCart
         open={isModalOpen}

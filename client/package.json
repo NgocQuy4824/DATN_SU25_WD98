@@ -38,6 +38,7 @@
     "redux-persist": "^6.0.0",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.19",
+    "swiper": "^11.2.10",
     "twin.macro": "^3.4.1",
     "web-vitals": "^2.1.4"
   },
