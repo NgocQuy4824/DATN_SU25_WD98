@@ -15,12 +15,12 @@ const TableCategory = ({
     const { paginatedData, paginationConfig } = useTablePagination(category, 5);
     const columns = [
         {
-            title: "Name",
+            title: "Tên",
             dataIndex: "name",
             key: "name",
         },
         {
-            title: "Action",
+            title: "Hành Động",
             key: "action",
             render: (_, record) => (
                 <Space>

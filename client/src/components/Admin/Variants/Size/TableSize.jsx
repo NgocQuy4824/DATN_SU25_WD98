@@ -9,12 +9,12 @@ const TableSize = ({ size, isLoading, onEdit }) => {
 
     const columns = [
         {
-            title: "Name",
+            title: "Tên",
             dataIndex: "name",
             key: "name",
         },
         {
-            title: "Action",
+            title: "Hành Động",
             key: "action",
             render: (_, record) => (
                 <Space>

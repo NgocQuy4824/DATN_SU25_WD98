@@ -5,6 +5,44 @@ import React from 'react'
 
 const { RangePicker } = DatePicker; 
 
+const validateCode = [
+    { required: true, message: "Vui lòng nhập mã voucher" },
+    { min: 5, message: "Mã voucher phải ít nhất 5 ký tự" }
+]
+
+const discountValueRules = ({ getFieldValue }) => [
+  { required: true, message: "Vui lòng nhập giá trị giảm giá" },
+  {
+    validator(_, value) {
+      const type = getFieldValue("discountType");
+      if (!value && value !== 0) {
+        return Promise.resolve();
+      }
+      const numValue = Number(value);
+      if (type === "percentage" && (numValue < 1 || numValue > 100)) {
+        return Promise.reject("Phần trăm giảm giá phải từ 1 đến 100");
+      }
+      if (type === "fixed" && (numValue < 1000 || numValue > 100000)) {
+        return Promise.reject("Giá trị cố định phải từ 1,000 đến 100,000");
+      }
+      return Promise.resolve();
+    }
+  }
+];
+
+const validateNumber = [
+    { required: true, message: "Vui lòng nhập số lượng" },
+    {
+        validator(_, value) {
+            if (value < 0) {
+                return Promise.reject("Số lượng không được âm");
+            }
+            return Promise.resolve();
+        }
+    }
+]
+
+
 const FormVoucher = ({form,mode = 'create'}) => {
 
     return (
@@ -13,7 +51,7 @@ const FormVoucher = ({form,mode = 'create'}) => {
                 <Form.Item
                     label="Mã voucher"
                     name="code"
-                    rules={[{ required: true, message: "Vui lòng nhập mã voucher" }]}
+                    rules={validateCode}
                 >
                     <Input placeholder="Nhập mã voucher..." />
                 </Form.Item>
@@ -40,6 +78,7 @@ const FormVoucher = ({form,mode = 'create'}) => {
                 <Form.Item
                     label="Giá trị giảm giá"
                     name="discountValue"
+                    rules={discountValueRules({getFieldValue: form.getFieldValue})}
                 >
                     <Input placeholder="Nhập giá trị giảm giá" type="number" />
                 </Form.Item>
@@ -48,6 +87,7 @@ const FormVoucher = ({form,mode = 'create'}) => {
                 <Form.Item
                     label="Số lượng"
                     name="quantity"
+                    rules={validateNumber}
                 >
                     <Input placeholder="Nhập số lượng voucher" type="number" />
                 </Form.Item>

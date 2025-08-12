@@ -68,7 +68,7 @@ const HeaderComponent = ({ isAdmin = false }) => {
                 textDecoration: "none",
                 fontSize: "16px",
                 fontWeight: "bold",
-                color: "#333",
+                color: "#1890ff",
               }}
             >
               Sản phẩm
@@ -120,7 +120,7 @@ const HeaderComponent = ({ isAdmin = false }) => {
                       gap: 6,
                     }}
                   >
-                    <UserOutlined />
+                    <UserOutlined style={{ color: '#1890ff' }} />
                     <div>Tài khoản</div>
                   </div>
                 </Dropdown>
@@ -162,7 +162,7 @@ const HeaderComponent = ({ isAdmin = false }) => {
                 }}
                 onClick={() => navigate("/cart")}
               >
-                <ShoppingCartOutlined />
+                <ShoppingCartOutlined style={{ color: '#1890ff' }} />
                 <span>Giỏ hàng</span>
               </div>
             </div>

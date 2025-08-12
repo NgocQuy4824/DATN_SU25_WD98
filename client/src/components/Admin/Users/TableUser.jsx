@@ -8,18 +8,18 @@ const TableUser = ({ users, loading }) => {
 
   const columns = [
     {
-      title: 'Image',
+      title: 'Link Ảnh',
       dataIndex: 'avatar',
       key: 'avatar',
     },
     {
-      title: 'User Name',
+      title: 'Tên Người Dùng',
       dataIndex: 'name',
       key: 'name',
       render: (_, record) => record.name
     },
     {
-      title: 'Phone',
+      title: 'Số Điện Thoại',
       dataIndex: 'phone',
       key: 'phone',
     },
@@ -29,7 +29,7 @@ const TableUser = ({ users, loading }) => {
       key: 'email',
     },
     {
-      title: 'Role',
+      title: 'Vai Trò',
       dataIndex: 'role',
       key: 'role',
       render: (role) => {

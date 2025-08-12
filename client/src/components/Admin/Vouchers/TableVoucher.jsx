@@ -16,22 +16,22 @@ const TableVoucher = ({ vouchers, loading, onEdit }) => {
 
     const columns = [
         {
-            title: 'Code Voucher',
+            title: 'Mã Voucher',
             key: 'code',
             render: (_, record) => <>{record.code}</>
         },
         {
-            title: 'Type Voucher',
+            title: 'Loại Voucher',
             key: 'discountType',
             render: (text) => discountTypeMap[text.discountType],
         },
         {
-            title: 'Discount',
+            title: 'Giảm Giá',
             key: 'discountValue',
             render: (_, record) => `${record.discountValue}`,
         },
         {
-            title: 'Start Date',
+            title: 'Ngày Bắt Đầu',
             key: 'startDate',
             render: (_, record) => (
                 <>{new Date(record.startDate).toLocaleString("vi-VN", {
@@ -44,7 +44,7 @@ const TableVoucher = ({ vouchers, loading, onEdit }) => {
             )
         },
         {
-            title: 'End Date',
+            title: 'Ngày Kết Thúc',
             key: 'endDate',
             render: (_, record) => (
                 <>{new Date(record.endDate).toLocaleString("vi-VN", {
@@ -58,21 +58,21 @@ const TableVoucher = ({ vouchers, loading, onEdit }) => {
         },
 
         {
-            title: 'Status',
+            title: 'Trạng Thái',
             key: 'status',
             render: (_, record) => {
                 return <>{record.status}</>;
             }
         },
         {
-            title: 'Quantity',
+            title: 'Số Lượng',
             key: 'quantity',
             render: (_, record) => {
                 return <>{record.quantity}</>;
             }
         },
         {
-            title: 'Actions',
+            title: 'Hành động',
             key: 'actions',
             render: (_, record) => (
                 <Space size="middle">

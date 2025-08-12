@@ -11,30 +11,30 @@ const TableComponent = ({ onEdit, onDelete, products, loading , handleToggleVisi
 
     const columns = [
         {
-            title: 'Name',
+            title: 'Tên Sản Phẩm',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: 'Type',
+            title: 'Loại',
             dataIndex: 'category',
             key: 'category',
             render: (_, record) => record.category?.name
         },
         {
-            title: 'Price',
+            title: 'Gía',
             dataIndex: 'price',
             key: 'price',
             render: (price) => `${price.toFixed(2)} đ`,
         },
         {
-            title: 'Discount',
+            title: 'Giảm Giá',
             dataIndex: 'discount',
             key: 'discount',
             render: (discount) => `${discount}%`,
         },
         {
-            title: 'In Stock',
+            title: 'Tồn Kho',
             key: 'countInStock',
             render: (_, record) => {
                 const total = record.variants.reduce((acc, v) => acc + (v.countInStock || 0), 0);
@@ -42,7 +42,7 @@ const TableComponent = ({ onEdit, onDelete, products, loading , handleToggleVisi
             }
         },
         {
-            title: 'Variants',
+            title: 'Biến Thể',
             dataIndex: 'variants',
             key: 'variants',
             width: 250,
@@ -95,7 +95,7 @@ const TableComponent = ({ onEdit, onDelete, products, loading , handleToggleVisi
             )
         },
         {
-            title: 'Description',
+            title: 'Mô Tả',
             dataIndex: 'description',
             key: 'description',
             ellipsis: true,
@@ -110,7 +110,7 @@ const TableComponent = ({ onEdit, onDelete, products, loading , handleToggleVisi
             )
         },
         {
-            title: 'Action',
+            title: 'Hành Động',
             key: 'action',
             render: (_, record) => (
                 <Space size="small" wrap className='align-items'>
