@@ -57,7 +57,7 @@ export default function ProductPage() {
         </Content>
       </Layout>{" "}
       <br />
-      <Footer />
+      {/* <Footer /> */}
     </Layout>
   );
 }
