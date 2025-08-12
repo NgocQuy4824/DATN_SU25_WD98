@@ -180,7 +180,7 @@ const handleWebhookPayos = async (req, res, next) => {
     };
     const newOrder = await Order.create({
       ...parsedOrder,
-      status: STATUS.CONFIRMED,
+      status: STATUS.PENDING,
       isPaid: true,
       paymentMethod: "ONLINE",
       orderLog: [orderLogCreate],

@@ -128,6 +128,13 @@ const orderModel = new mongoose.Schema(
       enum: ["COD", "ONLINE"],
       default: "COD",
     },
+    refund: {
+      amount: Number,
+      bankName: String,
+      accountName: String,
+      accountNumber: String,
+      bankLogo: String,
+    },
     status: {
       type: String,
       trim: true,

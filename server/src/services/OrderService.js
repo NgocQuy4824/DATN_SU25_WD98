@@ -8,6 +8,7 @@ const STATUS = require("../constants/status");
 const redisClient = require("../utils/redis");
 const ROLE = require("../constants/role");
 const User = require("../models/UserModel");
+const axios = require("axios");
 
 const createOrder = async (req, res, next) => {
   const session = await mongoose.startSession();
@@ -336,6 +337,53 @@ const cancelOrder = async (req, res, next) => {
   });
 };
 
+// REFUND
+const getAllBankInfo = async (req, res, next) => {
+  const { data } = await axios.get(`https://api.vietqr.io/v2/banks`);
+  const response = data.data
+    .map((item) => ({
+      _id: item.id,
+      name: item.name,
+      shortName: item.shortName,
+      logo: item.logo,
+    }))
+    .sort((a, b) => a.shortName.localeCompare(b.shortName));
+
+  return customResponse({
+    message: "OK",
+    status: 200,
+    success: true,
+    data: response,
+  });
+};
+
+const updateRefundInfo = async (req, res, next) => {
+  const { id } = req.params;
+  const foundOrder = await Order.findById(id);
+  if (!foundOrder) {
+    return res.status(400).json(
+      customResponse({
+        status: 400,
+        success: false,
+        message: `Không tìm thấy đơn hàng với id là: ${id}`,
+        data: null,
+      })
+    );
+  }
+  console.log(req.body)
+  foundOrder.refund = {
+    amount: foundOrder.totalPrice,
+    ...req.body,
+  };
+  await foundOrder.save();
+  return customResponse({
+    data: foundOrder,
+    message: `Cập nhật thông tin hoàn tiền thành công`,
+    success: true,
+    status: 200,
+  });
+};
+
 module.exports = {
   createOrder,
   getDetailOrder,
@@ -344,4 +392,6 @@ module.exports = {
   updateStatusOrder,
   completeOrder,
   cancelOrder,
+  getAllBankInfo,
+  updateRefundInfo
 };

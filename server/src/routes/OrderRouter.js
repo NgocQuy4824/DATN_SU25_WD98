@@ -20,5 +20,7 @@ router.patch(
 );
 router.patch("/complete/:orderId", authenticate, orderController.completeOrder);
 router.patch("/cancel/:orderId", authenticate, orderController.cancelOrder);
+router.get('/bank/all', orderController.getAllBankInfo)
+router.patch('/refund/update-info/:id', orderController.updateRefundInfo)
 router.use("/payos", payOsRouter);
 module.exports = router;
