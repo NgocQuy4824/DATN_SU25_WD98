@@ -1,15 +1,16 @@
-import React from "react";
-import tw from "twin.macro";
-import StatusOrder from "./StatusOrder";
+import { CloseCircleOutlined } from "@ant-design/icons";
+import { Button, Spin, Tooltip } from "antd";
 import { Link, useParams } from "react-router-dom";
-import ServicesInfo from "./ServicesInfo";
-import CustomerInfo from "./CustomerInfo";
-import TabelOrderItems from "./TabelOrderItems";
-import { Spin } from "antd";
+import tw from "twin.macro";
+import { translateRole } from "../../../../../components/Admin/Orders/OrderDetail/OrderDetail";
+import RefundStatus from "../../../../../components/Admin/Orders/OrderDetail/RefundStatus";
 import { useGetMyDetailOrder } from "../../../../../hooks/useOrderHook";
 import ActionStatusOrderUser from "./ActionStatusOrder";
-import { translateRole } from "../../../../../components/Admin/Orders/OrderDetail/OrderDetail";
-import { CloseCircleOutlined } from "@ant-design/icons";
+import CustomerInfo from "./CustomerInfo";
+import ServicesInfo from "./ServicesInfo";
+import StatusOrder from "./StatusOrder";
+import TabelOrderItems from "./TabelOrderItems";
+import PopUpRefundInfo from "./components/PopupRefundInfo/PopUpRefundInfo";
 
 const OrderDetailUser = () => {
   const { orderId } = useParams();
@@ -50,6 +51,8 @@ const OrderDetailUser = () => {
     };
   });
   const totalPrice = data?.totalPrice;
+   const orderLog = data?.orderLog || null;
+  const pendingRefund = ["pendingCancelled", "refund"];
   return (
     <div css={tw`pl-4`}>
       <Link to={"/profile/orders"}>Quay về danh sách</Link>
@@ -63,22 +66,55 @@ const OrderDetailUser = () => {
             <h2 css={tw`text-lg text-blue-800 py-12`}>
               Thông tin đơn hàng #{orderId}
             </h2>
-            <ActionStatusOrderUser status={data?.status} id={orderId} />
+            <ActionStatusOrderUser
+              status={data?.status}
+              isRefundInfo={!!data?.refund}
+              id={orderId}
+            />
           </div>
           {data?.canceled.isCancel ? (
             <div tw="flex justify-center py-4 flex-col items-center gap-2">
               <CloseCircleOutlined tw="text-4xl mb-4 text-red-500" />
               <p tw="text-xl font-semibold text-red-500">
-                Đơn hàng của bạn đã bị huỷ bởi{" "}
-                {translateRole(data?.canceled.by)}
+                Đơn hàng đã bị huỷ bởi {translateRole(data?.canceled.by)}
               </p>
               <p tw="text-lg text-red-700">{data?.canceled.description}</p>
             </div>
+          ) : pendingRefund.includes(data?.status) ? (
+            <RefundStatus currentStatus={data?.status} id={orderId} />
           ) : (
             <StatusOrder currentStatus={data?.status} />
           )}
           <br />
           <div>
+            {data?.refund?.accountNumber && (
+              <div tw="px-4 my-4 mb-12">
+                <div tw="flex items-center justify-between">
+                  <h3 tw="text-lg font-semibold m-0">Thông tin hoàn tiền</h3>
+                  {data.status === "pendingCancelled" && (
+                    <PopUpRefundInfo orderId={data?._id} info={data?.refund}>
+                      <Button danger>Cập nhật lại</Button>
+                    </PopUpRefundInfo>
+                  )}
+                </div>
+                <div tw="mt-8 justify-between px-4 py-8 shadow-md flex items-center rounded-lg">
+                  <Tooltip title={data?.refund.bankName} placement="topLeft">
+                    <p tw="text-base m-0 line-clamp-1 w-[30%]">
+                      <img tw="w-32" src={data?.refund.bankLogo} alt="" />{" "}
+                      {data?.refund.bankName}
+                    </p>
+                  </Tooltip>
+                  <div tw="flex flex-col gap-3">
+                    <p tw="text-[#777777] m-0">Chủ tài khoản:</p>
+                    <p tw="m-0 font-semibold">{data?.refund.accountName}</p>
+                  </div>
+                  <div tw="flex flex-col gap-3">
+                    <p tw="text-[#777777] m-0">Số tài khoản:</p>
+                    <p tw="m-0 font-semibold">{data?.refund.accountNumber}</p>
+                  </div>
+                </div>
+              </div>
+            )}
             <ServicesInfo services={servicesInfo} />
             <CustomerInfo
               addressData={addressData}
@@ -88,6 +124,7 @@ const OrderDetailUser = () => {
             <TabelOrderItems
               productsItems={productItems}
               totalPrice={totalPrice}
+              orderStatusLog={orderLog}
             />
           </div>
         </>

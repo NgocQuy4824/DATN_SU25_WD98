@@ -42,3 +42,16 @@ export const cancelOrder = async (id, body) => {
   const { data } = await API.patch(`/orders/cancel/${id}`, body);
   return data;
 };
+
+export const getAllBankInfo = async () => {
+  const { data } = await API.get(`/orders/bank/all`);
+  return data;
+};
+
+export const updateRefundInfo = async (orderId, body) => {
+  const { data } = await API.patch(
+    `/orders/refund/update-info/${orderId}`,
+    body
+  );
+  return data;
+};

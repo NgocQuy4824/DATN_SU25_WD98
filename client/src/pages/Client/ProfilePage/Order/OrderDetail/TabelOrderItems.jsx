@@ -1,10 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
-import { Table } from "antd";
-import { CarOutlined, DollarOutlined } from "@ant-design/icons";
+import { Table, Tag } from "antd";
+import { CameraOutlined, CarOutlined, CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, DollarOutlined, HistoryOutlined, StarFilled, TruckOutlined, UserOutlined } from "@ant-design/icons";
 import tw from "twin.macro";
+import dayjs from "dayjs";
+import { translateRole } from "../../../../../components/Admin/Orders/OrderDetail/OrderDetail";
 
-const TabelOrderItems = ({ productsItems, totalPrice }) => {
+const TabelOrderItems = ({ productsItems, totalPrice, orderStatusLog }) => {
   const columns = [
     {
       title: "Sản phẩm",
@@ -46,12 +48,48 @@ const TabelOrderItems = ({ productsItems, totalPrice }) => {
   ];
 
   const shippingFee = 0;
-
+const steps = [
+    {
+      title: "Chờ xác nhận",
+      key: "pending",
+      icon: <CameraOutlined tw="text-2xl text-blue-500" />,
+    },
+    {
+      title: "Đã xác nhận",
+      key: "confirmed",
+      icon: <CheckCircleOutlined tw="text-2xl text-blue-500" />,
+    },
+    {
+      title: "Đang giao",
+      key: "shipping",
+      icon: <TruckOutlined tw="text-2xl text-blue-500" />,
+    },
+    {
+      title: "Đã giao hàng",
+      key: "delivered",
+      icon: <UserOutlined tw="text-2xl text-blue-500" />,
+    },
+    {
+      title: "Hoàn thành",
+      key: "done",
+      icon: <StarFilled tw="text-2xl text-blue-500" />,
+    },
+    {
+      title: "Đã huỷ",
+      key: "cancelled",
+      icon: <CloseCircleOutlined tw="text-2xl text-red-500" />,
+    },
+    {
+      title: "Chờ hoàn tiền",
+      key: "pendingCancelled",
+      icon: <ClockCircleOutlined tw="text-2xl text-red-500" />,
+    },
+  ];
   return (
-    <div css={tw`space-y-4`}>
+    <div css={tw``}>
       <Table columns={columns} dataSource={productsItems} pagination={false} />
 
-      <div css={tw`flex gap-4`}>
+      <div css={tw`flex mt-8 mb-12 gap-4`}>
         <div
           css={tw`flex-1 border rounded-xl bg-green-50 p-4 flex items-center justify-between shadow-sm`}
         >
@@ -78,6 +116,69 @@ const TabelOrderItems = ({ productsItems, totalPrice }) => {
           </span>
         </div>
       </div>
+      {orderStatusLog && (
+        <div tw=" px-4 pb-16">
+          <h3 tw="text-lg  font-semibold flex items-center gap-3">
+            <HistoryOutlined tw="text-red-500" /> Lịch sử trạng thái
+          </h3>
+          <div tw="px-8 mt-20 flex flex-col gap-12">
+            {orderStatusLog?.map((item, index) => {
+              const matchedStep = steps.find(
+                (step) => step.key === item.status
+              );
+              return (
+                <div
+                  key={index}
+                  tw=" shadow-md py-4 px-8 grid grid-cols-[1fr, 8fr] items-center rounded-md"
+                >
+                  <div tw="flex flex-col gap-4 justify-center h-full items-center">
+                    {matchedStep?.icon}
+                    <p tw="text-sm font-semibold">
+                      {matchedStep?.title || "Không xác định trạng thái"}
+                    </p>
+                  </div>
+                  <div>
+                    <div tw="flex flex-col justify-between">
+                      <div tw="flex items-center justify-between pr-4">
+                        <p tw="text-xs text-[#777777]">
+                          Ngày cập nhật:{" "}
+                          {dayjs(item?.updateDate)
+                            .locale("vi-VN")
+                            .format("DD-MM-YYYY | hh:mm")}
+                        </p>
+                        <p tw="text-xs">
+                          Cập nhật bởi:{" "}
+                          <span tw="font-semibold">
+                            {item?.updateBy?.name || "Chưa cập nhật"}
+                          </span>{" "}
+                          - Vai trò:{" "}
+                          <span tw="font-semibold">
+                            {translateRole(item?.updateBy?.role) ||
+                              "Chưa cập nhật"}
+                          </span>
+                        </p>
+                      </div>
+                      <Tag
+                        color={
+                          item?.status === "cancelled" ||
+                          item?.status === "pendingCancelled"
+                            ? "red"
+                            : item?.status === "refund"
+                            ? "green"
+                            : "blue"
+                        }
+                        tw="py-4"
+                      >
+                        {item?.description || "Không có mô tả"}
+                      </Tag>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

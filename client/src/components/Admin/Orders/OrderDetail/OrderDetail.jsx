@@ -6,7 +6,7 @@ import ServicesInfo from "./ServicesInfo";
 import CustomerInfo from "./CustomerInfo";
 import TabelOrderItems from "./TabelOrderItems";
 import { useGetDetailOrder } from "../../../../hooks/useOrderHook";
-import { Spin } from "antd";
+import { Spin, Tooltip } from "antd";
 import ActionStatusOrder from "./ActionStatusOrder";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import RefundStatus from "./RefundStatus";
@@ -76,7 +76,7 @@ const OrderDetail = () => {
             <h2 css={tw`text-lg text-blue-800 py-12`}>
               Thông tin đơn hàng #{orderId}
             </h2>
-            <ActionStatusOrder status={data?.status} id={orderId} />
+            <ActionStatusOrder status={data?.status} isRefundInfo={data?.refund} id={orderId} />
           </div>
           {data?.canceled.isCancel ? (
             <div tw="flex justify-center py-4 flex-col items-center gap-2">
@@ -93,6 +93,29 @@ const OrderDetail = () => {
           )}
           <br />
           <div>
+             {data?.refund?.accountNumber && (
+              <div tw="px-4 my-4 mb-12">
+                <div tw="flex items-center justify-between">
+                  <h3 tw="text-lg font-semibold m-0">Thông tin hoàn tiền</h3>
+                </div>
+                <div tw="mt-8 justify-between px-4 py-8 shadow-md flex items-center rounded-lg">
+                  <Tooltip title={data?.refund.bankName} placement="topLeft">
+                    <p tw="text-base m-0 line-clamp-1 w-[30%]">
+                      <img tw="w-32" src={data?.refund.bankLogo} alt="" />{" "}
+                      {data?.refund.bankName}
+                    </p>
+                  </Tooltip>
+                  <div tw="flex flex-col gap-3">
+                    <p tw="text-[#777777] m-0 text-sm">Chủ tài khoản:</p>
+                    <p tw="m-0 font-semibold text-base">{data?.refund.accountName}</p>
+                  </div>
+                  <div tw="flex flex-col gap-3">
+                    <p tw="text-[#777777] m-0 text-sm">Số tài khoản:</p>
+                    <p tw="m-0 font-semibold text-base">{data?.refund.accountNumber}</p>
+                  </div>
+                </div>
+              </div>
+            )}
             <ServicesInfo services={servicesInfo} />
             <CustomerInfo
               addressData={addressData}
