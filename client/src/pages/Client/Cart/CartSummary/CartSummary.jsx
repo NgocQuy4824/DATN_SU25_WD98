@@ -42,13 +42,13 @@ const CartSummary = ({ items }) => {
     <Card bordered>
       <div style={{ marginBottom: 12 }}>
         <Text>Sản phẩm được chọn: </Text>
-        <Text strong>{cartItems.length}</Text>
+        <Text strong>{cartItems?.length}</Text>
       </div>
 
       <div style={{ marginBottom: 12 }}>
         <Text>Tổng tiền: </Text>
         <Text strong style={{ color: "green", fontSize: 18 }}>
-          {totalPrice.toLocaleString()} ₫
+          {totalPrice?.toLocaleString()} ₫
         </Text>
       </div>
 
@@ -100,7 +100,7 @@ const CartSummary = ({ items }) => {
         <Button
           block
           onClick={handleClickCheckOut}
-          disabled={!cartItems.length}
+          disabled={!cartItems?.length}
           type="primary"
         >
           Thanh Toán

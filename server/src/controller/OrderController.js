@@ -62,6 +62,54 @@ const cancelOrder = async (req, res, next) => {
   return res.status(200).json(result);
 };
 
+// REFUND
+const getAllBankInfo = async (req, res, next) => {
+  try {
+    const result = await orderService.getAllBankInfo(req, res, next);
+    return res.status(result.status || 200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const updateRefundInfo = async (req, res, next) => {
+  try {
+    const result = await orderService.updateRefundInfo(req, res, next);
+    return res.status(result.status || 200).json(result);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
+
+const confirmRefund = async (req, res, next) => {
+  try {
+    const result = await orderService.confirmRefund(req, res, next);
+    return res.status(result.status || 200).json(result);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Server Errỏ" });
+  }
+};
+
+const cancelRefund = async (req, res, next) => {
+  try {
+    const result = await orderService.cancelRefund(req, res, next);
+    return res.status(result.status || 200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: "server error" });
+  }
+};
+
+const endingRefund = async (req, res, next) => {
+  try {
+    const result = await orderService.endingRefund(req, res, next);
+    return res.status(result.status || 200).json(result);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "SERVER ERROR" });
+  }
+};
 module.exports = {
   getAllOrder,
   createOrder,
@@ -71,4 +119,9 @@ module.exports = {
   completeOrder,
   cancelOrder,
   getMyDetailOrder,
+  getAllBankInfo,
+  updateRefundInfo,
+  confirmRefund,
+  cancelRefund,
+  endingRefund
 };

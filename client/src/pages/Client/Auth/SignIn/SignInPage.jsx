@@ -41,14 +41,14 @@ const SignInPage = () => {
             { type: "email", message: "Email không hợp lệ!" },
           ]}
         >
-          <Input tw="h-[45px]" />
+          <Input tw="h-[45px]" placeholder="Nhập email của bạn"/>
         </Form.Item>
         <Form.Item
           label="Mật khẩu"
           name="password"
           rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
         >
-          <Input.Password tw="h-[45px]" />
+          <Input.Password tw="h-[45px]" placeholder="Nhập mật khẩu của bạn"/>
         </Form.Item>
         <Form.Item  tw="flex justify-end">
           <Link to={'/'}>Quên mật khẩu?</Link>

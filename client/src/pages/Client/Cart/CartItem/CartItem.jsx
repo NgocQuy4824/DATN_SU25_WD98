@@ -41,7 +41,6 @@ const StyledCheckbox = styled(Checkbox)`
 `;
 
 const CartItem = ({ item }) => {
-  console.log(item);
   const removeCartItemMutation = useRemoveCartItem();
   const updateQuantityMutation = useUpdateCartItemQuantity();
   const {
@@ -51,7 +50,9 @@ const CartItem = ({ item }) => {
     existsVariantId,
   } = useCartSelection();
   const handleRemove = () => {
-    removeCartItemMutation.mutate(item.variantId);
+    removeCartItemMutation.mutate(item.variantId,{onSuccess: (_,body)=>{
+      handleRemoveItem(body)
+    }});
   };
 
   const handleChangeQuantity = (newQuantity) => {
@@ -76,7 +77,7 @@ const CartItem = ({ item }) => {
         <Col flex="32px">
           <StyledCheckbox
             disabled={isOutStock}
-            checked={existsVariantId.includes(item.variantId)}
+            checked={existsVariantId?.includes(item.variantId)}
             onChange={(e) => handleToogleSelect(e.target.checked)}
           />
         </Col>

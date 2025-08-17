@@ -6,6 +6,9 @@ const Product = require("../models/ProductsModel");
 const buildQueryOptions = require("../helpers/buildQueryOptions");
 const STATUS = require("../constants/status");
 const redisClient = require("../utils/redis");
+const ROLE = require("../constants/role");
+const User = require("../models/UserModel");
+const axios = require("axios");
 
 const createOrder = async (req, res, next) => {
   const session = await mongoose.startSession();
@@ -86,9 +89,21 @@ const createOrder = async (req, res, next) => {
           );
         })
       );
-      const newOrder = await Order.create([{ ...req.body, userId }], {
-        session,
-      });
+      const orderLogCreate = {
+        status: STATUS.PENDING,
+        updateDate: new Date(),
+        description: `${req.body.customerInfo.name} đã đặt một đơn hàng mới`,
+        updateBy: {
+          name: "PACERUN",
+          role: ROLE.SYSTEM,
+        },
+      };
+      const newOrder = await Order.create(
+        [{ ...req.body, userId, orderLog: [orderLogCreate] }],
+        {
+          session,
+        }
+      );
       res.json(
         customResponse({
           data: newOrder[0],
@@ -186,6 +201,7 @@ const getMyOrder = async (req, res, next) => {
 
 const updateStatusOrder = async (req, res, next) => {
   const { orderId } = req.params;
+  const userId = req.userId;
   if (!orderId) {
     return res.status(400).json(
       customResponse({
@@ -205,10 +221,20 @@ const updateStatusOrder = async (req, res, next) => {
       })
     );
   }
+  const user = await User.findById(userId);
   foundOrder.status = req.body.status;
   if (!foundOrder.isPaid && req.body.status === STATUS.DELIVERED) {
     foundOrder.isPaid = true;
   }
+  foundOrder.orderLog.unshift({
+    status: req.body.status,
+    description: req.body.description,
+    updateDate: new Date(),
+    updateBy: {
+      name: user.name,
+      role: user.role,
+    },
+  });
   await foundOrder.save();
   return customResponse({
     message: `Cập nhật trạng thái đơn hàng thành công sang thành ${req.body.status}`,
@@ -239,7 +265,17 @@ const completeOrder = async (req, res, next) => {
       })
     );
   }
+  const user = await User.findById(req.userId)
   foundOrder.status = "done";
+    foundOrder.orderLog.unshift({
+    status: STATUS.DONE,
+    updateDate: new Date(),
+    description: `Đơn hàng đã được giao thành công`,
+    updateBy: {
+      name: user.name,
+      role: req.body.role,
+    },
+  });
   await foundOrder.save();
   return customResponse({
     message: `Hoàn thành đơn hàng`,
@@ -251,6 +287,7 @@ const completeOrder = async (req, res, next) => {
 
 const cancelOrder = async (req, res, next) => {
   const { orderId } = req.params;
+  const userId = req.userId;
   if (!orderId) {
     return res.status(400).json(
       customResponse({
@@ -273,12 +310,30 @@ const cancelOrder = async (req, res, next) => {
       })
     );
   }
+  const user = await User.findById(userId);
   foundOrder.canceled = {
-    isCancel: true,
+    isCancel: foundOrder.isPaid ? false : true,
     by: req.body.role,
-    description: req.body.description,
+    description: foundOrder.isPaid
+      ? `${req.body.description} - Đang chờ hoàn tiền`
+      : req.body.description,
   };
-  foundOrder.status = STATUS.CANCELLED;
+  foundOrder.orderLog.unshift({
+    status: foundOrder.isPaid ? STATUS.PENDINGCANCELLED : STATUS.CANCELLED,
+    updateDate: new Date(),
+    description: `${
+      foundOrder.isPaid
+        ? `Đơn hàng đã bị huỷ đang chờ hoàn tiền - Lý do: ${req.body.description}`
+        : `Đơn hàng đã bị huỷ`
+    }`,
+    updateBy: {
+      name: user.name,
+      role: req.body.role,
+    },
+  });
+  foundOrder.status = foundOrder.isPaid
+    ? STATUS.PENDINGCANCELLED
+    : STATUS.CANCELLED;
   await foundOrder.save();
   return customResponse({
     message: `huỷ đơn hàng thành công`,
@@ -288,12 +343,223 @@ const cancelOrder = async (req, res, next) => {
   });
 };
 
+// REFUND
+const getAllBankInfo = async (req, res, next) => {
+  const { data } = await axios.get(`https://api.vietqr.io/v2/banks`);
+  const response = data.data
+    .map((item) => ({
+      _id: item.id,
+      name: item.name,
+      shortName: item.shortName,
+      logo: item.logo,
+    }))
+    .sort((a, b) => a.shortName.localeCompare(b.shortName));
+
+  return customResponse({
+    message: "OK",
+    status: 200,
+    success: true,
+    data: response,
+  });
+};
+
+const updateRefundInfo = async (req, res, next) => {
+  const { id } = req.params;
+  const foundOrder = await Order.findById(id);
+  if (!foundOrder) {
+    return res.status(400).json(
+      customResponse({
+        status: 400,
+        success: false,
+        message: `Không tìm thấy đơn hàng với id là: ${id}`,
+        data: null,
+      })
+    );
+  }
+  const countUpdateRefund = foundOrder.orderLog.filter(
+    (item) => item.status === "updateRefund"
+  );
+  if (countUpdateRefund.length >= 4) {
+    return res.status(400).json(
+      customResponse({
+        status: 400,
+        success: false,
+        message: "Bạn đã vượt quá số lượt cập nhật thông tin",
+        data: null,
+      })
+    );
+  }
+  const user = await User.findById(req.userId);
+  foundOrder.refund = {
+    amount: foundOrder.totalPrice,
+    ...req.body,
+  };
+  foundOrder.orderLog.unshift({
+    status: "updateRefund",
+    updateDate: new Date(),
+    description: `Đơn hàng đã được cập nhật thông tin hoàn tiền: ${req.body.bankName.match(
+      /^[^-]+/
+    )} - ${req.body.accountNumber} - ${req.body.accountName}`,
+    updateBy: {
+      name: user.name,
+      role: req.body.role,
+    },
+  });
+  await foundOrder.save();
+  return customResponse({
+    data: foundOrder,
+    message: `Cập nhật thông tin hoàn tiền thành công`,
+    success: true,
+    status: 200,
+  });
+};
+
+const confirmRefund = async (req, res, next) => {
+  const { id } = req.params;
+  const userId = req.userId;
+  const foundOrder = await Order.findById(id);
+  if (!foundOrder) {
+    return res.status(400).json(
+      customResponse({
+        data: null,
+        success: false,
+        status: 400,
+        message: "Not found order",
+      })
+    );
+  }
+  const file = req.file;
+  foundOrder.refund = {
+    ...foundOrder.refund,
+    isCompleted: true,
+    imageConfirm: file.path,
+    reportInfo: req.body.reportInfo,
+  };
+  const user = await User.findById(userId);
+  foundOrder.status = STATUS.CONFIRMREFUND;
+  foundOrder.orderLog.unshift({
+    status: STATUS.CONFIRMREFUND,
+    updateDate: new Date(),
+    description: req.body.description
+      ? req.body.description
+      : `Đơn hàng đã được hoàn tiền`,
+    updateBy: {
+      name: user.name,
+      role: ROLE.ADMIN,
+    },
+  });
+  await foundOrder.save();
+  return customResponse({
+    data: foundOrder,
+    message: "Cập nhật hoàn tiền thành công",
+    status: 200,
+    success: true,
+  });
+};
+const cancelRefund = async (req, res, next) => {
+  const { orderId } = req.params;
+  const userId = req.userId;
+  if (!orderId) {
+    return res.status(400).json(
+      customResponse({
+        message: "Chưa có id của đơn hàng",
+        status: 400,
+        success: false,
+      })
+    );
+  }
+  const foundOrder = await Order.findOne({
+    _id: orderId,
+    "canceled.isCancel": false,
+  });
+  if (!foundOrder) {
+    return res.status(400).json(
+      customResponse({
+        message: "Không tìm thấy đơn hàng",
+        status: 400,
+        success: false,
+      })
+    );
+  }
+  const user = await User.findById(userId);
+  foundOrder.canceled = {
+    isCancel: true,
+    by: ROLE.ADMIN,
+    description: `Từ chối hoàn tiền vì ${req.body.description} có thắc mắc vui lòng liên hệ: ${req.body.reportInfo}`,
+  };
+  foundOrder.orderLog.unshift({
+    status: STATUS.CANCELLED,
+    updateDate: new Date(),
+    description: `Từ chối hoàn tiền vì ${req.body.description} có thắc mắc vui lòng liên hệ: ${req.body.reportInfo}`,
+    updateBy: {
+      name: user.name,
+      role: req.body.role,
+    },
+  });
+  foundOrder.refund = {
+    ...foundOrder.refund,
+    isCompleted: false,
+    reportInfo: req.body.reportInfo,
+  };
+  foundOrder.status = STATUS.CANCELLED;
+  await foundOrder.save();
+  return customResponse({
+    message: `Từ chối hoàn tiền`,
+    status: 200,
+    success: true,
+    data: null,
+  });
+};
+const endingRefund = async (req, res, next) => {
+  const { id } = req.params;
+  const userId = req.userId;
+  const foundOrder = await Order.findById(id);
+  if (!foundOrder) {
+    return res.status(400).json(
+      customResponse({
+        data: null,
+        success: false,
+        status: 400,
+        message: "Not found order",
+      })
+    );
+  }
+  const user = await User.findById(userId);
+  foundOrder.status = STATUS.CANCELLED;
+  foundOrder.canceled = {
+    isCancel: true,
+    by: req.body.role,
+    description: `Đơn hàng bị huỷ vì đã hoàn tiền thành công`,
+  };
+  foundOrder.orderLog.unshift({
+    status: STATUS.CANCELLED,
+    updateDate: new Date(),
+    description: `${user.name} - Xác nhận đã nhận được tiền`,
+    updateBy: {
+      name: user.name,
+      role: req.body.role,
+    },
+  });
+  await foundOrder.save();
+  return customResponse({
+    data: foundOrder,
+    message: "Cập nhật hoàn tiền thành công",
+    status: 200,
+    success: true,
+  });
+};
+
 module.exports = {
   createOrder,
   getDetailOrder,
   getMyDetailOrder,
   getMyOrder,
   updateStatusOrder,
+  confirmRefund,
   completeOrder,
   cancelOrder,
+  getAllBankInfo,
+  updateRefundInfo,
+  cancelRefund,
+  endingRefund,
 };

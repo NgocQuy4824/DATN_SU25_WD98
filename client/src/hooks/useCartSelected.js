@@ -45,7 +45,7 @@ export default function useCartSelection() {
   };
   // Constant
 
-  const existsVariantId = cartItems.map((item) => item.variantId);
+  const existsVariantId = cartItems?.map((item) => item.variantId);
 
   return {
     cartItems,
