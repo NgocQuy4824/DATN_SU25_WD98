@@ -1,3 +1,4 @@
+const MyVoucher = require('../models/MyVoucher');
 const Voucher = require('../models/VoucherModel');
 const mongoose = require('mongoose');
 
@@ -101,6 +102,7 @@ const deleteVoucher = (id) => {
     try {
       const deleted = await Voucher.findByIdAndDelete(id);
       if (deleted) {
+        await MyVoucher.deleteMany({ voucherId: id });
         resolve({
           status: "OK",
           message: "Xoá voucher thành công",

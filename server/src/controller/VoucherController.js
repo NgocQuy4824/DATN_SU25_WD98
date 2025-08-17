@@ -3,13 +3,26 @@ const VoucherService = require('../services/VoucherService');
 // 1. Tạo voucher
 const createVoucher = async (req, res) => {
   try {
+    const { code = "" } = req.body;
+
+    // Validate code bắt buộc
+    if (!code.trim()) {
+      return res.status(400).json({ status: "ERROR", message: "Mã voucher là bắt buộc" });
+    }
+
     const response = await VoucherService.createVoucher(req.body);
-    return res.status(200).json(response);
+
+    // Nếu service trả về lỗi => HTTP 400, còn OK => HTTP 200
+    return res
+      .status(response?.status === "ERROR" ? 400 : 200)
+      .json(response);
+
   } catch (error) {
     console.error("Lỗi createVoucher:", error);
     return res.status(500).json({ status: "ERROR", message: "Lỗi server khi tạo voucher" });
   }
 };
+
 
 // 2. Lấy tất cả voucher
 const getAllVoucher = async (req, res) => {

@@ -41,6 +41,34 @@ const orderProductSchema = new mongoose.Schema(
   { _id: false, id: false, versionKey: false, timestamps: false }
 );
 
+const orderStatusLog = new mongoose.Schema(
+  {
+    status: {
+      type: String,
+      enum: [...Object.values(STATUS), "updateRefund"],
+    },
+    updateDate: {
+      type: Date,
+      required: true,
+    },
+    description: {
+      type: String,
+    },
+    updateBy: {
+      name: String,
+      role: {
+        type: String,
+        enum: Object.values(ROLE),
+      },
+    },
+  },
+  {
+    timestamp: false,
+    versionKey: false,
+    _id: false,
+  }
+);
+
 const orderModel = new mongoose.Schema(
   {
     userId: {
@@ -100,6 +128,23 @@ const orderModel = new mongoose.Schema(
       enum: ["COD", "ONLINE"],
       default: "COD",
     },
+    refund: {
+      amount: Number,
+      bankName: String,
+      accountName: String,
+      accountNumber: String,
+      bankLogo: String,
+      isCompleted: {
+        type: Boolean,
+        default: false,
+      },
+      imageConfirm: {
+        type: String,
+      },
+      reportInfo: {
+        type: String,
+      },
+    },
     status: {
       type: String,
       trim: true,
@@ -127,6 +172,7 @@ const orderModel = new mongoose.Schema(
         type: String,
       },
     },
+    orderLog: [orderStatusLog],
   },
   {
     timestamps: true,

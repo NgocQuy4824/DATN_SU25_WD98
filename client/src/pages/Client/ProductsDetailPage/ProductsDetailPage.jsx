@@ -269,7 +269,7 @@ const ProductsDetailPage = () => {
         open={isCartDrawerOpen}
         onClose={() => setCartDrawerOpen(false)}
       />
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

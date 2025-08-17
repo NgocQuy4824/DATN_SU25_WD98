@@ -1,11 +1,13 @@
 import { Button, Col, Dropdown, Menu } from "antd";
-import { ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
+import { ShoppingCartOutlined, UserOutlined, GiftOutlined } from "@ant-design/icons";
 import { WrapperHeader, WrapperHeaderLogo } from "./style";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import TopNavBar from "../Client/TopNavBar";
 import ButtonInputSearch from "../Client/ButtonInputSearch/ButtonInputSearch";
 import React from "react";
+import { WrapperTypeProduct } from "../../pages/Client/HomePage/style";
+import CategoryClient from "../../pages/Client/HomePage/CategoryClient/CategoryClient";
 
 const HeaderComponent = ({ isAdmin = false }) => {
   const navigate = useNavigate();
@@ -58,6 +60,24 @@ const HeaderComponent = ({ isAdmin = false }) => {
           {isAdmin ? "Trang quản trị" : "PaceRun"}
         </WrapperHeaderLogo>
 
+        {!isAdmin && (
+          <WrapperTypeProduct>
+            <Link
+              to="/products"
+              style={{
+                textDecoration: "none",
+                fontSize: "16px",
+                fontWeight: "bold",
+                color: "#1890ff",
+              }}
+            >
+              Sản phẩm
+            </Link>
+            <CategoryClient />
+          </WrapperTypeProduct>
+        )}
+
+
         {isAdmin && (
           <div style={{ paddingLeft: "20px" }}>
             <Button type="primary" onClick={() => navigate("/")}>
@@ -66,11 +86,9 @@ const HeaderComponent = ({ isAdmin = false }) => {
           </div>
         )}
 
-        {!isAdmin && (
-          <div style={{ flex: "none", paddingLeft: "20px" }}>
-            <ButtonInputSearch />
-          </div>
-        )}
+        {/* {!isAdmin && (
+          
+        )} */}
 
         {!isAdmin && (
           <Col
@@ -81,6 +99,16 @@ const HeaderComponent = ({ isAdmin = false }) => {
               alignItems: "center",
             }}
           >
+            <div
+              style={{ marginRight: "13px", cursor: "pointer", display: "flex", alignItems: "center"}}
+              onClick={() => navigate("/my-vouchers")}
+            >
+              <div style={{ flex: "none", paddingLeft: "20px",marginRight: "20px" }}>
+                <ButtonInputSearch />
+              </div>
+              <GiftOutlined style={{ fontSize: 18, color: '#ff4d4f', marginRight: "5px" }} />
+              Mã giảm giá
+            </div>
             <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               {user ? (
                 <Dropdown overlay={accountMenu} placement="bottomRight" arrow>
@@ -92,8 +120,8 @@ const HeaderComponent = ({ isAdmin = false }) => {
                       gap: 6,
                     }}
                   >
-                    <UserOutlined />
-                    <span>Tài khoản</span>
+                    <UserOutlined style={{ color: '#1890ff' }} />
+                    <div>Tài khoản</div>
                   </div>
                 </Dropdown>
               ) : (
@@ -134,7 +162,7 @@ const HeaderComponent = ({ isAdmin = false }) => {
                 }}
                 onClick={() => navigate("/cart")}
               >
-                <ShoppingCartOutlined />
+                <ShoppingCartOutlined style={{ color: '#1890ff' }} />
                 <span>Giỏ hàng</span>
               </div>
             </div>

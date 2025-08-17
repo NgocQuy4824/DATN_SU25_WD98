@@ -5,6 +5,8 @@ const STATUS = {
   SHIPPING: "shipping",
   DELIVERED: "delivered",
   DONE: "done",
+  PENDINGCANCELLED: "pendingCancelled",
+  CONFIRMREFUND: "refund"
 };
 
 module.exports = STATUS;

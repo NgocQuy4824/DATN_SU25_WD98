@@ -11,6 +11,7 @@ import enUS from "antd/es/calendar/locale/en_US";
 import { AuthProvider } from "./context/AuthContext";
 import { ProductFilterProvider } from "./context/ProductFilterContext";
 import PersistenceProvider from "./context/PersistenceProvider";
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 dayjs.locale("en");
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ function App() {
           </AuthProvider>
         </BrowserRouter>
       </ConfigProvider>
+       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
 }

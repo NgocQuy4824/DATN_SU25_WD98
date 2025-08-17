@@ -9,7 +9,8 @@ import {
   BarChartOutlined,
   PieChartOutlined,
   AlignCenterOutlined,
-  HighlightOutlined
+  HighlightOutlined,
+  CreditCardOutlined
 } from '@ant-design/icons';
 
 const items = [
@@ -50,6 +51,11 @@ const items = [
     label: 'Thống kê',
     icon: <PieChartOutlined />,
   },
+  {
+    key: 'vouchers',
+    label: 'Voucher',
+    icon: <CreditCardOutlined />
+  },
 ];
 
 const AdminLayout = () => {
@@ -65,7 +71,7 @@ const AdminLayout = () => {
       <div style={{ display: 'flex' }}>
         <Menu
           onClick={handleMenuClick}
-          style={{ width: 200 }}
+          style={{ width: 200 ,backgroundColor: '#f0f2f5',height:'100vh'}}
           mode="inline"
           items={items}
         />

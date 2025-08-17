@@ -7,6 +7,7 @@ import Cart from "../pages/Client/Cart/Cart";
 import Checkout from "../pages/Client/Checkout/Checkout";
 import Shipping from "../pages/Client/Checkout/Shipping";
 import HomePage from "../pages/Client/HomePage/HomePage";
+import MyVoucher from "../pages/Client/MyVoucher/MyVoucher";
 import NotFoundPage from "../pages/Client/NotFoundPage/NotFoundPage";
 import ProductsDetailPage from "../pages/Client/ProductsDetailPage/ProductsDetailPage";
 import ProductsPage from "../pages/Client/ProductsPage/ProductsPage";
@@ -39,6 +40,7 @@ export const clientRoutes = [
           { path: "orders/detail/:orderId", element: <OrderDetailUser /> },
         ],
       },
+      { path: "my-vouchers", element: <MyVoucher /> }
     ],
   },
   {

@@ -1,0 +1,42 @@
+import React from "react";
+import { Modal } from "antd";
+import tw from "twin.macro";
+import { useGetUserVouchers } from "../../../hooks/useMyVoucherHook";
+import VoucherItem from "./VoucherItem";
+
+const PopupVoucher = ({ open, onClose, onApplyVoucher }) => {
+  const { data: response } = useGetUserVouchers();
+  const vouchers = response?.data ?? [];
+
+  const handleUseNow = (voucher) => {
+    if (onApplyVoucher) {
+      onApplyVoucher(voucher);
+    }
+  };
+
+  
+   
+  return (
+    <Modal
+      title={<span css={tw`text-lg font-semibold`}>Danh Sách Voucher Của Bạn</span>}
+      open={open}
+      onCancel={onClose}
+      footer={null}
+      width={400}
+    >
+      <div>
+        {vouchers.length === 0 ? (
+          <p css={tw`text-center text-gray-500 py-4`}>
+            Bạn chưa có mã giảm giá nào.
+          </p>
+        ) : (
+          vouchers.map((voucher) => (
+            <VoucherItem key={voucher._id} voucher={voucher} onUseNow={handleUseNow} />
+          ))
+        )}
+      </div>
+    </Modal>
+  );
+};
+
+export default PopupVoucher;

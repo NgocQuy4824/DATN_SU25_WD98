@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   List,
   Image,
@@ -21,10 +21,11 @@ import {
   useCreateOrderPayos,
 } from "../../../../hooks/useCheckoutHook";
 import { toast } from "react-toastify";
+import { removeVoucher } from "../../../../redux/slides/voucherSlice";
 
 const { Text } = Typography;
 
-// Tailwind-compatible Card và Button
+// Styled components
 const Card = styled(AntCard)`
   ${tw`shadow-lg border border-gray-200 rounded-xl`}
 `;
@@ -39,12 +40,16 @@ const Button = styled(AntButton)`
 
 export default function ProductsCheckOutItems({ isShippingPage, form }) {
   const { items: cartItems } = useSelector((state) => state.cart);
+  const selectedVoucher = useSelector((state) => state.voucher.selectedVoucher);
   const { data } = useMyCart();
   const checkoutInfo = useSelector((state) => state.checkout);
+
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [agreePolicy, setAgreePolicy] = useState(false);
   const createOrder = useCreateOrder();
   const createOrderPayOs = useCreateOrderPayos();
+  const dispatch = useDispatch();
+  // Gộp dữ liệu cart từ store và API
   const mergedCartItems = cartItems.map((cartItem) => {
     const fullItem = data?.data?.items.find(
       (p) => p.variantId === cartItem.variantId
@@ -55,14 +60,25 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
     };
   });
 
-  const totalPrice = mergedCartItems.reduce((total, item) => {
-    const price = item?.price || 0;
-    const quantity = item?.quantity || 0;
-    return total + price * quantity;
+  // Tính toán tổng tiền, giảm giá và tổng sau giảm
+  const totalPrice = mergedCartItems.reduce((acc, item) => {
+    if (!item) return acc;
+    return acc + (item.price || 0) * (item.quantity || 0);
   }, 0);
 
-  const totalQuantity = cartItems.reduce(
-    (total, item) => total + item.quantity,
+  const discountAmount = selectedVoucher
+    ? selectedVoucher.voucherId?.discountType === "fixed"
+      ? selectedVoucher.voucherId.discountValue
+      : Math.floor(
+          (selectedVoucher.voucherId.discountValue / 100) * totalPrice
+        )
+    : 0;
+
+  const totalAfterDiscount = Math.max(totalPrice - discountAmount, 0);
+
+
+  const totalQuantity = mergedCartItems.reduce(
+    (total, item) => total + (item.quantity || 0),
     0
   );
 
@@ -74,12 +90,12 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
   };
 
   const handleCreateOrder = () => {
-    let mergedItems = false;
+    let invalidItem = false;
     const items = mergedCartItems.map((item) => {
-      if (!item.variant) {
-        toast.error("Biến thể của sản phẩm đã không còn vui lòng thử lại");
-        mergedItems = true;
-        return;
+      if (!item?.variant) {
+        toast.error("Biến thể sản phẩm đã không còn, vui lòng thử lại");
+        invalidItem = true;
+        return null;
       }
       return {
         productId: item.productId,
@@ -88,22 +104,27 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
         price: item.price,
         image: item.variant?.image,
         quantity: item.quantity,
-        size: item.variant?.size.name,
+        size: item.variant?.size?.name,
         color: item.variant?.color,
       };
     });
-    if (mergedItems) {
-      return;
-    }
+
+    if (invalidItem) return;
+
     const payload = {
       ...checkoutInfo,
       items,
-      totalPrice: totalPrice,
+      totalPrice: totalAfterDiscount ?? 0,
     };
+    
+    const onSuccess = () => {
+      dispatch(removeVoucher()); 
+    };
+
     if (paymentMethod === "cod" && !createOrder.isPending) {
-      createOrder.mutate(payload);
+      createOrder.mutate(payload,{onSuccess});
     } else if (paymentMethod === "online" && !createOrderPayOs.isPending) {
-      createOrderPayOs.mutate(payload);
+      createOrderPayOs.mutate(payload,{onSuccess});
     }
   };
 
@@ -112,8 +133,10 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
       style: "currency",
       currency: "VND",
     }).format(value);
+
   return (
     <Card title="Sản phẩm thanh toán">
+      {/* Danh sách sản phẩm */}
       <div style={{ maxHeight: "300px", overflowY: "auto", paddingRight: 8 }}>
         <List
           itemLayout="horizontal"
@@ -136,7 +159,9 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
                         <Tag color="blue">Màu: {item.variant.color}</Tag>
                       )}
                       {item.variant?.size?.name && (
-                        <Tag color="purple">Size: {item.variant.size.name}</Tag>
+                        <Tag color="purple">
+                          Size: {item.variant.size.name}
+                        </Tag>
                       )}
                     </Space>
                     <div style={{ marginTop: 8 }}>
@@ -149,7 +174,9 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
                 }
               />
               <div>
-                <Text strong>{formatCurrency(item.price * item.quantity)}</Text>
+                <Text strong>
+                  {formatCurrency(item.price * item.quantity)}
+                </Text>
               </div>
             </List.Item>
           )}
@@ -157,6 +184,8 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
       </div>
 
       <Divider />
+
+      {/* Chọn phương thức thanh toán */}
       {!isShippingPage && (
         <div tw="my-8">
           <Text strong style={{ fontSize: 14 }}>
@@ -180,33 +209,41 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
         <Text>{totalQuantity} sản phẩm</Text>
       </div>
 
+      {/* Hiển thị giảm giá nếu có */}
+      {discountAmount > 0 && (
+        <div style={{ color: "red", marginBottom: 8 }}>
+          Giảm: {formatCurrency(discountAmount)}{" "}
+          {selectedVoucher?.voucherId?.discountType === "percentage" &&
+            `(${selectedVoucher?.voucherId?.discountValue}%)`}
+        </div>
+      )}
+
       <div tw="flex justify-between items-center mt-2">
         <Text strong style={{ fontSize: 16 }}>
           Tổng tiền:
         </Text>
         <Text strong style={{ fontSize: 18, color: "#ff4d4f" }}>
-          {formatCurrency(totalPrice)}
+          {formatCurrency(totalAfterDiscount ?? 0)}
         </Text>
       </div>
 
       {!isShippingPage && <hr />}
       {!isShippingPage && (
-        <>
-          <div tw="my-8">
-            <Checkbox
-              value={agreePolicy}
-              onChange={(e) => setAgreePolicy(e.target.checked)}
-            >
-              Đồng ý với <span>điều khoản và chính sách</span>
-            </Checkbox>
-          </div>
-        </>
+        <div tw="my-8">
+          <Checkbox
+            checked={agreePolicy}
+            onChange={(e) => setAgreePolicy(e.target.checked)}
+          >
+            Đồng ý với <span>điều khoản và chính sách</span>
+          </Checkbox>
+        </div>
       )}
+
       <InnerCard>
         <Tooltip
           title={
             !isShippingPage && !agreePolicy
-              ? "Bạn cần đồng ý với điều khoản và chính sách của chúng tôi để tiếp tục đặt hàng"
+              ? "Bạn cần đồng ý với điều khoản và chính sách để tiếp tục đặt hàng"
               : ""
           }
           color="blue"

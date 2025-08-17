@@ -49,11 +49,12 @@ const claimVoucher = async (req) => {
 
   return customResponse({
     data: myVoucher,
-    message: ReasonPhrases.OK,
+    message: "Nhận voucher thành công",
     status: StatusCodes.OK,
     success: true,
   });
 };
+
 
 const getUserVouchers = async (req) => {
   const userId = req.userId;
