@@ -41,7 +41,6 @@ const StyledCheckbox = styled(Checkbox)`
 `;
 
 const CartItem = ({ item }) => {
-  console.log(item);
   const removeCartItemMutation = useRemoveCartItem();
   const updateQuantityMutation = useUpdateCartItemQuantity();
   const {
@@ -51,7 +50,9 @@ const CartItem = ({ item }) => {
     existsVariantId,
   } = useCartSelection();
   const handleRemove = () => {
-    removeCartItemMutation.mutate(item.variantId);
+    removeCartItemMutation.mutate(item.variantId,{onSuccess: (_,body)=>{
+      handleRemoveItem(body)
+    }});
   };
 
   const handleChangeQuantity = (newQuantity) => {

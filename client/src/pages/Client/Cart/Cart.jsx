@@ -85,6 +85,11 @@ const CartPage = () => {
       }
     });
   }, [items, cartItems]);
+  useEffect(() => {
+    if (!isLoading && items.length === 0) {
+      dispatch(removeAllCartItems());
+    }
+  }, [isLoading, items, dispatch]);
 
   const handleRemoveSelected = () => {
     if (cartItems.length) removeAllCartMutation.mutate();
