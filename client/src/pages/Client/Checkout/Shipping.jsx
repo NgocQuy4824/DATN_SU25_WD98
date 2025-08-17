@@ -119,7 +119,7 @@ export default function Shipping() {
               customerInfo: {
                 name: user?.name,
                 email: user?.email,
-                phone: user?.phone,
+                phone: user?.phone === "Chưa cập nhật" ? "" : user?.phone,
               },
 
               address: {
@@ -172,7 +172,10 @@ export default function Shipping() {
                   { required: true, message: "Vui lòng nhập số điện thoại" },
                 ]}
               >
-                <Input disabled placeholder="Nhập số điện thoại" />
+                <Input
+                  disabled={!!user?.phone && user?.phone !== "Chưa cập nhật"}
+                  placeholder="Nhập số điện thoại"
+                />
               </Form.Item>
               <div
                 style={{
