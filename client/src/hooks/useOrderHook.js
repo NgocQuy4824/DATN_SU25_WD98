@@ -1,7 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   cancelOrder,
+  cancelRefund,
   completeOrder,
+  endingRefund,
   getAllOrder,
   getMyDetailOrder,
   getMyOrder,
@@ -46,9 +48,11 @@ export const useUpdateStatusOrder = (id) => {
     mutationKey: ["UPDATESTATUS"],
     mutationFn: (body) => updateOrderStatus(id, body),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === "ORDERS",
-      });
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          predicate: (query) => query.queryKey[0] === "ORDERS",
+        });
+      }, 200);
     },
   });
 };
@@ -57,11 +61,15 @@ export const useCompleteOrder = (id) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationKey: ["UPDATESTATUS"],
-    mutationFn: () => completeOrder(id),
+    mutationFn: (body) => {
+      return completeOrder(id,body)
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === "ORDERS",
-      });
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          predicate: (query) => query.queryKey[0] === "ORDERS",
+        });
+      }, 200);
     },
   });
 };
@@ -72,9 +80,41 @@ export const useCancelOrder = (id) => {
     mutationKey: ["UPDATESTATUS"],
     mutationFn: (body) => cancelOrder(id, body),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        predicate: (query) => query.queryKey[0] === "ORDERS",
-      });
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          predicate: (query) => query.queryKey[0] === "ORDERS",
+        });
+      }, 200);
+    },
+  });
+};
+
+export const useCancelRefund = (id) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ["CANCEL_REFUND"],
+    mutationFn: (body) => cancelRefund(id, body),
+    onSuccess: () => {
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          predicate: (query) => query.queryKey[0] === "ORDERS",
+        });
+      }, 200);
+    },
+  });
+};
+
+export const useEndingRefund = (id) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationKey: ["ENDING_REFUND"],
+    mutationFn: (body) => endingRefund(id,body),
+    onSuccess: () => {
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          predicate: (query) => query.queryKey[0] === "ORDERS",
+        });
+      }, 200);
     },
   });
 };

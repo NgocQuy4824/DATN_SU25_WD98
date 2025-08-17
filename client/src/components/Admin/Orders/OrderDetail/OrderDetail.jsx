@@ -6,10 +6,11 @@ import ServicesInfo from "./ServicesInfo";
 import CustomerInfo from "./CustomerInfo";
 import TabelOrderItems from "./TabelOrderItems";
 import { useGetDetailOrder } from "../../../../hooks/useOrderHook";
-import { Spin, Tooltip } from "antd";
+import { Button, Spin, Tooltip } from "antd";
 import ActionStatusOrder from "./ActionStatusOrder";
 import { CloseCircleOutlined } from "@ant-design/icons";
 import RefundStatus from "./RefundStatus";
+import PopupInfoRefundComplete from "../../../../pages/Client/ProfilePage/Order/OrderDetail/components/PopupInfoRefundComplete/PopupInfoRefundComplete";
 
 export const translateRole = (role) => {
   switch (role) {
@@ -76,7 +77,14 @@ const OrderDetail = () => {
             <h2 css={tw`text-lg text-blue-800 py-12`}>
               Thông tin đơn hàng #{orderId}
             </h2>
-            <ActionStatusOrder status={data?.status} isRefundInfo={data?.refund} id={orderId} />
+            <ActionStatusOrder
+              status={data?.status}
+              isRefundInfo={{
+                hadRefundInfo: !!data?.refund?.accountNumber,
+                ...data?.refund,
+              }}
+              id={orderId}
+            />
           </div>
           {data?.canceled.isCancel ? (
             <div tw="flex justify-center py-4 flex-col items-center gap-2">
@@ -93,10 +101,15 @@ const OrderDetail = () => {
           )}
           <br />
           <div>
-             {data?.refund?.accountNumber && (
+            {data?.refund?.accountNumber && (
               <div tw="px-4 my-4 mb-12">
                 <div tw="flex items-center justify-between">
                   <h3 tw="text-lg font-semibold m-0">Thông tin hoàn tiền</h3>
+                  {data?.refund.isCompleted && (
+                      <PopupInfoRefundComplete refundInfo={data?.refund}>
+                        <Button>Xem Thông tin hoàn tiền</Button>
+                      </PopupInfoRefundComplete>
+                  )}
                 </div>
                 <div tw="mt-8 justify-between px-4 py-8 shadow-md flex items-center rounded-lg">
                   <Tooltip title={data?.refund.bankName} placement="topLeft">
@@ -107,11 +120,15 @@ const OrderDetail = () => {
                   </Tooltip>
                   <div tw="flex flex-col gap-3">
                     <p tw="text-[#777777] m-0 text-sm">Chủ tài khoản:</p>
-                    <p tw="m-0 font-semibold text-base">{data?.refund.accountName}</p>
+                    <p tw="m-0 font-semibold text-base">
+                      {data?.refund.accountName}
+                    </p>
                   </div>
                   <div tw="flex flex-col gap-3">
                     <p tw="text-[#777777] m-0 text-sm">Số tài khoản:</p>
-                    <p tw="m-0 font-semibold text-base">{data?.refund.accountNumber}</p>
+                    <p tw="m-0 font-semibold text-base">
+                      {data?.refund.accountNumber}
+                    </p>
                   </div>
                 </div>
               </div>

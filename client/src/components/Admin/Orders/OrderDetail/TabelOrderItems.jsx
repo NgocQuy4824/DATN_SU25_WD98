@@ -95,6 +95,16 @@ const TabelOrderItems = ({ productsItems, totalPrice, orderStatusLog }) => {
       key: "pendingCancelled",
       icon: <ClockCircleOutlined tw="text-2xl text-red-500" />,
     },
+    {
+      title: "Đã hoàn tiền",
+      key: "refund",
+      icon: <CheckCircleOutlined tw="text-2xl text-green-500" />,
+    },
+    {
+      title: "Cập nhật",
+      key: "updateRefund",
+      icon: <HistoryOutlined tw="text-2xl text-green-500" />,
+    },
   ];
   return (
     <>

@@ -1,7 +1,18 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import { Table, Tag } from "antd";
-import { CameraOutlined, CarOutlined, CheckCircleOutlined, ClockCircleOutlined, CloseCircleOutlined, DollarOutlined, HistoryOutlined, StarFilled, TruckOutlined, UserOutlined } from "@ant-design/icons";
+import {
+  CameraOutlined,
+  CarOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
+  CloseCircleOutlined,
+  DollarOutlined,
+  HistoryOutlined,
+  StarFilled,
+  TruckOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import tw from "twin.macro";
 import dayjs from "dayjs";
 import { translateRole } from "../../../../../components/Admin/Orders/OrderDetail/OrderDetail";
@@ -48,7 +59,7 @@ const TabelOrderItems = ({ productsItems, totalPrice, orderStatusLog }) => {
   ];
 
   const shippingFee = 0;
-const steps = [
+  const steps = [
     {
       title: "Chờ xác nhận",
       key: "pending",
@@ -83,6 +94,16 @@ const steps = [
       title: "Chờ hoàn tiền",
       key: "pendingCancelled",
       icon: <ClockCircleOutlined tw="text-2xl text-red-500" />,
+    },
+    {
+      title: "Đã hoàn tiền",
+      key: "refund",
+      icon: <CheckCircleOutlined tw="text-2xl text-green-500" />,
+    },
+     {
+      title: "Cập nhật",
+      key: "updateRefund",
+      icon: <HistoryOutlined tw="text-2xl text-green-500" />,
     },
   ];
   return (
@@ -129,7 +150,7 @@ const steps = [
               return (
                 <div
                   key={index}
-                  tw=" shadow-md py-4 px-8 grid grid-cols-[1fr, 8fr] items-center rounded-md"
+                  tw=" shadow-md py-4 px-8 grid grid-cols-[1fr, 7fr] items-center rounded-md"
                 >
                   <div tw="flex flex-col gap-4 justify-center h-full items-center">
                     {matchedStep?.icon}

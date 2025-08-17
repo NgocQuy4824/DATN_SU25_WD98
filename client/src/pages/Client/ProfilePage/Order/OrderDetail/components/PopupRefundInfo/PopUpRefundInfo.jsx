@@ -28,6 +28,7 @@ const StyledSelect = styled(Select)`
 const { Option } = Select;
 
 const PopUpRefundInfo = ({ orderId, children, info }) => {
+  console.log(info)
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
   const showModal = () => {
@@ -49,7 +50,7 @@ const PopUpRefundInfo = ({ orderId, children, info }) => {
   const queryClient = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: ({ id, body }) => {
-      updateRefundInfo(id, body);
+      return updateRefundInfo(id, body);
     },
   });
   const handleConfirm = async () => {
@@ -64,20 +65,25 @@ const PopUpRefundInfo = ({ orderId, children, info }) => {
           ...values,
           bankName: `${foundBankInfo.shortName} - ( ${foundBankInfo.name})`,
           bankLogo: foundBankInfo.logo,
+          role: 'user'
         };
         mutate(
           { id: orderId, body: payload },
           {
             onSuccess: () => {
               toast.success("Cập nhật thông tin hoàn tiền thành công");
+              setIsModalOpen(false);
               setTimeout(() => {
                 queryClient.invalidateQueries({
-                  predicate: (query) => query.queryKey.includes("ORDERS"),
+                  predicate: (query) => query.queryKey[0] === "ORDERS",
                 });
-              }, 100);
-              setIsModalOpen(false);
+              }, 200);
             },
             onError: (err) => {
+              if (!err.response.data.success) {
+                toast.error(err.response.data.message);
+                return;
+              }
               toast.error("Có lỗi xảy ra vui lòng thử lại");
             },
           }

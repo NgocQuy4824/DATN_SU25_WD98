@@ -6,6 +6,7 @@ import { useUpdateStatusOrder } from "../../../../hooks/useOrderHook";
 import PopUpConfirm from "./PopupCancel/PopUpConfirm";
 
 export default function ActionStatusOrder({ status, id, isRefundInfo }) {
+  console.log(status)
   switch (status) {
     case "pending":
       return (
@@ -59,11 +60,11 @@ export default function ActionStatusOrder({ status, id, isRefundInfo }) {
         </div>
       );
     case "pendingCancelled":
-      return isRefundInfo ? (
+      return isRefundInfo.hadRefundInfo ? (
         <div tw="flex gap-5 items-center">
           <PopUpConfirm
-            isRefund
-            title="Xác nhận đã hoàn tiền"
+            isRefund={isRefundInfo}
+            // title="Xác nhận đã hoàn tiền"
             status="delivered"
             idOrder={id}
           >
@@ -81,7 +82,10 @@ export default function ActionStatusOrder({ status, id, isRefundInfo }) {
           <Tag color="red">Đang đợi người dùng điền thông tin hoàn tiền</Tag>
         </div>
       );
-
+      case "refund":
+        return(
+          <Tag color="green">Đang đợi khách hàng xác nhận</Tag>
+        );
     default:
       return <div></div>;
   }

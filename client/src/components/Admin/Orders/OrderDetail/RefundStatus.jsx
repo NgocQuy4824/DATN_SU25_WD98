@@ -15,7 +15,7 @@ const RefundStatus = ({ currentStatus }) => {
   return (
     <Steps  current={currentStep}>
       {steps.map((step, index) => (
-        <Steps.Step status={index === currentStep ? "error" : undefined} key={index} title={step.title} icon={step.icon} />
+        <Steps.Step status={index === currentStep && index !== 1 ? "error" : undefined} key={index} title={step.title} icon={step.icon} />
       ))}
     </Steps>
   );

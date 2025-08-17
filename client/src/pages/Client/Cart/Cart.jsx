@@ -18,13 +18,15 @@ import {
   useUpdateCartItemQuantity,
 } from "../../../hooks/useCartHook";
 import useCartSelection from "../../../hooks/useCartSelected";
+import { useDispatch } from "react-redux";
+import { removeAllCartItems } from "../../../redux/slides/cartSlice";
 
 const CartPage = () => {
   const { data, isLoading } = useMyCart();
   const removeAllCartMutation = useRemoveAllCart();
   const updateQuantityMutation = useUpdateCartItemQuantity();
   const [hasInitialSelected, setHasInitialSelected] = useState(false);
-
+  const dispatch = useDispatch();
   const { cartItems, toogleSelectAll, handleRemoveItem, handleUpdateQuantity } =
     useCartSelection();
 
@@ -55,7 +57,7 @@ const CartPage = () => {
   useEffect(() => {
     filteredItems.forEach((item) => {
       const stock = item.variant?.countInStock ?? 0;
-      if (item.quantity > stock) {
+      if (item.quantity > stock && stock >= 0) {
         updateQuantityMutation.mutate({
           productId: item.productId,
           variantId: item.variantId,
@@ -63,7 +65,11 @@ const CartPage = () => {
         });
       }
     });
-  }, [filteredItems]);
+  }, [
+    filteredItems
+      .map((i) => `${i.variantId}-${i.quantity}-${i.variant?.countInStock}`)
+      .join(","),
+  ]);
 
   useEffect(() => {
     cartItems?.forEach((cartItem) => {
@@ -128,7 +134,9 @@ const CartPage = () => {
             }
           >
             {items.length > 0 ? (
-              items?.map((item) => <CartItem key={item.variantId} item={item} />)
+              items?.map((item) => (
+                <CartItem key={item.variantId} item={item} />
+              ))
             ) : (
               <Empty description="Giỏ hàng trống" />
             )}
