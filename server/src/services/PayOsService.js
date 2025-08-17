@@ -174,7 +174,7 @@ const handleWebhookPayos = async (req, res, next) => {
       updateDate: new Date(),
       description: `${parsedOrder.customerInfo.name} đã đặt một đơn hàng mới`,
       updateBy: {
-        name: "SPACERUN",
+        name: "PACERUN",
         role: ROLE.SYSTEM,
       },
     };
