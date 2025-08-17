@@ -45,7 +45,7 @@ const orderStatusLog = new mongoose.Schema(
   {
     status: {
       type: String,
-      enum: Object.values(STATUS),
+      enum: [...Object.values(STATUS), "updateRefund"],
     },
     updateDate: {
       type: Date,
@@ -134,6 +134,16 @@ const orderModel = new mongoose.Schema(
       accountName: String,
       accountNumber: String,
       bankLogo: String,
+      isCompleted: {
+        type: Boolean,
+        default: false,
+      },
+      imageConfirm: {
+        type: String,
+      },
+      reportInfo: {
+        type: String,
+      },
     },
     status: {
       type: String,
