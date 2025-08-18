@@ -117,6 +117,7 @@ const HeaderComponent = ({ isAdmin = false }) => {
                       cursor: "pointer",
                       display: "flex",
                       alignItems: "center",
+                      // minWidth:"140px",
                       gap: 6,
                     }}
                   >

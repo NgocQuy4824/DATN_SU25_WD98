@@ -9,7 +9,7 @@ const CategoryClient = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', fontSize: '16px' }}>
+    <div style={{ display: 'flex', gap: '8px', flexWrap: 'nowrap', fontSize: '16px', maxWidth:"500px"}}>
       {categoryOptions.map((category) => (
         <div
           key={category.value}
