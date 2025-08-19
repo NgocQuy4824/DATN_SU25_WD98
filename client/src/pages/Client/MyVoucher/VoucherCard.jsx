@@ -24,7 +24,7 @@ const VoucherCard = () => {
           <div css={tw`flex-1 text-sm`}>
             <p>
               <span css={tw`font-semibold`}>Giảm trực tiếp </span>
-              <span css={tw`text-red-600 font-bold`}>{voucher.discountValue}</span>
+              <span css={tw`text-red-600 font-bold`}>{voucher.discountValue.toLocaleString("vi-VN")} ₫</span>
               <span css={tw`font-semibold`}> cho đơn hàng</span>
             </p>
 
