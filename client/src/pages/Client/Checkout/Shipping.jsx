@@ -101,7 +101,7 @@ export default function Shipping() {
           style={{ marginBottom: 16 }}
           items={[
             { title: <Link to="/">Trang chủ</Link> },
-            { title: <Link to="/">Giỏ hàng</Link> },
+            { title: <Link to="/cart">Giỏ hàng</Link> },
             { title: "Địa chỉ giao hàng" },
           ]}
         />
