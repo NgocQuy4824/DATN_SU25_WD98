@@ -8,7 +8,7 @@ DỰ ÁN TỐT NGHIỆP - KÌ SU25 - WD98
 + npm start
 
 
-Tài khoản hệ thống 
-========================================== Admin ===============================================
+Tài khoản hệ thống ADMIN
+
 TÀI KHOẢN : admin@gmail.com
 MẬT KHẨU : admin123@
