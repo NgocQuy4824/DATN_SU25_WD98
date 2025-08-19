@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
+import { ShoppingCartOutlined } from "@ant-design/icons";
 import ModalAddToCart from "../Cart/ModalAddToCart/ModalAddToCart";
-import { Badge } from "antd";
-import { formatCurrency } from "../../../utils/formatCurrency";
 import tw from "twin.macro";
-
+import { Badge, Tag } from "antd";
+import { formatCurrency } from "../../../utils/formatCurrency";
 const Card = styled.div`
   width: 230px;
   height: 350px;
@@ -48,18 +48,23 @@ const AddToCartButton = styled.button`
   transform: translate(-50%, 10px);
   opacity: 0;
   transition: all 0.3s ease;
+
   background-color: #1677ff;
   color: white;
   border: none;
   border-radius: 8px;
+
   width: 100%;
   height: 50px;
+
   font-size: 16px;
   font-weight: 500;
+
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+
   cursor: pointer;
 
   &:hover {
@@ -85,7 +90,7 @@ const ProductContent = styled.div`
 const ProductName = styled.div`
   font-size: 18px;
   color: #222;
-  font-weight: 500;
+  font-weight: 00;
   margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
@@ -122,20 +127,21 @@ const Discount = styled.div`
   border-radius: 4px;
 `;
 
-
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
   const firstVariant = product?.variants?.[0];
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [selectedVariant, setSelectedVariant] = useState(firstVariant);
   const [quantity, setQuantity] = useState(1);
-  const [selectedSize, setSelectedSize] = useState(firstVariant?.size?.name); 
+  const [selectedSize, setSelectedSize] = useState(firstVariant?.size);
   const [selectedColor, setSelectedColor] = useState(firstVariant?.color);
 
   const handleAddToCart = (e) => {
     e.stopPropagation();
     setIsModalOpen(true);
+    //api giỏ hàng
   };
 
   const handleCloseModal = () => {
@@ -144,42 +150,56 @@ const ProductCard = ({ product }) => {
 
   return (
     <>
-      <div className="product_card relative">
-        <div tw="h-[350px] overflow-hidden bg-gray-200">
+      {/* <Card
+        onClick={() =>
+          navigate(`/products/${product._id}`, { state: { from: "home" } })
+        }
+      >
+        <ImageWrapper>
+          <ProductImage src={firstVariant?.image} alt={product.name} />
+          <AddToCartButton
+            className="add-to-cart-btn"
+            onClick={handleAddToCart}
+          >
+            <ShoppingCartOutlined style={{ fontSize: 24 }} /> Thêm giỏ hàng
+          </AddToCartButton>
+        </ImageWrapper>
+        <ProductContent>
+          <ProductName>{product.name}</ProductName>
+          <AuthBadge>Hàng chính hãng 100%</AuthBadge>
+          <PriceRow>
+            <Price>{(product.price || 0).toLocaleString()}₫</Price>
+            {product.discount > 0 && <Discount>-{product.discount}%</Discount>}
+          </PriceRow>
+        </ProductContent>
+      </Card> */}
+
+      <div className="product_card">
+        <div tw=" h-[350px] overflow-hidden bg-gray-200 ">
           <img
             tw="w-full h-full object-contain"
-            src={firstVariant?.image || product.image}
-            alt={product.name}
+            src={firstVariant?.image}
+            alt=""
           />
         </div>
-
-
         <div tw="hidden" className="hover_product">
           <Link className="link_to" to={`/products/${product._id}`}>
             Xem chi tiết
           </Link>
           <button onClick={handleAddToCart}>Thêm vào giỏ hàng</button>
         </div>
-
         <div tw="mt-6 mx-4 flex flex-col">
           <h3 tw="text-xl line-clamp-1 overflow-hidden font-semibold capitalize">
             {product.name}
           </h3>
-
-
-          {product.category?.name && (
-            <span tw="text-sm text-gray-500">{product.category.name}</span>
-          )}
-
           <p tw="mt-4 text-base flex items-center font-semibold gap-5">
             {formatCurrency(product.price || 0)}
           </p>
         </div>
-
         {product.discount > 0 && (
           <Badge
             count={`-${product.discount}%`}
-            style={{ backgroundColor: "#f87171", borderColor: "#ef4444" }}
+            style={{ backgroundColor: "#f87171", borderColor: "#ef4444" }} // tailwind đỏ sáng và đỏ đậm
             tw="absolute top-3 left-4 rounded-full text-xs px-2 py-1 font-semibold"
           />
         )}

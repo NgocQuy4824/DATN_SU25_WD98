@@ -22,10 +22,10 @@ const TableComponent = ({ onEdit, onDelete, products, loading , handleToggleVisi
             render: (_, record) => record.category?.name
         },
         {
-            title: 'Giá',
+            title: 'Gía',
             dataIndex: 'price',
             key: 'price',
-            render: (price) => `${price.toLocaleString("vi-VN")} ₫`,
+            render: (price) => `${price.toFixed(2)} đ`,
         },
         {
             title: 'Giảm Giá',
