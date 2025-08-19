@@ -2,6 +2,7 @@ const ROLE = require("../constants/role");
 const STATUS = require("../constants/status");
 const customResponse = require("../helpers/customResponse");
 const Cart = require("../models/CartModel");
+const MyVoucher = require("../models/MyVoucher");
 const Order = require("../models/OrderModel");
 const Product = require("../models/ProductsModel");
 const { generateOrderCode, payos } = require("../utils/payos");
@@ -185,6 +186,15 @@ const handleWebhookPayos = async (req, res, next) => {
       paymentMethod: "ONLINE",
       orderLog: [orderLogCreate],
     });
+
+    // if (parsedOrder.voucherId) {
+    //   await MyVoucher.updateOne(
+    //     { userId: parsedOrder.userId, voucherId: parsedOrder.voucherId },
+    //     { $set: { isUsed: true, usedAt: new Date() } }
+    //   );
+    //   console.log(`🎫 Voucher ${parsedOrder.voucherId} đã được sử dụng bởi user ${parsedOrder.userId}`);
+    // }
+
     return customResponse({
       data: newOrder,
       success: true,

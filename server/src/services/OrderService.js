@@ -9,8 +9,9 @@ const redisClient = require("../utils/redis");
 const ROLE = require("../constants/role");
 const User = require("../models/UserModel");
 const axios = require("axios");
+const { applyVoucherToOrder } = require("./MyVoucherService");
 
-const createOrder = async (req, res, next) => {
+const createOrder = async (req, res, next,) => {
   const session = await mongoose.startSession();
 
   try {
@@ -104,6 +105,14 @@ const createOrder = async (req, res, next) => {
           session,
         }
       );
+
+      if (req.body.voucherId) {
+        const voucherResult = await applyVoucherToOrder(userId, req.body.voucherId);
+        if (!voucherResult.success) {
+          throw new Error(voucherResult.message);
+        }
+      }
+      
       res.json(
         customResponse({
           data: newOrder[0],

@@ -10,4 +10,6 @@ router.post("/claim", authenticate, myVoucherController.claimVoucher);
 
 router.post("/update", authenticate, myVoucherController.updateVoucherQuantity);
 
+router.post("/apply", authenticate, myVoucherController.applyVoucherToOrder);
+
 module.exports = router;

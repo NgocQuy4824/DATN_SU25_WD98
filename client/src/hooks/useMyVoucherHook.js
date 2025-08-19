@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+  applyVoucherToOrder,
   claimVoucher,
   getUserVouchers,
   updateVoucherQuantity,
@@ -51,6 +52,25 @@ export const useUpdateVoucherQuantity = () => {
     },
     onError: () => {
       toast.error("Cập nhật số lượng voucher thất bại");
+    },
+  });
+};
+
+export const useApplyVoucherToOrder = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: applyVoucherToOrder,
+    onSuccess: (data) => {
+      if (data.status === "OK") {
+        toast.success(data.message || "Áp dụng voucher thành công");
+        queryClient.invalidateQueries(['my-vouchers']); // làm mới danh sách voucher
+      } else {
+        toast.error(data.message || "Voucher không hợp lệ hoặc đã sử dụng");
+      }
+    },
+    onError: () => {
+      toast.error("Áp dụng voucher thất bại");
     },
   });
 };

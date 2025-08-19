@@ -22,6 +22,7 @@ import {
 } from "../../../../hooks/useCheckoutHook";
 import { toast } from "react-toastify";
 import { removeVoucher } from "../../../../redux/slides/voucherSlice";
+import { useQueryClient } from "@tanstack/react-query";
 
 const { Text } = Typography;
 
@@ -35,7 +36,7 @@ const InnerCard = styled(AntCard)`
 `;
 
 const Button = styled(AntButton)`
-  ${tw`h-[45px] text-lg font-semibold`}
+  ${tw`h-[45px] text-lg font-semibold`} 
 `;
 
 export default function ProductsCheckOutItems({ isShippingPage, form }) {
@@ -49,6 +50,7 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
   const createOrder = useCreateOrder();
   const createOrderPayOs = useCreateOrderPayos();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   // Gộp dữ liệu cart từ store và API
   const mergedCartItems = cartItems.map((cartItem) => {
     const fullItem = data?.data?.items.find(
@@ -115,10 +117,12 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
       ...checkoutInfo,
       items,
       totalPrice: totalAfterDiscount ?? 0,
+      voucherId: selectedVoucher?.voucherId?._id || null,
     };
     
     const onSuccess = () => {
       dispatch(removeVoucher()); 
+      queryClient.invalidateQueries(["my-vouchers"]);
     };
 
     if (paymentMethod === "cod" && !createOrder.isPending) {

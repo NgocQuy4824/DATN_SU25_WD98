@@ -2,6 +2,7 @@ const { StatusCodes, ReasonPhrases } = require("http-status-codes");
 const Voucher = require("../models/VoucherModel");
 const MyVoucher = require("../models/MyVoucher");
 const customResponse = require("../helpers/customResponse");
+const User = require("../models/UserModel");
 
 const validateVoucher = (voucher) => {
   if (!voucher) return "Không tìm thấy Voucher.";
@@ -110,9 +111,46 @@ const updateVoucherQuantity = async (req) => {
   });
 };
 
+const applyVoucherToOrder = async (userId, voucherId) => {
+  const user = await User.findById(userId);
+
+  if (user.usedVouchers.includes(voucherId)) {
+    return {
+      success: false,
+      message: "Bạn đã sử dụng voucher này trước đó",
+    };
+  }
+
+  // Logic giảm số lượng voucher hoặc mark voucher là used trong MyVoucher
+  const myVoucher = await MyVoucher.findOne({ userId, voucherId });
+  if (!myVoucher || myVoucher.quantity <= 0) {
+    return {
+      success: false,
+      message: "Voucher không hợp lệ hoặc đã hết số lượng",
+    };
+  }
+
+  // Giảm số lượng voucher
+  myVoucher.quantity -= 1;
+  if (myVoucher.quantity === 0) myVoucher.status = "used";
+  await myVoucher.save();
+
+  // Push voucher vào usedVouchers của user
+  user.usedVouchers.push(voucherId);
+  await user.save();
+
+  return {
+    success: true,
+    message: "Voucher áp dụng thành công",
+    data: myVoucher,
+  };
+};
+
+
 
 module.exports = {
   claimVoucher,
   getUserVouchers,
   updateVoucherQuantity,
+  applyVoucherToOrder,
 };

@@ -4,9 +4,12 @@ import tw from "twin.macro";
 import { useGetUserVouchers } from "../../../hooks/useMyVoucherHook";
 import VoucherItem from "./VoucherItem";
 
-const PopupVoucher = ({ open, onClose, onApplyVoucher }) => {
+const PopupVoucher = ({ open, onClose, onApplyVoucher, user }) => {
   const { data: response } = useGetUserVouchers();
-  const vouchers = response?.data ?? [];
+  // Lọc voucher đã dùng
+  const vouchers = (response?.data ?? []).filter(
+    v => !user?.usedVouchers.includes(v.voucherId?._id)
+  );
 
   const handleUseNow = (voucher) => {
     if (onApplyVoucher) {
@@ -14,8 +17,6 @@ const PopupVoucher = ({ open, onClose, onApplyVoucher }) => {
     }
   };
 
-  
-   
   return (
     <Modal
       title={<span css={tw`text-lg font-semibold`}>Danh Sách Voucher Của Bạn</span>}
@@ -27,7 +28,7 @@ const PopupVoucher = ({ open, onClose, onApplyVoucher }) => {
       <div>
         {vouchers.length === 0 ? (
           <p css={tw`text-center text-gray-500 py-4`}>
-            Bạn chưa có mã giảm giá nào.
+            Bạn chưa có mã giảm giá nào còn hiệu lực hoặc đã dùng.
           </p>
         ) : (
           vouchers.map((voucher) => (

@@ -31,11 +31,27 @@ export const getUserVouchers = async () => {
 };
 
 // Cập nhật số lượng voucher 
-export const updateVoucherQuantity = async (voucherId) => {
+export const updateVoucherQuantity = async (myVoucherId, quantity) => {
   const accessToken = localStorage.getItem("accessToken");
 
   const response = await API.post(
     "/my-vouchers/update",
+    { myVoucherId, quantity },
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+
+  return { ...response.data };
+};
+
+export const applyVoucherToOrder = async (voucherId) => {
+  const accessToken = localStorage.getItem("accessToken");
+
+  const response = await API.post(
+    "/my-vouchers/apply",
     { voucherId },
     {
       headers: {

@@ -117,7 +117,7 @@ const TabelOrderItems = ({ productsItems, totalPrice, orderStatusLog }) => {
           <div css={tw`flex items-center gap-2`}>
             <CarOutlined css={tw`text-green-600 text-xl`} />
             <span css={tw`text-sm font-semibold text-red-600`}>
-              Cước phí vận chuyển
+              Cước phí vận chuyển ( Miễn Phí ) 
             </span>
           </div>
           <span css={tw`font-semibold text-lg`}>

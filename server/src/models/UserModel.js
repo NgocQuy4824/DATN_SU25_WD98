@@ -50,13 +50,20 @@ const userSchema = new mongoose.Schema(
         default: [],
       },
     ],
+    usedVouchers: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Voucher",
+      default: [],
+    },
+  ],
   },
   {
     timestamps: true,
     versionKey: false,
   }
 );
-
+  
 userSchema.plugin(paginate);
 
 // hashpassword
