@@ -36,7 +36,7 @@ const InnerCard = styled(AntCard)`
 `;
 
 const Button = styled(AntButton)`
-  ${tw`h-[45px] text-lg font-semibold`} 
+  ${tw`h-[45px] text-lg font-semibold`}
 `;
 
 export default function ProductsCheckOutItems({ isShippingPage, form }) {
@@ -62,27 +62,28 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
     };
   });
 
-  // Tính toán tổng tiền, giảm giá và tổng sau giảm
+  // Tổng tiền sau khi trừ discount từng sản phẩm
   const totalPrice = mergedCartItems.reduce((acc, item) => {
     if (!item) return acc;
-    return acc + (item.price || 0) * (item.quantity || 0);
+    const priceAfterDiscount = item.price * (1 - (item.discount || 0) / 100);
+    return acc + priceAfterDiscount * (item.quantity || 0);
   }, 0);
 
-  const discountAmount = selectedVoucher
-    ? selectedVoucher.voucherId?.discountType === "fixed"
-      ? selectedVoucher.voucherId.discountValue
-      : Math.floor(
-          (selectedVoucher.voucherId.discountValue / 100) * totalPrice
-        )
-    : 0;
-
-  const totalAfterDiscount = Math.max(totalPrice - discountAmount, 0);
-
-
+  // Tổng số lượng sản phẩm
   const totalQuantity = mergedCartItems.reduce(
     (total, item) => total + (item.quantity || 0),
     0
   );
+
+  // Giảm giá từ voucher
+  const discountAmount = selectedVoucher
+    ? selectedVoucher.voucherId?.discountType === "fixed"
+      ? selectedVoucher.voucherId.discountValue
+      : Math.floor((selectedVoucher.voucherId.discountValue / 100) * totalPrice)
+    : 0;
+
+  // Tổng tiền cuối cùng sau giảm giá
+  const totalAfterDiscount = Math.max(totalPrice - discountAmount, 0);
 
   const handleContinueShipping = () => {
     form
@@ -119,16 +120,16 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
       totalPrice: totalAfterDiscount ?? 0,
       voucherId: selectedVoucher?.voucherId?._id || null,
     };
-    
+
     const onSuccess = () => {
-      dispatch(removeVoucher()); 
+      dispatch(removeVoucher());
       queryClient.invalidateQueries(["my-vouchers"]);
     };
 
     if (paymentMethod === "cod" && !createOrder.isPending) {
-      createOrder.mutate(payload,{onSuccess});
+      createOrder.mutate(payload, { onSuccess });
     } else if (paymentMethod === "online" && !createOrderPayOs.isPending) {
-      createOrderPayOs.mutate(payload,{onSuccess});
+      createOrderPayOs.mutate(payload, { onSuccess });
     }
   };
 
@@ -163,9 +164,7 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
                         <Tag color="blue">Màu: {item.variant.color}</Tag>
                       )}
                       {item.variant?.size?.name && (
-                        <Tag color="purple">
-                          Size: {item.variant.size.name}
-                        </Tag>
+                        <Tag color="purple">Size: {item.variant.size.name}</Tag>
                       )}
                     </Space>
                     <div style={{ marginTop: 8 }}>
@@ -177,9 +176,20 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
                   </>
                 }
               />
-              <div>
-                <Text strong>
-                  {formatCurrency(item.price * item.quantity)}
+              <div style={{ marginTop: 8 }}>
+                <Text>
+                  Đã chiết khấu:{" "}
+                  <span style={{ color: "#40a9ff", fontWeight: "bold" }}>
+                    {item.discount || 0}%
+                  </span>
+                </Text>
+                <br />
+                <Text strong style={{ color: "red" }}>
+                  {formatCurrency(
+                    item.price *
+                      (1 - (item.discount || 0) / 100) *
+                      item.quantity
+                  )}
                 </Text>
               </div>
             </List.Item>

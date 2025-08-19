@@ -4,7 +4,10 @@ import useCartSelection from "../../../../hooks/useCartSelected";
 import { useState } from "react";
 import PopupVoucher from "../../MyVoucher/PopupVoucher";
 import { useDispatch, useSelector } from "react-redux";
-import { applyVoucher, removeVoucher } from "../../../../redux/slides/voucherSlice";
+import {
+  applyVoucher,
+  removeVoucher,
+} from "../../../../redux/slides/voucherSlice";
 
 const { Text } = Typography;
 
@@ -20,9 +23,9 @@ const CartSummary = ({ items }) => {
   const totalPrice = cartItems.reduce((acc, cartItem) => {
     const product = items.find((item) => item.variantId === cartItem.variantId);
     if (!product) return acc;
-    return acc + product.price * cartItem.quantity;
+    const discountedPrice = product.price * (1 - (product.discount || 0) / 100);
+    return acc + discountedPrice * cartItem.quantity;
   }, 0);
-
   // Tính số tiền giảm
   const discountAmount = selectedVoucher
     ? selectedVoucher.voucherId?.discountType === "fixed"
