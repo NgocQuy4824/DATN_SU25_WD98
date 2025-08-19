@@ -48,15 +48,13 @@ const HomePage = () => {
     }
   };
 
-  const visibleProducts = sortedProducts.slice(0, visibleRows * 5);
+  const visibleProducts = sortedProducts.slice(0, visibleRows * 6);
 
-  const canShowMore = visibleRows * 5 < sortedProducts.length;
+  const canShowMore = visibleRows * 6 < sortedProducts.length;
 
   return (
     <>
       <div style={{ padding: "0 120px", overflow: "hidden" }}>
-        
-
         <SliderComponent arrImages={[anh4, anh5]} />
         <ClauseComponent />
 
@@ -96,7 +94,7 @@ const HomePage = () => {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
+            gridTemplateColumns: "repeat(3, 1fr)",
             gap: "20px",
             marginTop: "25px",
             marginBottom: "20px",
@@ -122,7 +120,6 @@ const HomePage = () => {
           </Space>
         </div>
       </div>
-
     </>
   );
 };
