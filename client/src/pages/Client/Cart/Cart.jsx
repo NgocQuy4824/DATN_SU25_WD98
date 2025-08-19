@@ -148,7 +148,7 @@ const CartPage = () => {
           </Card>
         </Col>
 
-        <Col flex="300px">
+        <Col flex="450px">
           <CartSummary items={filteredItems} />
         </Col>
       </Row>
