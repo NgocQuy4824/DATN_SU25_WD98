@@ -42,8 +42,40 @@ const updateVoucherQuantity = async (req, res) => {
   }
 };
 
+const applyVoucherToOrder = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { voucherId } = req.body;
+
+    const response = await MyVoucherService.applyVoucherToOrder(userId, voucherId);
+
+    if (!response.success) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: response.message,
+        data: null,
+      });
+    }
+
+    return res.status(200).json({
+      status: "OK",
+      message: response.message,
+      data: response.data,
+    });
+  } catch (error) {
+    console.error("Lỗi applyVoucherToOrder:", error);
+    return res.status(500).json({
+      status: "ERROR",
+      message: "Lỗi server khi áp dụng voucher",
+      data: null,
+    });
+  }
+};
+
 module.exports = {
   claimVoucher,
   getUserVouchers,
   updateVoucherQuantity,
+  applyVoucherToOrder,
 };
+
