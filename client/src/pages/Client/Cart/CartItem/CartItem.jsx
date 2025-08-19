@@ -50,9 +50,11 @@ const CartItem = ({ item }) => {
     existsVariantId,
   } = useCartSelection();
   const handleRemove = () => {
-    removeCartItemMutation.mutate(item.variantId,{onSuccess: (_,body)=>{
-      handleRemoveItem(body)
-    }});
+    removeCartItemMutation.mutate(item.variantId, {
+      onSuccess: (_, body) => {
+        handleRemoveItem(body);
+      },
+    });
   };
 
   const handleChangeQuantity = (newQuantity) => {
@@ -99,7 +101,13 @@ const CartItem = ({ item }) => {
               <br />
               <Text type="secondary">Kích cỡ: {item.variant?.size?.name}</Text>
               <br />
-              <Text strong>{item.price?.toLocaleString()} ₫</Text>
+              <Text strong>
+                {(
+                  item.price *
+                  (1 - (item.discount || 0) / 100)
+                ).toLocaleString()}{" "}
+                ₫
+              </Text>
             </>
           )}
           {item.warning && (
@@ -125,7 +133,12 @@ const CartItem = ({ item }) => {
         <Col flex="100px" style={{ textAlign: "right" }}>
           {!isOutStock && (
             <Text strong>
-              {(item?.price * item?.quantity).toLocaleString()} ₫
+              {(
+                item?.price *
+                (1 - (item.discount || 0) / 100) *
+                item?.quantity
+              ).toLocaleString()}{" "}
+              ₫
             </Text>
           )}
         </Col>
