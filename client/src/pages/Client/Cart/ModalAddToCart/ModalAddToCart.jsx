@@ -3,19 +3,7 @@ import { Drawer, Typography, Row, Col, Button, InputNumber } from 'antd';
 import { useSizeOptions } from '../../../../hooks/useSizeOptions';
 import { useAddToCart } from '../../../../hooks/useCartHook';
 import CartSide from '../CartSide/CartSide';
-
 const { Title, Text } = Typography;
-
-// helper để lấy tên size an toàn
-const getVariantSizeLabel = (variant, sizeMap) => {
-  if (!variant?.size) return "";
-  // Nếu size là object
-  if (typeof variant.size === "object") {
-    return sizeMap[variant.size._id] || variant.size.name || "";
-  }
-  // Nếu size là string
-  return sizeMap[variant.size] || variant.size;
-};
 
 const ModalAddToCart = ({
   open,
@@ -28,11 +16,12 @@ const ModalAddToCart = ({
   const [selectedVariant, setSelectedVariant] = useState(variant);
   const [quantity, setQuantity] = useState(initialQuantity || 1);
 
+
   const { mutate: addToCart } = useAddToCart();
-  const [isCartDrawerOpen, setCartDrawerOpen] = useState(false);
+
+  const [isCartDrawerOpen, setCartDrawerOpen] = useState(false)
 
   const { sizeMap } = useSizeOptions();
-
   useEffect(() => {
     if (variant) setSelectedVariant(variant);
     if (initialQuantity) setQuantity(initialQuantity);
@@ -42,6 +31,8 @@ const ModalAddToCart = ({
 
   // Lấy số lượng tồn kho hiện tại
   const maxQuantity = selectedVariant.countInStock || 0;
+
+
 
   return (
     <>
@@ -57,7 +48,7 @@ const ModalAddToCart = ({
             <img
               src={selectedVariant.image}
               alt={product.name}
-              style={{ width: '100%', height: 300, objectFit: 'contain', borderRadius: 8, backgroundColor: '#f5f5f5', }}
+              style={{ width: '100%', height: 300, objectFit: 'cover', borderRadius: 8 }}
             />
           </Col>
           <Col span={16}>
@@ -70,9 +61,7 @@ const ModalAddToCart = ({
             <br />
             <Text>Màu sắc: {selectedVariant.color}</Text>
             <br />
-            <Text>
-              Kích thước: {getVariantSizeLabel(selectedVariant, sizeMap)}
-            </Text>
+            <Text>Kích thước: {sizeMap[selectedVariant.size] || selectedVariant.size}</Text>
             <br />
             <Text>
               Số lượng:
@@ -81,6 +70,7 @@ const ModalAddToCart = ({
                 max={maxQuantity}
                 value={quantity}
                 onChange={(value) => {
+                  //nếu nhập lớn hơn tổn kho thì setValue = max tồn kho 
                   if (value > maxQuantity) {
                     setQuantity(maxQuantity);
                   } else {
@@ -103,6 +93,7 @@ const ModalAddToCart = ({
                 key={v._id}
                 onClick={() => {
                   setSelectedVariant(v);
+                  // Reset số lượng nếu biến thể mới tồn kho ít hơn
                   setQuantity(Math.min(quantity, v.countInStock || 1));
                 }}
                 style={{
@@ -134,17 +125,19 @@ const ModalAddToCart = ({
               setCartDrawerOpen(true);
             }}
             disabled={maxQuantity === 0}
+
           >
             Xác nhận
           </Button>
         </div>
       </Drawer>
-
       <CartSide
         open={isCartDrawerOpen}
         onClose={() => setCartDrawerOpen(false)}
+        
       />
     </>
+
   );
 };
 

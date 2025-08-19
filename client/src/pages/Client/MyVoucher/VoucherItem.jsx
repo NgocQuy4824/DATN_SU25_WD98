@@ -26,7 +26,7 @@ const VoucherItem = ({ voucher, onUseNow }) => {
             <>
               Giảm trực tiếp{" "}
               <span css={tw`text-red-500 font-semibold`}>
-                {voucher.voucherId?.discountValue.toLocaleString("vi-VN")} ₫
+                {voucher.voucherId?.discountValue.toLocaleString()} ₫
               </span>{" "}
               cho đơn hàng
             </>
