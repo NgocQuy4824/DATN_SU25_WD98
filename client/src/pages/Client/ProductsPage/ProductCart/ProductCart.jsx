@@ -35,9 +35,8 @@ export default function ProductCart({ product }) {
         {product.discount && <Text type="danger">{product.discount}%</Text>}
       </div>
 
-      <div>
+      {/* <div>
         <Text style={{ color: "red" }}>{product.price.toLocaleString()} đ</Text>
-        {/* Nếu có oldPrice thì hiển thị */}
         {product.oldPrice && (
           <>
             {" "}
@@ -46,9 +45,9 @@ export default function ProductCart({ product }) {
             </Text>
           </>
         )}
-      </div>
+      </div> */}
 
-      <div style={{ marginTop: 8 }}>
+      {/* <div style={{ marginTop: 8 }}>
         {product.discount ? (
           <Button size="small" danger>
             Giá độc quyền Online
@@ -56,7 +55,7 @@ export default function ProductCart({ product }) {
         ) : (
           <Tag color="red">Hàng chính Hãng</Tag>
         )}
-      </div>
+      </div> */}
     </Card>
   );
 }
