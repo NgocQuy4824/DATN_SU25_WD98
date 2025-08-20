@@ -18,6 +18,8 @@ export default function ProductList({ products, sortOption, setSortOption, onRes
     }
   });
 
+  console.log("products", products);
+
   return (
     <>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "10px" }}>

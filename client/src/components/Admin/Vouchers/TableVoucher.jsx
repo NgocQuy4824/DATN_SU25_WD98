@@ -27,7 +27,7 @@ const TableVoucher = ({ vouchers, loading, onEdit }) => {
     {
       title: "Giảm Giá",
       key: "discountValue",
-      render: (_, record) => `${record.discountValue}`,
+      render: (_, record) => `${record.discountValue.toLocaleString("vi-VN")} ₫`,
     },
     {
       title: "Ngày Bắt Đầu",

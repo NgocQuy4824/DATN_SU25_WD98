@@ -193,7 +193,7 @@ const ProductCard = ({ product }) => {
             {product.name}
           </h3>
           <p tw="mt-4 text-base flex items-center font-semibold gap-5">
-            {formatCurrency(product.price || 0)}
+            {product.price || 0}
           </p>
         </div>
         {product.discount > 0 && (

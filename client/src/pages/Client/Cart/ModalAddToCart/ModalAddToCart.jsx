@@ -13,15 +13,24 @@ const ModalAddToCart = ({
   variant,           // biến thể ban đầu
   quantity: initialQuantity,
 }) => {
+  console.log({
+  open,
+  onClose,
+  product,
+  variants,          // tất cả biến thể
+  variant,           // biến thể ban đầu
+  quantity: initialQuantity,
+})
   const [selectedVariant, setSelectedVariant] = useState(variant);
   const [quantity, setQuantity] = useState(initialQuantity || 1);
 
-
+  console.log("product",product)
   const { mutate: addToCart } = useAddToCart();
 
   const [isCartDrawerOpen, setCartDrawerOpen] = useState(false)
 
   const { sizeMap } = useSizeOptions();
+  console.log('sizeMap', sizeMap)
   useEffect(() => {
     if (variant) setSelectedVariant(variant);
     if (initialQuantity) setQuantity(initialQuantity);
@@ -32,6 +41,10 @@ const ModalAddToCart = ({
   // Lấy số lượng tồn kho hiện tại
   const maxQuantity = selectedVariant.countInStock || 0;
 
+console.log('selectedVariant0', selectedVariant)
+
+console.log(444, sizeMap[selectedVariant?.size])
+// return (<>12</>)
 
 
   return (
@@ -47,21 +60,21 @@ const ModalAddToCart = ({
           <Col span={8}>
             <img
               src={selectedVariant.image}
-              alt={product.name}
-              style={{ width: '100%', height: 300, objectFit: 'cover', borderRadius: 8 }}
+              alt={product?.name}
+              style={{ width: '100%', height: 300, objectFit: 'contain', borderRadius: 8 }}
             />
           </Col>
           <Col span={16}>
-            <Title level={5}>{product.name}</Title>
+            <Title level={5}>{product?.name}</Title>
             <Text>
-              Giá: ₫{(product.price * (1 - product.discount / 100)).toLocaleString()}
+              Giá: {(product?.price * (1 - product?.discount / 100)).toLocaleString("vi-VN")} đ
             </Text>
             <br />
-            <Text>Giảm giá: {product.discount}%</Text>
+            <Text>Giảm giá: {product?.discount}%</Text>
             <br />
-            <Text>Màu sắc: {selectedVariant.color}</Text>
+            <Text>Màu sắc: {selectedVariant?.color}</Text>
             <br />
-            <Text>Kích thước: {sizeMap[selectedVariant.size] || selectedVariant.size}</Text>
+            <Text>Kích thước: {sizeMap[selectedVariant?.size] || selectedVariant?.size.name}</Text>
             <br />
             <Text>
               Số lượng:
@@ -97,7 +110,7 @@ const ModalAddToCart = ({
                   setQuantity(Math.min(quantity, v.countInStock || 1));
                 }}
                 style={{
-                  border: v._id === selectedVariant._id ? '2px solid #1677ff' : '1px solid #ccc',
+                  border: v._id === selectedVariant?._id ? '2px solid #1677ff' : '1px solid #ccc',
                   borderRadius: 6,
                   padding: 4,
                   width: 70,
