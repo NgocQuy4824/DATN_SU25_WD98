@@ -47,7 +47,7 @@ const CartSide = ({ open, onClose }) => {
                             <Text strong>TỔNG ĐƠN HÀNG:</Text>
                             <br />
                             <Text strong style={{ fontSize: 18, color: "red" }}>
-                                ₫{totalPrice.toLocaleString()}
+                                {totalPrice.toLocaleString("vi-VN")} đ
                             </Text>
                         </div>
                     </div>

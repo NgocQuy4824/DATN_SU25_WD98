@@ -319,6 +319,17 @@ const cancelOrder = async (req, res, next) => {
       })
     );
   }
+
+  for (const item of foundOrder.items) {
+    const product = await Product.findById(item.productId);
+    if (product) {
+      const variant = product.variants.id(item.variantId);
+      if (variant) {
+        variant.countInStock += item.quantity;
+        await product.save();
+      }
+    }
+  }
   const user = await User.findById(userId);
   foundOrder.canceled = {
     isCancel: foundOrder.isPaid ? false : true,
