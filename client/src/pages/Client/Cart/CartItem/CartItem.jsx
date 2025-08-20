@@ -119,7 +119,7 @@ const CartItem = ({ item }) => {
             />
           )}
         </Col>
-        <Col flex="100px">
+        <Col flex="120px" style={{ paddingRight: 12 }}>
           {!isOutStock && (
             <UpdateQuantity
               value={item?.quantity}

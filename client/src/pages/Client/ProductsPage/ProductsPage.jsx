@@ -11,17 +11,25 @@ import { useProductFilter } from "../../../context/ProductFilterContext";
 const { Sider, Content } = Layout;
 
 export default function ProductPage() {
-  const { selectedCategory, setSelectedCategory, resetCategory } = useProductFilter();
+  const { selectedCategory, setSelectedCategory, resetCategory } =
+    useProductFilter();
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
   const [sortOption, setSortOption] = useState("newprice");
 
-  const { data: products = [] } = useProductsByFilter(
+  const { data: products = [], refetch } = useProductsByFilter(
     selectedSize,
     selectedColor,
     selectedCategory
   );
-  
+
+  const handleResetFilters = () => {
+    resetCategory();
+    setSelectedSize(null);
+    setSelectedColor(null);
+    setSortOption("newprice");
+    refetch?.(); // gọi refetch nếu hook có hỗ trợ
+  };
 
   return (
     <Layout style={{ background: "#fff", padding: "24px" }}>
@@ -47,12 +55,7 @@ export default function ProductPage() {
             products={products}
             sortOption={sortOption}
             setSortOption={setSortOption}
-            onResetFilters={() => {  
-              resetCategory();
-              setSelectedSize(null);
-              setSelectedColor(null);
-              setSortOption("newprice");
-            }}
+            onResetFilters={handleResetFilters}
           />
         </Content>
       </Layout>{" "}
