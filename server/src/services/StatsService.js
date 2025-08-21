@@ -352,108 +352,103 @@ const orderByDateRangeStats = async (req, res, next) => {
 const getProductStatsService = async (req, res, next) => {
   const { startDate, endDate } = req.query;
 
-  if (!startDate || !endDate) {
-    return {
-      status: "ERROR",
-      message: "Thiếu trường startDate hoặc trường endDate!",
-    };
-  }
+    if (!startDate || !endDate) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "Missing startDate or endDate parameter",
+      });
+    }
 
-  const start = moment
-    .tz(startDate, "DD-MM-YYYY", VIET_NAM_TZ)
-    .startOf("day")
-    .toDate();
-  const end = moment
-    .tz(endDate, "DD-MM-YYYY", VIET_NAM_TZ)
-    .endOf("day")
-    .toDate();
+    const start = moment.tz(startDate, "DD-MM-YYYY", VIET_NAM_TZ).startOf("day").toDate();
+    const end = moment.tz(endDate, "DD-MM-YYYY", VIET_NAM_TZ).endOf("day").toDate();
 
-  if (
-    !moment(start).isValid() ||
-    !moment(end).isValid() ||
-    moment(start).isAfter(end)
-  ) {
-    return { status: "ERROR", message: "Khoảng thời gian không hợp lệ!" };
-  }
+    if (!moment(start).isValid() || !moment(end).isValid() || moment(start).isAfter(end)) {
+      return res.status(400).json({
+        status: "ERROR",
+        message: "Invalid date range",
+      });
+    }
 
-  //   lấy sản phẩm từ đơn hàng
-  const pipeline = [
-    {
-      $match: {
-        createdAt: { $gte: start, $lte: end },
-        status: STATUS.DONE,
-        isPaid: true,
-      },
-    },
-    { $unwind: "$items" },
-    {
-      $group: {
-        _id: "$items.productId",
-        name: { $first: "$items.name" },
-        totalQuantity: { $sum: "$items.quantity" },
-        totalRevenue: {
-          $sum: { $multiply: ["$items.quantity", "$items.price"] },
+    const pipeline = [
+      {
+        $match: {
+          createdAt: { $gte: start, $lte: end },
+          status: STATUS.DONE,
+          isPaid: true,
         },
-        image: { $first: "$items.image" },
-        price: { $first: "$items.price" },
       },
-    },
-    {
-      $lookup: {
-        from: "products",
-        localField: "productId",
-        foreignField: "_id",
-        as: "productDetails",
+      { $unwind: "$items" },
+      {
+        $group: {
+          _id: "$items.productId",
+          name: { $first: "$items.name" },
+          totalQuantity: { $sum: "$items.quantity" },
+          totalRevenue: {
+            $sum: { $multiply: ["$items.quantity", "$items.price"] },
+          },
+          image: { $first: "$items.image" },
+          price: { $first: "$items.price" },
+        },
       },
-    },
-    { $unwind: "$productDetails" },
-    {
-      $addFields: {
-        productTotalStock: { $sum: "$variantDetails.countInStock" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "_id",
+          foreignField: "_id",
+          as: "productDetails",
+        },
       },
-    },
-    { $sort: { totalQuantity: -1 } },
-  ];
-
-  const allProductStats = await Order.aggregate(pipeline);
-
-  const totalStock = await Product.aggregate([
-    { $match: { isActive: false } },
-    {
-      $group: {
-        _id: null,
-        totalStock: { $sum: "$variants.countInStock" },
+      { $unwind: { path: "$productDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $addFields: {
+          productTotalStock: {
+            $ifNull: [{ $sum: "$productDetails.variants.countInStock" }, 0]
+          },
+        },
       },
-    },
-  ]);
+      { $sort: { totalQuantity: -1 } },
+    ];
 
-  const totalStockValue = totalStock[0]?.totalStock || 0;
+    const [allProductStats, totalStock] = await Promise.all([
+      Order.aggregate(pipeline),
+      Product.aggregate([
+        { $match: { isActive: true } },
+        { $unwind: "$variants" },
+        {
+          $group: {
+            _id: null,
+            totalStock: { $sum: "$variants.countInStock" },
+          },
+        },
+      ]),
+    ]);
 
-  const formatProductStats = (products) =>
-    products.map((product) => ({
-      _id: product._id.toString(),
-      name: product.name,
-      totalQuantity: product.totalQuantity,
-      totalRevenue: parseFloat(product.totalRevenue.toFixed(2)),
-      image: product.image,
-      price: product.price,
-      percentageOfTotal: (
-        (product.totalQuantity /
-          (product.totalQuantity + (product.productTotalStock || 0))) *
-        100
-      ).toFixed(2),
-      percentageOfAllProducts:
-        totalStockValue > 0
-          ? ((product.productTotalStock / totalStockValue) * 100).toFixed(2)
-          : "0.00",
-    }));
+    const totalStockValue = totalStock[0]?.totalStock || 0;
 
-  const topSellingWithPercentage = formatProductStats(
-    allProductStats.slice(0, 5)
-  );
-  const leastSellingWithPercentage = formatProductStats(
-    allProductStats.slice(-5).reverse()
-  );
+    const formatProductStats = (products) =>
+      products.map((product) => ({
+        _id: product._id.toString(),
+        name: product.name,
+        totalQuantity: product.totalQuantity,
+        totalRevenue: parseFloat(product.totalRevenue.toFixed(2)),
+        image: product.image,
+        price: product.price,
+        percentageOfTotal: (
+          (product.totalQuantity /
+            (product.totalQuantity + (product.productTotalStock || 0))) *
+          100
+        ).toFixed(2),
+        percentageOfAllProducts:
+          totalStockValue > 0
+            ? ((product.productTotalStock / totalStockValue) * 100).toFixed(2)
+            : "0.00",
+      }));
+
+    const topSellingWithPercentage = formatProductStats(allProductStats.slice(0, 5));
+    const leastSellingWithPercentage = formatProductStats(
+      allProductStats.slice(-5).reverse()
+    );
+    console.log(allProductStats)
 
   return {
     status: "OK",
