@@ -57,7 +57,13 @@ const HeaderComponent = ({ isAdmin = false }) => {
       {!isAdmin && <TopNavBar />}
       <WrapperHeader>
         <WrapperHeaderLogo flex={1}>
-          {isAdmin ? "Trang quản trị" : "PaceRun"}
+          {isAdmin ? (
+            "Trang quản trị"
+          ) : (
+            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+              PaceRun
+            </Link>
+          )}
         </WrapperHeaderLogo>
 
         {!isAdmin && (
