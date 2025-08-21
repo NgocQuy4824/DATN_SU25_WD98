@@ -152,12 +152,11 @@ const ProductsDetailPage = () => {
 
             <PriceSection>
               <Price>
-                ₫
                 {Math.floor(
                   product.price * (1 - product.discount / 100)
-                ).toLocaleString()}
+                ).toLocaleString("vi-VN")} đ
                 <OldPrice>
-                  ₫{Math.floor(product.price).toLocaleString()}
+                  {Math.floor(product.price).toLocaleString("vi-VN")} đ
                 </OldPrice>
                 <Discount>Giảm {product.discount}%</Discount>
               </Price>

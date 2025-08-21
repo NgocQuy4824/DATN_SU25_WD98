@@ -148,6 +148,8 @@ const ProductCard = ({ product }) => {
     setIsModalOpen(false);
   };
 
+  const discountedPrice = Math.floor(product.price * (1 - (product.discount || 0) / 100));
+
   return (
     <>
       {/* <Card
@@ -193,13 +195,24 @@ const ProductCard = ({ product }) => {
             {product.name}
           </h3>
           <p tw="mt-4 text-base flex items-center font-semibold gap-5">
-            {product.price || 0}
+            {product.discount > 0 ? (
+              <>
+                <span tw="text-red-600">
+                  {discountedPrice.toLocaleString("vi-VN")} đ
+                </span>
+                <span tw="line-through text-gray-400">
+                  {(product.price || 0).toLocaleString("vi-VN")} đ
+                </span>
+              </>
+            ) : (
+              <span>{(product.price || 0).toLocaleString("vi-VN")} đ</span>
+            )}
           </p>
         </div>
         {product.discount > 0 && (
           <Badge
             count={`-${product.discount}%`}
-            style={{ backgroundColor: "#f87171", borderColor: "#ef4444" }} // tailwind đỏ sáng và đỏ đậm
+            style={{ backgroundColor: "#f87171", borderColor: "#ef4444" }} 
             tw="absolute top-3 left-4 rounded-full text-xs px-2 py-1 font-semibold"
           />
         )}
