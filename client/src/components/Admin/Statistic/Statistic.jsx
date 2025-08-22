@@ -34,6 +34,9 @@ const Statistic = () => {
         }
       /> */}
       <>
+      <TopUsersContainer>
+            <TopUsers />
+          </TopUsersContainer>
         <StatisticWrapper>
           <StatisticsCards />
           <OrderStatusCards />
@@ -48,9 +51,6 @@ const Statistic = () => {
           <div>
             <TopProducts />
           </div>
-          <TopUsersContainer>
-            <TopUsers />
-          </TopUsersContainer>
         </ChartsGrid>
       </>
     </>

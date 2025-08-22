@@ -9,6 +9,7 @@ import Shipping from "../pages/Client/Checkout/Shipping";
 import HomePage from "../pages/Client/HomePage/HomePage";
 import MyVoucher from "../pages/Client/MyVoucher/MyVoucher";
 import NotFoundPage from "../pages/Client/NotFoundPage/NotFoundPage";
+import OrderCancel from "../pages/Client/OrderCancel/OrderCancel";
 import ProductsDetailPage from "../pages/Client/ProductsDetailPage/ProductsDetailPage";
 import ProductsPage from "../pages/Client/ProductsPage/ProductsPage";
 import OrderDetailUser from "../pages/Client/ProfilePage/Order/OrderDetail/OrderDetail";
@@ -51,8 +52,9 @@ export const clientRoutes = [
     path: "/order/success/:id",
     element: <OrderSuccess />,
   },
-  // {
-  //   path: "/order/error",
-  // },
+  {
+    path: "/order/cancel",
+    element: <OrderCancel />,
+  },
 ];
 export default clientRoutes;
