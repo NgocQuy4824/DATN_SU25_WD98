@@ -370,12 +370,14 @@ const getProductStatsService = async (req, res, next) => {
     }
 
     const pipeline = [
+      //lọc đơn hàng hợp lệ , trạng thái done ,  đã thanh toán
       {
         $match: {
           createdAt: { $gte: start, $lte: end },
           status: STATUS.DONE,
           isPaid: true,
         },
+        //tách đơn hàng lấy từng sp
       },
       { $unwind: "$items" },
       {
@@ -383,6 +385,7 @@ const getProductStatsService = async (req, res, next) => {
           _id: "$items.productId",
           name: { $first: "$items.name" },
           totalQuantity: { $sum: "$items.quantity" },
+          //tính tổng doanh thu của từng sp
           totalRevenue: {
             $sum: { $multiply: ["$items.quantity", "$items.price"] },
           },
@@ -444,11 +447,12 @@ const getProductStatsService = async (req, res, next) => {
             : "0.00",
       }));
 
+    // bán nhiều nhất 5 sp
     const topSellingWithPercentage = formatProductStats(allProductStats.slice(0, 5));
+    //bán ít nhất
     const leastSellingWithPercentage = formatProductStats(
       allProductStats.slice(-5).reverse()
     );
-    console.log(allProductStats)
 
   return {
     status: "OK",
