@@ -146,28 +146,28 @@ export const TopProducts = () => {
           </div>
         ),
       },
-      {
-        title: (
-          <Tooltip
-            title="Số lượng bán ra chia cho toàn bộ số lượng sản phẩm còn tồn kho"
-            color="blue"
-          >
-            <span className="text-sm font-semibold text-gray-900">
-              % Tồn kho{" "}
-              <QuestionCircleOutlined className="ml-1 text-gray-500" />
-            </span>
-          </Tooltip>
-        ),
-        dataIndex: "percentageOfAllProducts",
-        key: "percentageOfAllProducts",
-        align: "center",
-        width: "20%",
-        render: (percent) => (
-          <Text className="text-center font-medium text-gray-800">
-            {parseFloat(percent).toFixed(2)}%
-          </Text>
-        ),
-      },
+      // {
+      //   title: (
+      //     <Tooltip
+      //       title="Số lượng bán ra chia cho toàn bộ số lượng sản phẩm còn tồn kho"
+      //       color="blue"
+      //     >
+      //       <span className="text-sm font-semibold text-gray-900">
+      //         % Tồn kho{" "}
+      //         <QuestionCircleOutlined className="ml-1 text-gray-500" />
+      //       </span>
+      //     </Tooltip>
+      //   ),
+      //   dataIndex: "percentageOfAllProducts",
+      //   key: "percentageOfAllProducts",
+      //   align: "center",
+      //   width: "20%",
+      //   render: (percent) => (
+      //     <Text className="text-center font-medium text-gray-800">
+      //       {parseFloat(percent).toFixed(2)}%
+      //     </Text>
+      //   ),
+      // },
     ];
 
     if (!isLoading && tableData.length === 0) {

@@ -1,8 +1,6 @@
 // src/routers/clientRouter.jsx
 import ClientLayout from "../layouts/ClientLayout";
 import AuthPage from "../pages/Client/Auth/AuthPage";
-import SignInPage from "../pages/Client/Auth/SignIn/SignInPage";
-import SignUpPage from "../pages/Client/Auth/SignUp/SignUpPage";
 import Cart from "../pages/Client/Cart/Cart";
 import Checkout from "../pages/Client/Checkout/Checkout";
 import Shipping from "../pages/Client/Checkout/Shipping";
@@ -17,6 +15,7 @@ import ProfileForm from "../pages/Client/ProfilePage/ProfileForm";
 import ProfilePage from "../pages/Client/ProfilePage/ProfilePage";
 import OrderSuccess from "../pages/Client/StateOrder/Success/OrderSuccess";
 // import ProfileForm from "../pages/Client/ProfilePage/ProfileForm";
+import OrderCancel from "../pages/Client/OrderCancel/OrderCancel";
 
 export const clientRoutes = [
   {
@@ -50,6 +49,10 @@ export const clientRoutes = [
   {
     path: "/order/success/:id",
     element: <OrderSuccess />,
+  },
+  {
+    path: "/order/cancel",
+    element: <OrderCancel />,
   },
 ];
 export default clientRoutes;

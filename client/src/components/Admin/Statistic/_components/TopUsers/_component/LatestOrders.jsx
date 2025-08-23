@@ -89,14 +89,14 @@ const LatestOrders = ({ orders }) => {
 
               <OrderStatusTag status={order.status} />
 
-              <Tooltip title="Xem chi tiết">
+              {/* <Tooltip title="Xem chi tiết">
                 <Button
                   type="primary"
                   icon={<EyeOutlined />}
                   shape="circle"
                   onClick={() => handleViewDetails(order._id)}
                 />
-              </Tooltip>
+              </Tooltip> */}
             </OrderDetailsFlex>
           </Flex>
         </StyledCard>

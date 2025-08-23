@@ -88,12 +88,12 @@ const OrderStatusCards = () => {
       icon: <CloseCircleOutlined className="text-red-600"  style={{ fontSize: 28 }} />,
       tooltip: "Đơn hàng đã bị hủy",
     },
-    {
-      title: "Sản Phẩm Hết Hàng",
-      count: data?.data?.outOfStockProducts || 0,
-      icon: <ShoppingCartOutlined className="text-gray-600"  style={{ fontSize: 28 }} />,
-      tooltip: "Sản phẩm trong đơn hàng đã hết hàng",
-    },
+    // {
+    //   title: "Sản Phẩm Hết Hàng",
+    //   count: data?.data?.outOfStockProducts || 0,
+    //   icon: <ShoppingCartOutlined className="text-gray-600"  style={{ fontSize: 28 }} />,
+    //   tooltip: "Sản phẩm trong đơn hàng đã hết hàng",
+    // },
   ];
 
   return (
