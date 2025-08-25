@@ -149,7 +149,7 @@ const DateRangePickerCard = ({ onDateChange, initialDate }) => {
     {
       label: (
         <Space direction="vertical" className="border-r p-4">
-          <div>
+          {/* <div>
             <DropDownItem
               labelId={weekId}
               title="7 ngày trước"
@@ -187,7 +187,7 @@ const DateRangePickerCard = ({ onDateChange, initialDate }) => {
               onMouseLeave={() => setHoveredDate(null)}
             />
           </div>
-          <hr />
+          <hr /> */}
           <div>
             <DropDownItem
               labelId={dateRangeId}
