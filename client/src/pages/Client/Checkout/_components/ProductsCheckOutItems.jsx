@@ -99,11 +99,13 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
         invalidItem = true;
         return null;
       }
+
+       const finalPrice = item.price * (1 - (item.discount || 0) / 100);
       return {
         productId: item.productId,
         variantId: item.variantId,
         name: item.name,
-        price: item.price,
+        price: finalPrice,
         image: item.variant?.image,
         quantity: item.quantity,
         size: item.variant?.size?.name,
