@@ -7,7 +7,6 @@ export const WrapperHeader = styled(Row)`
     padding: 10px 20px;
     align-items: center;
     justify-content: space-between;
-    border-bottom:1px solid red;
 `
 export const WrapperHeaderText = styled.div`
     color: black;
