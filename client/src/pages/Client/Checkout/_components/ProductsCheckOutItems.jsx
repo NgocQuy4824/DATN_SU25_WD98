@@ -56,21 +56,33 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
     const fullItem = data?.data?.items.find(
       (p) => p.variantId === cartItem.variantId
     );
+    if (!fullItem || !fullItem.price) {
+      // Đánh dấu item đã xóa/ẩn
+      return {
+        ...cartItem,
+        isDeleted: true,
+        name: fullItem?.name || "Sản phẩm",
+        variant: null,
+        price: 0,
+        discount: 0,
+      };
+    }
     return {
       ...fullItem,
       quantity: cartItem.quantity,
+      isDeleted: false,
     };
   });
 
+  // Tổng tiền chỉ tính item còn hợp lệ
   const totalPrice = mergedCartItems.reduce((acc, item) => {
-    if (!item) return acc;
+    if (item.isDeleted) return acc;
     const priceAfterDiscount = item.price * (1 - (item.discount || 0) / 100);
     return acc + priceAfterDiscount * (item.quantity || 0);
   }, 0);
 
-  // Tổng số lượng sản phẩm
   const totalQuantity = mergedCartItems.reduce(
-    (total, item) => total + (item.quantity || 0),
+    (total, item) => (item.isDeleted ? total : total + (item.quantity || 0)),
     0
   );
 
@@ -100,7 +112,7 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
         return null;
       }
 
-       const finalPrice = item.price * (1 - (item.discount || 0) / 100);
+      const finalPrice = item.price * (1 - (item.discount || 0) / 100);
       return {
         productId: item.productId,
         variantId: item.variantId,
@@ -148,51 +160,70 @@ export default function ProductsCheckOutItems({ isShippingPage, form }) {
           itemLayout="horizontal"
           dataSource={mergedCartItems}
           renderItem={(item) => (
-            <List.Item>
+            <List.Item style={item.isDeleted ? { opacity: 1 } : {}}>
               <List.Item.Meta
                 avatar={
-                  <Image width={60} src={item.variant?.image} preview={false} />
+                  <Image
+                    width={60}
+                    src={item.variant?.image}
+                    preview={false}
+                    style={{
+                      filter: item.isDeleted ? "grayscale(100%)" : "none",
+                    }}
+                  />
                 }
                 title={
-                  <Link to={`/products/${item.productId}`}>
-                    <Text strong>{item.name}</Text>
-                  </Link>
+                  item.isDeleted ? (
+                    <Text style={{ color: "red" }} strong>
+                      (Sản phẩm đã xoá hoặc ẩn)
+                    </Text>
+                  ) : (
+                    <Link to={`/products/${item.productId}`}>
+                      <Text strong>{item.name}</Text>
+                    </Link>
+                  )
                 }
                 description={
-                  <>
-                    <Space wrap>
-                      {item.variant?.color && (
-                        <Tag color="blue">Màu: {item.variant.color}</Tag>
-                      )}
-                      {item.variant?.size?.name && (
-                        <Tag color="purple">Size: {item.variant.size.name}</Tag>
-                      )}
-                    </Space>
-                    <div style={{ marginTop: 8 }}>
-                      <Text>Đơn giá: {formatCurrency(item.price)}</Text>
-                      <Text style={{ marginLeft: 16 }}>
-                        Số lượng: {item.quantity}
-                      </Text>
-                    </div>
-                  </>
+                  !item.isDeleted && (
+                    <>
+                      <Space wrap>
+                        {item.variant?.color && (
+                          <Tag color="blue">Màu: {item.variant.color}</Tag>
+                        )}
+                        {item.variant?.size?.name && (
+                          <Tag color="purple">
+                            Size: {item.variant.size.name}
+                          </Tag>
+                        )}
+                      </Space>
+                      <div style={{ marginTop: 8 }}>
+                        <Text>Đơn giá: {formatCurrency(item.price)}</Text>
+                        <Text style={{ marginLeft: 16 }}>
+                          Số lượng: {item.quantity}
+                        </Text>
+                      </div>
+                    </>
+                  )
                 }
               />
-              <div style={{ marginTop: 8 }}>
-                <Text>
-                  Đã chiết khấu:{" "}
-                  <span style={{ color: "#40a9ff", fontWeight: "bold" }}>
-                    {item.discount || 0}%
-                  </span>
-                </Text>
-                <br />
-                <Text strong style={{ color: "red" }}>
-                  {formatCurrency(
-                    item.price *
+              {!item.isDeleted && (
+                <div style={{ marginTop: 8 }}>
+                  <Text>
+                    Đã chiết khấu:{" "}
+                    <span style={{ color: "#40a9ff", fontWeight: "bold" }}>
+                      {item.discount || 0}%
+                    </span>
+                  </Text>
+                  <br />
+                  <Text strong style={{ color: "red" }}>
+                    {formatCurrency(
+                      item.price *
                       (1 - (item.discount || 0) / 100) *
                       item.quantity
-                  )}
-                </Text>
-              </div>
+                    )}
+                  </Text>
+                </div>
+              )}
             </List.Item>
           )}
         />
