@@ -108,7 +108,7 @@ const createPaymentLink = async (req, res, next) => {
     });
   } catch (err) {
     console.error("❌ Lỗi tạo link thanh toán:", err);
-    return res.status(500).json({ message: "Lỗi server" });
+    return res.status(500).json({ message: "Vui lòng chọn phương thức thanh toán khác" });
   }
 };
 
