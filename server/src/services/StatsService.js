@@ -52,7 +52,7 @@ const totalStats = async (req, res, next) => {
       break;
 
     case "single":
-      if (startDate && endDate) {
+      if ((startDate && endDate || startDate)) {
         start = moment
           .tz(startDate, "DD-MM-YYYY", VIET_NAM_TZ)
           .startOf("day")
